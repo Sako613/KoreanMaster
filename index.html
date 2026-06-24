@@ -254,22 +254,25 @@
       min-width:0;
     }
 
-    .kr{
-      font-size:24px;
-      font-weight:800;
-      line-height:1.2;
-      margin-bottom:6px;
-      word-break:break-all;
-    }
+   .kana{
+  font-size:12px;
+  color:#666;
+}
 
-    .jp{
-      display:none;
-      font-size:15px;
-      color:#334;
-      line-height:1.5;
-      margin-top:6px;
-    }
+.jp{
+  display:none;
+}
 
+.show .jp{
+  display:block;
+}
+
+.phrase{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:10px;
+  margin:5px;
+}
     .word-card.show-answer .jp{
       display:block;
     }
@@ -643,6 +646,10 @@
         <button class="phrase-btn" data-phrase-group="instruction">指示</button>
         <button class="phrase-btn" data-phrase-group="slang">スラング</button>
         <button class="phrase-btn" data-phrase-group="game">ゲーム</button>
+        <button class="phrase-btn" date-phrase-group="koutei">肯定</button>
+        <button class="phrase-btn" date-phrase-group="hitei">否定</button> 
+        <button class="phrase-btn" date-phrase-group="youbou">要望</button>
+
       </div>
       <div class="phrase-panel" id="phrasePanel">
         <div class="muted">上のボタンを押すとフレーズ一覧が表示されます。</div>
@@ -730,103 +737,103 @@
      *    今はサンプル。ここを1671語まで増やせる。
      ************************************************************/
     const RAW_WORDS = [
-      { kr:"사람", jp:"人" },
-      { kr:"친구", jp:"友達" },
-      { kr:"학생", jp:"学生" },
-      { kr:"선생님", jp:"先生" },
-      { kr:"가수", jp:"歌手" },
-      { kr:"경찰관", jp:"警察官" },
-      { kr:"간호사", jp:"看護師" },
+      { kr:"사람", jp:"人",kana:"サラム" },
+     { kr:"친구", jp:"友達", kana:"チング" },
+{ kr:"학생", jp:"学生", kana:"ハクセン" },
+{ kr:"선생님", jp:"先生", kana:"ソンセンニム" },
+{ kr:"가수", jp:"歌手", kana:"カス" },
+{ kr:"경찰관", jp:"警察官", kana:"キョンチャルグァン" },
+{ kr:"간호사", jp:"看護師", kana:"カノサ" },
 
-      { kr:"밥", jp:"ご飯" },
-      { kr:"사과", jp:"りんご" },
-      { kr:"김치", jp:"キムチ" },
-      { kr:"고기", jp:"肉" },
-      { kr:"물", jp:"水" },
-      { kr:"과일", jp:"果物" },
-      { kr:"과자", jp:"お菓子" },
-      { kr:"커피", jp:"コーヒー" },
+{ kr:"밥", jp:"ご飯", kana:"パプ" },
+{ kr:"사과", jp:"りんご", kana:"サグァ" },
+{ kr:"김치", jp:"キムチ", kana:"キムチ" },
+{ kr:"고기", jp:"肉", kana:"コギ" },
+{ kr:"물", jp:"水", kana:"ムル" },
+{ kr:"과일", jp:"果物", kana:"クァイル" },
+{ kr:"과자", jp:"お菓子", kana:"クァジャ" },
+{ kr:"커피", jp:"コーヒー", kana:"コピ" },
 
-      { kr:"학교", jp:"学校" },
-      { kr:"집", jp:"家" },
-      { kr:"공원", jp:"公園" },
-      { kr:"회사", jp:"会社" },
-      { kr:"가게", jp:"店" },
-      { kr:"교실", jp:"教室" },
-      { kr:"도서관", jp:"図書館" },
-      { kr:"공항", jp:"空港" },
+{ kr:"학교", jp:"学校", kana:"ハッキョ" },
+{ kr:"집", jp:"家", kana:"チプ" },
+{ kr:"공원", jp:"公園", kana:"コンウォン" },
+{ kr:"회사", jp:"会社", kana:"フェサ" },
+{ kr:"가게", jp:"店", kana:"カゲ" },
+{ kr:"교실", jp:"教室", kana:"キョシル" },
+{ kr:"도서관", jp:"図書館", kana:"トソグァン" },
+{ kr:"공항", jp:"空港", kana:"コンハン" },
 
-      { kr:"책", jp:"本" },
-      { kr:"가방", jp:"かばん" },
-      { kr:"컴퓨터", jp:"コンピューター" },
-      { kr:"의자", jp:"いす" },
-      { kr:"전화", jp:"電話" },
-      { kr:"거울", jp:"鏡" },
-      { kr:"종이", jp:"紙" },
+{ kr:"책", jp:"本", kana:"チェク" },
+{ kr:"가방", jp:"かばん", kana:"カバン" },
+{ kr:"컴퓨터", jp:"コンピューター", kana:"コムピュト" },
+{ kr:"의자", jp:"いす", kana:"ウィジャ" },
+{ kr:"전화", jp:"電話", kana:"チョナ" },
+{ kr:"거울", jp:"鏡", kana:"コウル" },
+{ kr:"종이", jp:"紙", kana:"チョンイ" },
 
-      { kr:"가다", jp:"行く" },
-      { kr:"오다", jp:"来る" },
-      { kr:"보다", jp:"見る" },
-      { kr:"먹다", jp:"食べる" },
-      { kr:"마시다", jp:"飲む" },
-      { kr:"말하다", jp:"話す" },
-      { kr:"공부하다", jp:"勉強する" },
-      { kr:"기다리다", jp:"待つ" },
-      { kr:"가르치다", jp:"教える" },
-      { kr:"만나다", jp:"会う" },
-      { kr:"좋아하다", jp:"好きだ" },
-      { kr:"걷다", jp:"歩く" },
-      { kr:"자다", jp:"寝る" },
+{ kr:"가다", jp:"行く", kana:"カダ" },
+{ kr:"오다", jp:"来る", kana:"オダ" },
+{ kr:"보다", jp:"見る", kana:"ポダ" },
+{ kr:"먹다", jp:"食べる", kana:"モクタ" },
+{ kr:"마시다", jp:"飲む", kana:"マシダ" },
+{ kr:"말하다", jp:"話す", kana:"マラダ" },
+{ kr:"공부하다", jp:"勉強する", kana:"コンブハダ" },
+{ kr:"기다리다", jp:"待つ", kana:"キダリダ" },
+{ kr:"가르치다", jp:"教える", kana:"カルチダ" },
+{ kr:"만나다", jp:"会う", kana:"マンナダ" },
+{ kr:"좋아하다", jp:"好きだ", kana:"チョアハダ" },
+{ kr:"걷다", jp:"歩く", kana:"コッタ" },
+{ kr:"자다", jp:"寝る", kana:"チャダ" },
 
-      { kr:"좋다", jp:"良い" },
-      { kr:"크다", jp:"大きい" },
-      { kr:"작다", jp:"小さい" },
-      { kr:"예쁘다", jp:"きれいだ" },
-      { kr:"나쁘다", jp:"悪い" },
-      { kr:"빠르다", jp:"速い" },
-      { kr:"느리다", jp:"遅い" },
-      { kr:"귀엽다", jp:"かわいい" },
-      { kr:"건강하다", jp:"健康だ" },
-      { kr:"행복하다", jp:"幸せだ" },
-      { kr:"어렵다", jp:"難しい" },
-      { kr:"쉽다", jp:"易しい" },
+{ kr:"좋다", jp:"良い", kana:"チョタ" },
+{ kr:"크다", jp:"大きい", kana:"クダ" },
+{ kr:"작다", jp:"小さい", kana:"チャクタ" },
+{ kr:"예쁘다", jp:"きれいだ", kana:"イェップダ" },
+{ kr:"나쁘다", jp:"悪い", kana:"ナップダ" },
+{ kr:"빠르다", jp:"速い", kana:"パルダ" },
+{ kr:"느리다", jp:"遅い", kana:"ヌリダ" },
+{ kr:"귀엽다", jp:"かわいい", kana:"クィヨプタ" },
+{ kr:"건강하다", jp:"健康だ", kana:"コンガンハダ" },
+{ kr:"행복하다", jp:"幸せだ", kana:"ヘンボカダ" },
+{ kr:"어렵다", jp:"難しい", kana:"オリョプタ" },
+{ kr:"쉽다", jp:"易しい", kana:"シプタ" },
 
-      { kr:"빨리", jp:"早く" },
-      { kr:"천천히", jp:"ゆっくり" },
-      { kr:"많이", jp:"たくさん" },
-      { kr:"잘", jp:"よく / 上手に" },
-      { kr:"가끔", jp:"時々" },
-      { kr:"자주", jp:"しばしば" },
-      { kr:"거의", jp:"ほとんど" },
-      { kr:"갑자기", jp:"急に" },
+{ kr:"빨리", jp:"早く", kana:"パルリ" },
+{ kr:"천천히", jp:"ゆっくり", kana:"チョンチョニ" },
+{ kr:"많이", jp:"たくさん", kana:"マニ" },
+{ kr:"잘", jp:"よく / 上手に", kana:"チャル" },
+{ kr:"가끔", jp:"時々", kana:"カックム" },
+{ kr:"자주", jp:"しばしば", kana:"チャジュ" },
+{ kr:"거의", jp:"ほとんど", kana:"コイ" },
+{ kr:"갑자기", jp:"急に", kana:"カプチャギ" },
 
-      { kr:"그리고", jp:"そして" },
-      { kr:"하지만", jp:"しかし" },
-      { kr:"그래서", jp:"だから" },
-      { kr:"또는", jp:"または" },
-      { kr:"그런데", jp:"ところで / ところが" },
+{ kr:"그리고", jp:"そして", kana:"クリゴ" },
+{ kr:"하지만", jp:"しかし", kana:"ハジマン" },
+{ kr:"그래서", jp:"だから", kana:"クレソ" },
+{ kr:"또는", jp:"または", kana:"ットヌン" },
+{ kr:"그런데", jp:"ところで / ところが", kana:"クロンデ" },
 
-      { kr:"와", jp:"わあ" },
-      { kr:"헐", jp:"えっ" },
-      { kr:"응", jp:"うん" },
-      { kr:"아", jp:"あ" },
-      { kr:"어", jp:"あれ / えっ" },
+{ kr:"와", jp:"わあ", kana:"ワ" },
+{ kr:"헐", jp:"えっ", kana:"ホル" },
+{ kr:"응", jp:"うん", kana:"ウン" },
+{ kr:"아", jp:"あ", kana:"ア" },
+{ kr:"어", jp:"あれ / えっ", kana:"オ" },
 
-      { kr:"오늘", jp:"今日" },
-      { kr:"어제", jp:"昨日" },
-      { kr:"내일", jp:"明日" },
-      { kr:"지금", jp:"今" },
-      { kr:"아침", jp:"朝" },
-      { kr:"저녁", jp:"夕方 / 夜" },
-      { kr:"주말", jp:"週末" },
-      { kr:"월요일", jp:"月曜日" },
+{ kr:"오늘", jp:"今日", kana:"オヌル" },
+{ kr:"어제", jp:"昨日", kana:"オジェ" },
+{ kr:"내일", jp:"明日", kana:"ネイル" },
+{ kr:"지금", jp:"今", kana:"チグム" },
+{ kr:"아침", jp:"朝", kana:"アチム" },
+{ kr:"저녁", jp:"夕方 / 夜", kana:"チョニョク" },
+{ kr:"주말", jp:"週末", kana:"チュマル" },
+{ kr:"월요일", jp:"月曜日", kana:"ウォリョイル" },
 
-      { kr:"감사합니다", jp:"ありがとうございます" },
-      { kr:"안녕하세요", jp:"こんにちは" },
-      { kr:"괜찮다", jp:"大丈夫だ" },
-      { kr:"정말", jp:"本当に" },
-      { kr:"재미있다", jp:"面白い" },
-      { kr:"반갑다", jp:"うれしい / 会えてうれしい" }
+{ kr:"감사합니다", jp:"ありがとうございます", kana:"カムサハムニダ" },
+{ kr:"안녕하세요", jp:"こんにちは", kana:"アンニョンハセヨ" },
+{ kr:"괜찮다", jp:"大丈夫だ", kana:"ケンチャンタ" },
+{ kr:"정말", jp:"本当に", kana:"チョンマル" },
+{ kr:"재미있다", jp:"面白い", kana:"チェミイッタ" },
+{ kr:"반갑다", jp:"うれしい / 会えてうれしい", kana:"パンガプタ" }
     ];
 
     /************************************************************
@@ -924,8 +931,19 @@
         { kr:"같이 가자", jp:"一緒に行こう" },
         { kr:"적이 있다", jp:"敵がいる" },
         { kr:"다시 시작하자", jp:"もう一回始めよう" }
-      ]
-    };
+      ],
+      koutei:[
+        { kr:"좋아요", jp:"いいね"},
+      ],
+      hitei:[
+        {kr:"싫다", jp:"いやだ"}
+      ],
+      youbou:[
+        { kr:"고맙다", jp;"おねがい"}
+        ]
+          
+          
+        
 
     /************************************************************
      * 6) アプリ状態
@@ -1184,31 +1202,44 @@
      * 11) 文章生成
      *     名詞（人） + 名詞（食べ物/物/場所） + 動詞
      ************************************************************/
-    function makeRandomSentence(){
-      const db = state.classified;
+ const particleMeaning = {
+  "이":"が",
+  "가":"が",
+  "을":"を",
+  "를":"を",
+  "에":"に",
+  "에서":"で",
+  "는":"は",
+  "은":"は"
+};
 
-      const subject = pickRandom(db.noun.person);
-      const objectPool = [
-        ...db.noun.food,
-        ...db.noun.place,
-        ...db.noun.thing
-      ];
-      const object = pickRandom(objectPool);
-      const verb = pickRandom(db.verb);
+function makeRandomSentence(){
+  const db = state.classified;
 
-      if(!subject || !object || !verb){
-        state.sentence = "文章生成に必要な単語が足りません";
-        renderSentenceBoard();
-        return;
-      }
+  const subject = pickRandom(db.noun.person);
+  const object = pickRandom([
+    ...db.noun.food,
+    ...db.noun.place,
+    ...db.noun.thing
+  ]);
+  const verb = pickRandom(db.verb);
 
-      const sentence = `${subject.kr}는 ${object.kr}을 ${convertVerbToHaeyotai(verb.kr)}`;
-      const helper = `主語: ${subject.jp} / 目的語: ${object.jp} / 動詞: ${verb.jp}`;
-      state.sentence = sentence;
-      renderSentenceBoard(helper);
-      saveState();
-    }
+  const p1 = pickRandom(particles);
+  const p2 = pickRandom(particles);
 
+  const sentence =
+    `${subject.kr}${p1} ${object.kr}${p2} ${convertVerbToHaeyotai(verb.kr)}`;
+
+  // ✅ 日本語説明
+  const meaning =
+    `${subject.jp}(${particleMeaning[p1]}) ` +
+    `${object.jp}(${particleMeaning[p2]}) ` +
+    `${verb.jp}`;
+
+  state.sentence = sentence + "\n" + meaning;
+
+  renderSentenceBoard();
+}
     function convertVerbToHaeyotai(verbDictForm){
       if(!verbDictForm.endsWith("다")) return verbDictForm;
 
