@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <title>KoreanMaster</title>
+
+  <style>
+    :root{
+      --main:#0d1b2a;
+      --sub:#1b263b;
+      --sub2:#24364f;
+      --endless:#740125;
+      --white:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#d7dee8;
+      --shadow:rgba(0,0,0,0.32);
+      --press:#9aa3af;
+      --radius:10px;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    body{
+      margin:0;
+      background:var(--main);
+      color:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+      transition:background-color .25s ease;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    .app{
+      max-width:760px;
+      min-height:100vh;
+      margin:0 auto;
+      padding-bottom:96px;
+      position:relative;
+    }
+
+    #fadeOverlay{
+      position:fixed;
+      inset:0;
+      background:#fff;
+      opacity:0;
+      pointer-events:none;
+      z-index:2000;
+      transition:opacity .35s ease;
+    }
+
+    #fadeOverlay.show{
+      opacity:1;
+    }
+
+    #splash{
+      position:fixed;
+      inset:0;
+      background:var(--main);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      z-index:3000;
+      animation:splashOut .8s ease 1.5s forwards;
+    }
+
+    #splash img{
+      width:86px;
+      height:86px;
+      object-fit:contain;
+      display:block;
+      margin-bottom:12px;
+    }
+
+    #splash .splash-title{
+      font-size:28px;
+      font-weight:800;
+      color:#fff;
+    }
+
+    @keyframes splashOut{
+      to{
+        opacity:0;
+        visibility:hidden;
+      }
+    }
+
+    button{
+      font-family:inherit;
+    }
+
+    .pressable{
+      position:relative;
+      overflow:hidden;
+      transition:background-color .15s ease,color .15s ease,box-shadow .15s ease,transform .12s ease;
+    }
+
+    .pressable:active{
+      background:var(--press) !important;
+      color:#fff !important;
+      box-shadow:
+        0 0 0 4px rgba(160,160,160,0.32),
+        0 4px 0 rgba(0,0,0,0.24) !important;
+      transform:scale(.985);
+    }
+
+    .topbar{
+      height:64px;
+      position:sticky;
+      top:0;
+      z-index:80;
+      background:var(--main);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 16px;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
+      overflow:hidden;
+      transition:background-color .25s ease;
+    }
+
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      height:100%;
+      min-width:0;
+    }
+
+    .logo{
+      width:36px;
+      height:36px;
+      object-fit:contain;
+      display:block;
+      flex-shrink:0;
+    }
+
+    .brand{
+      font-size:22px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .menu-btn{
+      border:none;
+      background:transparent;
+      color:#fff;
+      font-size:22px;
+      border-radius:10px;
+      padding:8px 10px;
+      cursor:pointer;
+    }
+
+    .menu-btn:active{
+      background:var(--press);
+    }
+
+    .subbar{
+      position:sticky;
+      top:64px;
+      z-index:70;
+      background:var(--sub);
+      padding:10px;
+      overflow-x:auto;
+      white-space:nowrap;
+      box-shadow:0 4px 10px rgba(0,0,0,.12);
+      transition:background-color .25s ease;
+    }
+
+    .scroll-row{
+      display:flex;
+      gap:8px;
+      min-width:max-content;
+    }
+
+    .chip{
+      border:none;
+      background:var(--sub2);
+      color:#fff;
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:14px;
+      cursor:pointer;
+    }
+
+    .chip.active{
+      background:#fff;
+      color:var(--main);
+      font-weight:800;
+    }
+
+    .screen{
+      display:none;
+      padding:14px 0 22px;
+    }
+
+    .screen.active{
+      display:block;
+    }
+
+    .section-title{
+      font-size:18px;
+      font-weight:800;
+      margin:8px 20px 12px;
+      color:#fff;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      padding:0 20px 10px;
+    }
+
+    .action-btn{
+      border:none;
+      background:var(--sub);
+      color:#fff;
+      border-radius:10px;
+      padding:10px 14px;
+      font-size:14px;
+      cursor:pointer;
+      box-shadow:0 4px 0 rgba(0,0,0,.24);
+    }
+
+    .action-btn.secondary{
+      background:var(--sub2);
+    }
+
+    .action-btn.light{
+      background:#fff;
+      color:var(--main);
+      border:2px solid var(--line);
+      box-shadow:none;
+    }
+
+    .sentence-board{
+      margin:0 20px 12px;
+      padding:16px;
+      background:#fff;
+      color:var(--text);
+      border-radius:10px;
+      box-shadow:0 8px 18px var(--shadow);
+      min-height:116px;
+    }
+
+    .sentence-title{
+      font-size:13px;
+      font-weight:800;
+      color:#566477;
+      margin-bottom:8px;
+    }
+
+    .sentence-text{
+      font-size:22px;
+      font-weight:800;
+      line-height:1.5;
+      white-space:pre-line;
+    }
+
+    .sentence-sub{
+      margin-top:10px;
+      color:#475569;
+      font-size:14px;
+      line-height:1.6;
+      white-space:pre-line;
+    }
+
+    .card-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .word-card{
+      background:#fff;
+      color:var(--text);
+      border-radius:10px;
+      padding:14px;
+      margin:0 20px;
+      box-shadow:0 8px 18px var(--shadow);
+      border:1px solid rgba(15,23,42,.06);
+      cursor:pointer;
+      user-select:none;
+      transition:background-color .15s ease, transform .12s ease;
+    }
+
+    .word-card:active{
+      background:#f1f5f9;
+      transform:scale(.992);
+    }
+
+    .top-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .card-left{
+      flex:1;
+      min-width:0;
+    }
+
+    .kr{
+      font-size:24px;
+      font-weight:800;
+      line-height:1.2;
+      margin-bottom:4px;
+      color:#0f172a;
+      word-break:break-all;
+    }
+
+    .kana{
+      font-size:13px;
+      color:#6b7280;
+      margin-bottom:8px;
+      line-height:1.4;
+    }
+
+    .jp{
+      display:none;
+      color:#334155;
+      font-size:15px;
+      line-height:1.5;
+      margin-top:8px;
+    }
+
+    .word-card.show-answer .jp,
+    .phrase-item.show .phrase-jp{
+      display:block;
+    }
+
+    .tag-row{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:#0d1b2a;
+      background:#edf2f7;
+      border:1px solid #d5dbe5;
+    }
+
+    .audio-btn{
+      border:none;
+      width:42px;
+      height:42px;
+      border-radius:10px;
+      background:var(--main);
+      color:#fff;
+      font-size:18px;
+      flex-shrink:0;
+      cursor:pointer;
+    }
+
+    .phrase-panel{
+      margin:0 20px;
+    }
+
+    .phrase-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .phrase-item{
+      background:#fff;
+      color:var(--text);
+      border-radius:10px;
+      padding:14px;
+      border:1px solid #e2e8f0;
+      box-shadow:0 8px 18px var(--shadow);
+      cursor:pointer;
+    }
+
+    .phrase-item-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .phrase-text{
+      flex:1;
+      min-width:0;
+    }
+
+    .phrase-kr{
+      font-size:18px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:4px;
+    }
+
+    .phrase-kana{
+      font-size:13px;
+      color:#6b7280;
+      margin-bottom:6px;
+    }
+
+    .phrase-jp{
+      display:none;
+      color:#334155;
+      font-size:14px;
+      line-height:1.5;
+      margin-top:8px;
+    }
+
+    .quiz-box{
+      background:#fff;
+      color:var(--text);
+      margin:0 20px;
+      padding:16px;
+      border-radius:10px;
+      box-shadow:0 8px 18px var(--shadow);
+    }
+
+    .quiz-progress{
+      font-size:13px;
+      color:#54606d;
+      margin-bottom:8px;
+      font-weight:800;
+      white-space:pre-line;
+    }
+
+    .quiz-question{
+      font-size:24px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:14px;
+    }
+
+    .answers{
+      display:grid;
+      gap:10px;
+    }
+
+    .answer-btn{
+      border:none;
+      background:#eef2f9;
+      color:var(--main);
+      border-radius:10px;
+      padding:14px;
+      font-size:15px;
+      font-weight:800;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .quiz-result{
+      margin-top:14px;
+      background:#f4f7fb;
+      border-radius:10px;
+      padding:12px;
+      color:#334155;
+      font-size:14px;
+      line-height:1.6;
+      white-space:pre-line;
+    }
+
+    .quiz-start-panel{
+      display:grid;
+      gap:12px;
+    }
+
+    .gacha-box{
+      background:#fff;
+      color:var(--text);
+      margin:0 20px;
+      padding:16px;
+      border-radius:10px;
+      box-shadow:0 8px 18px var(--shadow);
+    }
+
+    .coin-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+
+    .coin-badge{
+      background:var(--main);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .gacha-stage{
+      min-height:160px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      border:2px dashed #cfd8e5;
+      border-radius:10px;
+      background:linear-gradient(180deg,#fbfcff,#f1f5fb);
+      color:#5c6675;
+      margin-bottom:14px;
+      padding:10px;
+      white-space:pre-line;
+    }
+
+    .gacha-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .gacha-log{
+      margin-top:14px;
+      background:#f7f9fd;
+      border-radius:10px;
+      padding:12px;
+      min-height:120px;
+    }
+
+    .gacha-item{
+      padding:10px 0;
+      border-bottom:1px solid #e7ebf3;
+      color:#334155;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .gacha-item:last-child{
+      border-bottom:none;
+    }
+
+    .stats-box{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+      margin:12px 20px 0;
+    }
+
+    .stat{
+      background:#fff;
+      color:var(--text);
+      border-radius:10px;
+      padding:14px;
+      box-shadow:0 8px 18px var(--shadow);
+    }
+
+    .stat-label{
+      font-size:12px;
+      color:#637083;
+      margin-bottom:4px;
+      font-weight:800;
+    }
+
+    .stat-value{
+      font-size:22px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .fab{
+      position:fixed;
+      right:18px;
+      bottom:100px;
+      width:58px;
+      height:58px;
+      border:none;
+      border-radius:50%;
+      background:var(--sub);
+      color:#fff;
+      font-size:32px;
+      cursor:pointer;
+      z-index:90;
+      box-shadow:0 8px 18px rgba(0,0,0,.35);
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.65);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:1000;
+    }
+
+    .modal.show{
+      display:flex;
+    }
+
+    .modal-box{
+      width:min(520px,100%);
+      background:#fff;
+      color:var(--text);
+      border-radius:12px;
+      padding:18px;
+      box-shadow:0 20px 40px rgba(0,0,0,.35);
+    }
+
+    .modal-title{
+      font-size:20px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:12px;
+    }
+
+    .field{
+      margin-bottom:12px;
+    }
+
+    .field label{
+      display:block;
+      font-size:13px;
+      font-weight:800;
+      color:#334155;
+      margin-bottom:6px;
+    }
+
+    .field input,
+    .field select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #cfd8e3;
+      border-radius:10px;
+      font-size:14px;
+    }
+
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .gacha-effect{
+      position:fixed;
+      inset:0;
+      background:#fff;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:1200;
+      opacity:0;
+      transition:opacity .6s ease;
+    }
+
+    .gacha-effect.show{
+      display:flex;
+      opacity:1;
+    }
+
+    .note-sheet{
+      width:min(620px,100%);
+      height:min(70vh,560px);
+      background:
+        linear-gradient(to bottom,#fff 0%,#fff 100%),
+        repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#dbe4ef 32px);
+      border:1px solid #d2dae4;
+      border-radius:10px;
+      padding:22px 18px;
+      overflow:auto;
+      box-shadow:0 14px 30px rgba(0,0,0,.15);
+    }
+
+    .note-title{
+      font-size:18px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:16px;
+    }
+
+    .note-line{
+      min-height:32px;
+      line-height:32px;
+      font-size:18px;
+      font-weight:800;
+      color:#111827;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:var(--main);
+      display:flex;
+      z-index:80;
+      box-shadow:0 -6px 18px rgba(0,0,0,.16);
+      transition:background-color .25s ease;
+    }
+
+    .tab-btn{
+      flex:1;
+      border:none;
+      background:transparent;
+      color:#fff;
+      padding:14px 8px 18px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      opacity:.72;
+    }
+
+    .tab-btn.active{
+      opacity:1;
+      background:rgba(255,255,255,.08);
+    }
+
+    .empty{
+      background:#fff;
+      color:#526072;
+      margin:0 20px;
+      padding:18px;
+      border-radius:10px;
+      box-shadow:0 8px 18px var(--shadow);
+      line-height:1.6;
+    }
+
+    @media (min-width:768px){
+      .stats-box{
+        grid-template-columns:repeat(4,1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="fadeOverlay"></div>
+
+  <div id="splash">
+    <img src="logo.png" alt="logo">
+    <div class="splash-title">KoreanMaster</div>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <img src="logo.png" class="logo" alt="logo">
+        <div class="brand">KoreanMaster</div>
+      </div>
+      <button class="menu-btn" id="resetBtn">≡</button>
+    </header>
+
+    <div class="subbar">
+      <div class="scroll-row" id="dynamicBarRow"></div>
+    </div>
+
+    <section class="screen active" id="screen-word">
+      <div class="toolbar">
+        <button class="action-btn pressable" id="toggleMeaningBtn">意味を全表示 / 全非表示</button>
+        <button class="action-btn secondary pressable" id="randomSentenceBtn">ランダム文章表示</button>
+        <button class="action-btn light pressable" id="speakSentenceBtn">文章を読み上げ</button>
+      </div>
+
+      <div class="sentence-board">
+        <div class="sentence-title">ランダム文章</div>
+        <div class="sentence-text" id="sentenceText">ボタンを押すとここに文章が出ます</div>
+        <div class="sentence-sub" id="sentenceSub">自分で用意した文章リストからランダム表示します。</div>
+      </div>
+
+      <div class="section-title">単語帳</div>
+      <div class="card-list" id="wordList"></div>
+    </section>
+
+    <section class="screen" id="screen-phrase">
+      <div class="section-title">フレーズ</div>
+      <div class="phrase-panel" id="phrasePanel"></div>
+    </section>
+
+    <section class="screen" id="screen-quiz">
+      <div class="section-title">クイズ</div>
+      <div class="toolbar">
+        <button class="action-btn pressable" id="selectNormalQuizBtn">10問クイズ</button>
+        <button class="action-btn secondary pressable" id="selectEndlessQuizBtn">エンドレスモード</button>
+        <button class="action-btn light pressable hidden" id="endEndlessBtn">終了</button>
+      </div>
+
+      <div class="quiz-box" id="quizBox">
+        <div class="quiz-result">
+          上のボタンからクイズ形式を選んでください。
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-gacha">
+      <div class="section-title">ガチャ</div>
+
+      <div class="gacha-box">
+        <div class="coin-row">
+          <div class="coin-badge">コイン: <span id="coinDisplay">0</span></div>
+          <div>1回 500 / 10連 5000</div>
+        </div>
+
+        <div class="gacha-stage" id="gachaStage">ガチャ結果はノート演出で表示されます。</div>
+
+        <div class="gacha-actions">
+          <button class="action-btn pressable" id="gachaOneBtn">1回引く</button>
+          <button class="action-btn secondary pressable" id="gachaTenBtn">10連引く</button>
+        </div>
+
+        <div class="gacha-log" id="gachaLog"></div>
+      </div>
+
+      <div class="stats-box">
+        <div class="stat">
+          <div class="stat-label">所持単語数</div>
+          <div class="stat-value" id="statWordCount">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">獲得ガチャ語</div>
+          <div class="stat-value" id="statGachaCount">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">クイズ最高点</div>
+          <div class="stat-value" id="statBestScore">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">現在カテゴリ</div>
+          <div class="stat-value" id="statCurrentCategory">all</div>
+        </div>
+      </div>
+    </section>
+
+    <button class="fab pressable" id="fabBtn">＋</button>
+
+    <div class="modal" id="addWordModal">
+      <div class="modal-box">
+        <div class="modal-title">単語を追加</div>
+
+        <div class="field">
+          <label>韓国語</label>
+          <input id="newKr" type="text">
+        </div>
+
+        <div class="field">
+          <label>日本語</label>
+          <input id="newJp" type="text">
+        </div>
+
+        <div class="field">
+          <label>カタカナ</label>
+          <input id="newKana" type="text">
+        </div>
+
+        <div class="field">
+          <label>品詞</label>
+          <select id="newType">
+            <option value="noun">名詞</option>
+            <option value="verb">動詞</option>
+            <option value="adj">形容詞</option>
+            <option value="adv">副詞</option>
+            <option value="conj">接続詞</option>
+            <option value="react">リアクション</option>
+            <option value="time">時間</option>
+          </select>
+        </div>
+
+        <div class="field" id="nounSubtypeField">
+          <label>名詞分類</label>
+          <select id="newSubType">
+            <option value="person">人</option>
+            <option value="food">食べ物</option>
+            <option value="place">場所</option>
+            <option value="thing">物</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button class="action-btn light pressable" id="cancelAddWordBtn">キャンセル</button>
+          <button class="action-btn pressable" id="submitAddWordBtn">追加</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="addPhraseModal">
+      <div class="modal-box">
+        <div class="modal-title">フレーズを追加</div>
+
+        <div class="field">
+          <label>分類</label>
+          <select id="newPhraseCategory"></select>
+        </div>
+
+        <div class="field">
+          <label>韓国語</label>
+          <input id="newPhraseKr" type="text">
+        </div>
+
+        <div class="field">
+          <label>日本語</label>
+          <input id="newPhraseJp" type="text">
+        </div>
+
+        <div class="field">
+          <label>カタカナ</label>
+          <input id="newPhraseKana" type="text">
+        </div>
+
+        <div class="modal-actions">
+          <button class="action-btn light pressable" id="cancelAddPhraseBtn">キャンセル</button>
+          <button class="action-btn pressable" id="submitAddPhraseBtn">追加</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="gacha-effect" id="gachaEffect">
+      <div class="note-sheet">
+        <div class="note-title">獲得した単語</div>
+        <div id="noteLines"></div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="tab-btn pressable active" data-tab="word">単語帳</button>
+      <button class="tab-btn pressable" data-tab="phrase">フレーズ</button>
+      <button class="tab-btn pressable" data-tab="quiz">クイズ</button>
+      <button class="tab-btn pressable" data-tab="gacha">ガチャ</button>
+    </nav>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "koreanmaster_state_fixed_v2";
+    const CUSTOM_WORDS_KEY = "koreanmaster_custom_words_fixed_v2";
+    const CUSTOM_PHRASES_KEY = "koreanmaster_custom_phrases_fixed_v2";
+    const GACHA_WORDS_KEY = "koreanmaster_gacha_words_fixed_v2";
+
+    const SENTENCE_LIBRARY = [
+      { kr:"사람은 학교에 가요.", jp:"人は学校に行きます。" },
+      { kr:"친구는 밥을 먹어요.", jp:"友達はご飯を食べます。" },
+      { kr:"학생은 도서관에서 공부해요.", jp:"学生は図書館で勉強します。" },
+      { kr:"나는 물을 마셔요.", jp:"私は水を飲みます。" },
+      { kr:"친구는 책을 봐요.", jp:"友達は本を見ます。" }
+    ];
+
+    const RAW_WORDS = [
+      { kr:"사람", jp:"人", kana:"サラム" },
+      { kr:"친구", jp:"友達", kana:"チング" },
+      { kr:"학생", jp:"学生", kana:"ハクセン" },
+      { kr:"선생님", jp:"先生", kana:"ソンセンニム" },
+
+      { kr:"밥", jp:"ご飯", kana:"パプ" },
+      { kr:"사과", jp:"りんご", kana:"サグァ" },
+      { kr:"김치", jp:"キムチ", kana:"キムチ" },
+      { kr:"고기", jp:"肉", kana:"コギ" },
+      { kr:"물", jp:"水", kana:"ムル" },
+
+      { kr:"학교", jp:"学校", kana:"ハッキョ" },
+      { kr:"집", jp:"家", kana:"チプ" },
+      { kr:"공원", jp:"公園", kana:"コンウォン" },
+      { kr:"회사", jp:"会社", kana:"フェサ" },
+
+      { kr:"책", jp:"本", kana:"チェク" },
+      { kr:"가방", jp:"かばん", kana:"カバン" },
+      { kr:"컴퓨터", jp:"コンピューター", kana:"コムピュト" },
+
+      { kr:"가다", jp:"行く", kana:"カダ" },
+      { kr:"오다", jp:"来る", kana:"オダ" },
+      { kr:"보다", jp:"見る", kana:"ポダ" },
+      { kr:"먹다", jp:"食べる", kana:"モクタ" },
+      { kr:"마시다", jp:"飲む", kana:"マシダ" },
+      { kr:"공부하다", jp:"勉強する", kana:"コンブハダ" },
+
+      { kr:"좋다", jp:"良い", kana:"チョタ" },
+      { kr:"크다", jp:"大きい", kana:"クダ" },
+      { kr:"예쁘다", jp:"きれいだ", kana:"イェップダ" },
+
+      { kr:"빨리", jp:"早く", kana:"パルリ" },
+      { kr:"천천히", jp:"ゆっくり", kana:"チョンチョニ" },
+
+      { kr:"그리고", jp:"そして", kana:"クリゴ" },
+      { kr:"하지만", jp:"しかし", kana:"ハジマン" },
+
+      { kr:"와", jp:"わあ", kana:"ワ" },
+      { kr:"헐", jp:"えっ", kana:"ホル" },
+
+      { kr:"오늘", jp:"今日", kana:"オヌル" },
+      { kr:"내일", jp:"明日", kana:"ネイル" }
+    ];
+
+    const ADJECTIVE_SET = new Set(["좋다","크다","예쁘다"]);
+    const ADVERB_SET = new Set(["빨리","천천히"]);
+    const CONJUNCTION_SET = new Set(["그리고","하지만"]);
+    const REACTION_SET = new Set(["와","헐"]);
+    const TIME_SET = new Set(["오늘","내일"]);
+
+    const NOUN_SUBTYPE_DB = {
+      person:new Set(["사람","친구","학생","선생님"]),
+      food:new Set(["밥","사과","김치","고기","물"]),
+      place:new Set(["학교","집","공원","회사"]),
+      thing:new Set(["책","가방","컴퓨터"])
+    };
+
+    const PHRASE_CATEGORY_LABELS = {
+      greeting:"挨拶",
+      emotion:"感情",
+      instruction:"指示",
+      slang:"スラング",
+      game:"ゲーム",
+      affirm:"肯定",
+      negative:"否定",
+      request:"要望",
+      question:"疑問"
+    };
+
+    const BASE_PHRASES = {
+      greeting:[
+        { kr:"안녕하세요", jp:"こんにちは", kana:"アンニョンハセヨ" },
+        { kr:"감사합니다", jp:"ありがとうございます", kana:"カムサハムニダ" }
+      ],
+      emotion:[
+        { kr:"기분이 좋아요", jp:"気分がいいです", kana:"キブニ チョアヨ" }
+      ],
+      instruction:[
+        { kr:"천천히 말해 주세요", jp:"ゆっくり話してください", kana:"チョンチョニ マレ ジュセヨ" }
+      ],
+      slang:[
+        { kr:"대박", jp:"やばい / すごい", kana:"テバク" }
+      ],
+      game:[
+        { kr:"같이 가자", jp:"一緒に行こう", kana:"カチ カジャ" }
+      ],
+      affirm:[
+        { kr:"좋아요", jp:"いいです / いいね", kana:"チョアヨ" }
+      ],
+      negative:[
+        { kr:"아니요", jp:"いいえ", kana:"アニヨ" }
+      ],
+      request:[
+        { kr:"주세요", jp:"ください", kana:"ジュセヨ" }
+      ],
+      question:[
+        { kr:"어디예요?", jp:"どこですか？", kana:"オディエヨ？" },
+        { kr:"왜 그래요?", jp:"どうしてですか？", kana:"ウェ クレヨ？" }
+      ]
+    };
+
+    const GACHA_POOL = [
+      { kr:"대박", jp:"やばい / すごい", kana:"テバク", rarity:"R" },
+      { kr:"진짜", jp:"マジで", kana:"チンチャ", rarity:"R" },
+      { kr:"최애", jp:"最推し", kana:"チェエ", rarity:"SR" },
+      { kr:"레전드", jp:"レジェンド", kana:"レジョンドゥ", rarity:"SR" },
+      { kr:"현타", jp:"現実に引き戻される感じ", kana:"ヒョンタ", rarity:"SSR" }
+    ];
+
+    const state = {
+      currentTab:"word",
+      currentWordCategory:"all",
+      currentNounSubType:"all",
+      currentPhraseCategory:"greeting",
+      showAllMeanings:false,
+      coin:1000,
+      sentence:"",
+      sentenceMeaning:"",
+      bestScore:0,
+      customWords:[],
+      customPhrases:{},
+      gachaWords:[],
+      classified:null,
+      quiz:{
+        mode:null,
+        inProgress:false,
+        items:[],
+        index:0,
+        score:0,
+        currentQuestion:null,
+        streak:0,
+        pendingCoins:0,
+        maxCorrect:1000
+      }
+    };
+
+    function loadState(){
+      try{
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        Object.assign(state, saved);
+      }catch(e){}
+
+      try{
+        state.customWords = JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY) || "[]");
+      }catch(e){ state.customWords = []; }
+
+      try{
+        state.customPhrases = JSON.parse(localStorage.getItem(CUSTOM_PHRASES_KEY) || "{}");
+      }catch(e){ state.customPhrases = {}; }
+
+      try{
+        state.gachaWords = JSON.parse(localStorage.getItem(GACHA_WORDS_KEY) || "[]");
+      }catch(e){ state.gachaWords = []; }
+    }
+
+    function saveState(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        currentTab:state.currentTab,
+        currentWordCategory:state.currentWordCategory,
+        currentNounSubType:state.currentNounSubType,
+        currentPhraseCategory:state.currentPhraseCategory,
+        showAllMeanings:state.showAllMeanings,
+        coin:state.coin,
+        sentence:state.sentence,
+        sentenceMeaning:state.sentenceMeaning,
+        bestScore:state.bestScore
+      }));
+
+      localStorage.setItem(CUSTOM_WORDS_KEY, JSON.stringify(state.customWords));
+      localStorage.setItem(CUSTOM_PHRASES_KEY, JSON.stringify(state.customPhrases));
+      localStorage.setItem(GACHA_WORDS_KEY, JSON.stringify(state.gachaWords));
+    }
+
+    function classifyWord(item){
+      if(item.type){
+        return {
+          type:item.type,
+          subType:item.type === "noun" ? (item.subType || "thing") : null
+        };
+      }
+
+      const w = item.kr;
+
+      if(TIME_SET.has(w)) return { type:"time", subType:null };
+      if(ADVERB_SET.has(w)) return { type:"adv", subType:null };
+      if(CONJUNCTION_SET.has(w)) return { type:"conj", subType:null };
+      if(REACTION_SET.has(w)) return { type:"react", subType:null };
+
+      if(w.endsWith("다")){
+        if(ADJECTIVE_SET.has(w)) return { type:"adj", subType:null };
+        return { type:"verb", subType:null };
+      }
+
+      return { type:"noun", subType:classifyNounSubType(w) };
+    }
+
+    function classifyNounSubType(w){
+      if(NOUN_SUBTYPE_DB.person.has(w)) return "person";
+      if(NOUN_SUBTYPE_DB.food.has(w)) return "food";
+      if(NOUN_SUBTYPE_DB.place.has(w)) return "place";
+      return "thing";
+    }
+
+    function rebuildDictionary(){
+      const db = {
+        noun:{ person:[], food:[], place:[], thing:[] },
+        verb:[],
+        adj:[],
+        adv:[],
+        conj:[],
+        react:[],
+        time:[],
+        gacha:[]
+      };
+
+      [...RAW_WORDS, ...state.customWords].forEach(item=>{
+        const info = classifyWord(item);
+        const full = {
+          kr:item.kr,
+          jp:item.jp,
+          kana:item.kana || "",
+          type:info.type,
+          subType:info.subType
+        };
+
+        if(info.type === "noun"){
+          db.noun[info.subType].push(full);
+        }else{
+          db[info.type].push(full);
+        }
+      });
+
+      state.gachaWords.forEach(item=>{
+        db.gacha.push({
+          kr:item.kr,
+          jp:item.jp,
+          kana:item.kana || "",
+          type:"gacha",
+          subType:null
+        });
+      });
+
+      state.classified = db;
+    }
+
+    function getAllWordsFlat(){
+      const db = state.classified;
+      return [
+        ...db.noun.person,
+        ...db.noun.food,
+        ...db.noun.place,
+        ...db.noun.thing,
+        ...db.verb,
+        ...db.adj,
+        ...db.adv,
+        ...db.conj,
+        ...db.react,
+        ...db.time,
+        ...db.gacha
+      ];
+    }
+
+    function getVisibleWords(){
+      const db = state.classified;
+      const cat = state.currentWordCategory;
+
+      if(cat === "all") return getAllWordsFlat();
+
+      if(cat === "noun"){
+        if(state.currentNounSubType === "all"){
+          return [
+            ...db.noun.person,
+            ...db.noun.food,
+            ...db.noun.place,
+            ...db.noun.thing
+          ];
+        }
+        return db.noun[state.currentNounSubType] || [];
+      }
+
+      return db[cat] || [];
+    }
+
+    function getMergedPhrases(){
+      const merged = JSON.parse(JSON.stringify(BASE_PHRASES));
+      Object.keys(PHRASE_CATEGORY_LABELS).forEach(key=>{
+        if(!merged[key]) merged[key] = [];
+        if(state.customPhrases[key]){
+          merged[key] = merged[key].concat(state.customPhrases[key]);
+        }
+      });
+      return merged;
+    }
+
+    function pickRandom(arr){
+      if(!arr || arr.length === 0) return null;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffle(arr){
+      const a = [...arr];
+      for(let i=a.length-1; i>0; i--){
+        const j = Math.floor(Math.random() * (i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function typeLabel(type){
+      return {
+        noun:"名詞",
+        verb:"動詞",
+        adj:"形容詞",
+        adv:"副詞",
+        conj:"接続詞",
+        react:"リアクション",
+        time:"時間",
+        gacha:"ガチャ"
+      }[type] || type;
+    }
+
+    function subTypeLabel(sub){
+      return {
+        person:"人",
+        food:"食べ物",
+        place:"場所",
+        thing:"物"
+      }[sub] || sub;
+    }
+
+    function renderDynamicBar(){
+      const row = document.getElementById("dynamicBarRow");
+
+      if(state.currentTab === "word"){
+        row.innerHTML = `
+          <button class="chip pressable ${state.currentWordCategory==="all"?"active":""}" data-word-cat="all">すべて</button>
+          <button class="chip pressable ${state.currentWordCategory==="noun"?"active":""}" data-word-cat="noun">名詞</button>
+          <button class="chip pressable ${state.currentWordCategory==="verb"?"active":""}" data-word-cat="verb">動詞</button>
+          <button class="chip pressable ${state.currentWordCategory==="adj"?"active":""}" data-word-cat="adj">形容詞</button>
+          <button class="chip pressable ${state.currentWordCategory==="adv"?"active":""}" data-word-cat="adv">副詞</button>
+          <button class="chip pressable ${state.currentWordCategory==="conj"?"active":""}" data-word-cat="conj">接続詞</button>
+          <button class="chip pressable ${state.currentWordCategory==="react"?"active":""}" data-word-cat="react">リアクション</button>
+          <button class="chip pressable ${state.currentWordCategory==="time"?"active":""}" data-word-cat="time">時間</button>
+          <button class="chip pressable ${state.currentWordCategory==="gacha"?"active":""}" data-word-cat="gacha">ガチャ</button>
+          ${
+            state.currentWordCategory === "noun" ? `
+              <button class="chip pressable ${state.currentNounSubType==="all"?"active":""}" data-noun-sub="all">名詞すべて</button>
+              <button class="chip pressable ${state.currentNounSubType==="person"?"active":""}" data-noun-sub="person">人</button>
+              <button class="chip pressable ${state.currentNounSubType==="food"?"active":""}" data-noun-sub="food">食べ物</button>
+              <button class="chip pressable ${state.currentNounSubType==="place"?"active":""}" data-noun-sub="place">場所</button>
+              <button class="chip pressable ${state.currentNounSubType==="thing"?"active":""}" data-noun-sub="thing">物</button>
+            ` : ""
+          }
+        `;
+      }else if(state.currentTab === "phrase"){
+        row.innerHTML = Object.entries(PHRASE_CATEGORY_LABELS).map(([key,label])=>{
+          return `<button class="chip pressable ${state.currentPhraseCategory===key?"active":""}" data-phrase-cat="${key}">${label}</button>`;
+        }).join("");
+      }else if(state.currentTab === "quiz"){
+        row.innerHTML = `<button class="chip active">クイズ</button>`;
+      }else if(state.currentTab === "gacha"){
+        row.innerHTML = `<button class="chip active">ガチャ</button>`;
+      }
+    }
+
+    function renderWordCards(){
+      const list = document.getElementById("wordList");
+      const items = getVisibleWords();
+
+      if(!items.length){
+        list.innerHTML = `<div class="empty">表示できる単語がありません。</div>`;
+        return;
+      }
+
+      list.innerHTML = items.map(item=>{
+        const showClass = state.showAllMeanings ? "show-answer" : "";
+        const sub = item.type === "noun" ? `<span class="tag">${subTypeLabel(item.subType)}</span>` : "";
+
+        return `
+          <div class="word-card ${showClass}" data-kr="${escapeHtml(item.kr)}">
+            <div class="top-row">
+              <div class="card-left">
+                <div class="kr">${escapeHtml(item.kr)}</div>
+                <div class="kana">${escapeHtml(item.kana || "")}</div>
+                <div class="tag-row">
+                  <span class="tag">${typeLabel(item.type)}</span>
+                  ${sub}
+                </div>
+                <div class="jp">${escapeHtml(item.jp)}</div>
+              </div>
+              <button class="audio-btn pressable" data-audio="${escapeHtml(item.kr)}">🔊</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderSentenceBoard(){
+      document.getElementById("sentenceText").textContent =
+        state.sentence || "ボタンを押すとここに文章が出ます";
+
+      document.getElementById("sentenceSub").textContent =
+        state.sentenceMeaning || "自分で用意した文章リストからランダム表示します。";
+    }
+
+    function showRandomSentence(){
+      const item = pickRandom(SENTENCE_LIBRARY);
+      if(!item) return;
+
+      state.sentence = item.kr;
+      state.sentenceMeaning = item.jp;
+      renderSentenceBoard();
+      saveState();
+    }
+
+    function renderPhraseGroup(key){
+      state.currentPhraseCategory = key;
+      renderDynamicBar();
+
+      const panel = document.getElementById("phrasePanel");
+      const phrases = getMergedPhrases()[key] || [];
+
+      if(!phrases.length){
+        panel.innerHTML = `<div class="empty">フレーズがありません。</div>`;
+        return;
+      }
+
+      panel.innerHTML = `
+        <div class="phrase-list">
+          ${phrases.map(item=>`
+            <div class="phrase-item">
+              <div class="phrase-item-top">
+                <div class="phrase-text">
+                  <div class="phrase-kr">${escapeHtml(item.kr)}</div>
+                  <div class="phrase-kana">${escapeHtml(item.kana || "")}</div>
+                  <div class="phrase-jp">${escapeHtml(item.jp)}</div>
+                </div>
+                <button class="audio-btn phrase-audio-btn pressable" data-audio="${escapeHtml(item.kr)}">🔊</button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      saveState();
+    }
+
+    function renderCoin(){
+      document.getElementById("coinDisplay").textContent = state.coin;
+    }
+
+    function renderStats(){
+      document.getElementById("statWordCount").textContent = getAllWordsFlat().length;
+      document.getElementById("statGachaCount").textContent = state.gachaWords.length;
+      document.getElementById("statBestScore").textContent = state.bestScore;
+      document.getElementById("statCurrentCategory").textContent =
+        state.currentTab === "word" ? state.currentWordCategory : state.currentTab;
+    }
+
+    function renderFab(){
+      const fab = document.getElementById("fabBtn");
+      if(state.currentTab === "word" || state.currentTab === "phrase"){
+        fab.classList.remove("hidden");
+      }else{
+        fab.classList.add("hidden");
+      }
+    }
+
+    function switchTab(tab){
+      state.currentTab = tab;
+
+      document.querySelectorAll(".tab-btn").forEach(btn=>{
+        btn.classList.toggle("active", btn.dataset.tab === tab);
+      });
+
+      document.querySelectorAll(".screen").forEach(screen=>{
+        screen.classList.remove("active");
+      });
+
+      document.getElementById(`screen-${tab}`).classList.add("active");
+
+      renderDynamicBar();
+      renderFab();
+
+      if(tab === "word") renderWordCards();
+      if(tab === "phrase") renderPhraseGroup(state.currentPhraseCategory);
+
+      renderStats();
+      saveState();
+    }
+
+    async function switchTheme(color){
+      const fade = document.getElementById("fadeOverlay");
+      fade.classList.add("show");
+      await wait(180);
+
+      document.documentElement.style.setProperty("--main", color);
+      document.documentElement.style.setProperty("--sub", color === "#740125" ? "#8b1430" : "#1b263b");
+      document.documentElement.style.setProperty("--sub2", color === "#740125" ? "#9d1b39" : "#24364f");
+
+      await wait(180);
+      fade.classList.remove("show");
+    }
+
+    function showQuizStartScreen(mode){
+      document.getElementById("endEndlessBtn").classList.add("hidden");
+
+      if(mode === "normal"){
+        document.getElementById("quizBox").innerHTML = `
+          <div class="quiz-start-panel">
+            <div class="quiz-progress">10問クイズ</div>
+            <div class="quiz-result">
+              10問出題されます。<br>
+              10問全問正解で100コイン獲得できます。
+            </div>
+            <button class="action-btn pressable" id="confirmStartNormalBtn">開始する</button>
+          </div>
+        `;
+
+        document.getElementById("confirmStartNormalBtn").addEventListener("click", startNormalQuiz);
+      }
+
+      if(mode === "endless"){
+        document.getElementById("quizBox").innerHTML = `
+          <div class="quiz-start-panel">
+            <div class="quiz-progress">エンドレスモード</div>
+            <div class="quiz-result">
+              間違えるまで続きます。<br>
+              10連続正解ごとにボーナスコインを獲得できます。<br>
+              1000連続正解でガチャ排出語をすべて獲得できます。
+            </div>
+            <button class="action-btn pressable" id="confirmStartEndlessBtn">開始する</button>
+          </div>
+        `;
+
+        document.getElementById("confirmStartEndlessBtn").addEventListener("click", startEndlessQuiz);
+      }
+    }
+
+    function startNormalQuiz(){
+      const pool = getAllWordsFlat();
+
+      if(pool.length < 4){
+        document.getElementById("quizBox").innerHTML = `<div class="quiz-result">単語が4つ以上必要です。</div>`;
+        return;
+      }
+
+      document.getElementById("endEndlessBtn").classList.add("hidden");
+
+      state.quiz.mode = "normal";
+      state.quiz.inProgress = true;
+      state.quiz.items = shuffle(pool).slice(0,10);
+      state.quiz.index = 0;
+      state.quiz.score = 0;
+
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion(){
+      const current = state.quiz.items[state.quiz.index];
+
+      if(!current){
+        finishNormalQuiz();
+        return;
+      }
+
+      const pool = getAllWordsFlat();
+      const wrong = shuffle(pool.filter(w=>w.jp !== current.jp)).slice(0,3);
+      const choices = shuffle([current, ...wrong]);
+
+      document.getElementById("quizBox").innerHTML = `
+        <div class="quiz-progress">問題 ${state.quiz.index + 1} / ${state.quiz.items.length} ・ ${state.quiz.score}点</div>
+        <div class="quiz-question">${escapeHtml(current.kr)} の意味は？</div>
+        <div class="answers">
+          ${choices.map(c=>`<button class="answer-btn pressable" data-answer="${escapeHtml(c.jp)}">${escapeHtml(c.jp)}</button>`).join("")}
+        </div>
+        <div class="quiz-result">10問全問正解で100コイン。</div>
+      `;
+    }
+
+    function finishNormalQuiz(){
+      const score = state.quiz.score;
+      let reward = 0;
+
+      if(score === 10){
+        reward = 100;
+        state.coin += reward;
+      }
+
+      if(score > state.bestScore) state.bestScore = score;
+
+      state.quiz.inProgress = false;
+      state.quiz.mode = null;
+
+      document.getElementById("endEndlessBtn").classList.add("hidden");
+
+      document.getElementById("quizBox").innerHTML = `
+        <div class="quiz-progress">終了</div>
+        <div class="quiz-question">${score} / 10</div>
+        <div class="quiz-result">${reward ? "100コイン獲得！" : "報酬なし。"}</div>
+      `;
+
+      renderCoin();
+      renderStats();
+      saveState();
+    }
+
+    async function startEndlessQuiz(){
+      const pool = getAllWordsFlat();
+
+      if(pool.length < 4){
+        document.getElementById("quizBox").innerHTML = `<div class="quiz-result">単語が4つ以上必要です。</div>`;
+        return;
+      }
+
+      state.quiz.mode = "endless";
+      state.quiz.inProgress = true;
+      state.quiz.streak = 0;
+      state.quiz.pendingCoins = 0;
+
+      await switchTheme("#740125");
+
+      document.getElementById("endEndlessBtn").classList.remove("hidden");
+
+      renderEndlessQuestion();
+    }
+
+    function renderEndlessQuestion(){
+      if(state.quiz.streak >= 1000){
+        finishEndlessQuiz(true);
+        return;
+      }
+
+      const pool = getAllWordsFlat();
+      const current = pickRandom(pool);
+      state.quiz.currentQuestion = current;
+
+      const wrong = shuffle(pool.filter(w=>w.jp !== current.jp)).slice(0,3);
+      const choices = shuffle([current, ...wrong]);
+
+      document.getElementById("quizBox").innerHTML = `
+        <div class="quiz-progress">エンドレス
+連続正解: ${state.quiz.streak}
+保留コイン: ${state.quiz.pendingCoins}</div>
+        <div class="quiz-question">${escapeHtml(current.kr)} の意味は？</div>
+        <div class="answers">
+          ${choices.map(c=>`<button class="answer-btn pressable" data-answer="${escapeHtml(c.jp)}">${escapeHtml(c.jp)}</button>`).join("")}
+        </div>
+        <div class="quiz-result">10連続ごとに n×10 コイン。</div>
+      `;
+    }
+
+    function handleQuizAnswer(answer){
+      if(!state.quiz.inProgress) return;
+
+      if(state.quiz.mode === "normal"){
+        const current = state.quiz.items[state.quiz.index];
+
+        if(answer === current.jp){
+          state.quiz.score++;
+        }
+
+        state.quiz.index++;
+
+        if(state.quiz.index >= state.quiz.items.length){
+          finishNormalQuiz();
+        }else{
+          renderQuizQuestion();
+        }
+      }
+
+      else if(state.quiz.mode === "endless"){
+        const current = state.quiz.currentQuestion;
+
+        if(answer === current.jp){
+          state.quiz.streak++;
+
+          if(state.quiz.streak % 10 === 0){
+            state.quiz.pendingCoins += state.quiz.streak * 10;
+          }
+
+          renderEndlessQuestion();
+        }else{
+          finishEndlessQuiz(false);
+        }
+      }
+    }
+
+    async function finishEndlessQuiz(maxClear){
+      if(maxClear){
+        unlockAllGacha();
+      }else{
+        state.coin += state.quiz.pendingCoins;
+      }
+
+      const streak = state.quiz.streak;
+      const coins = state.quiz.pendingCoins;
+
+      state.quiz.inProgress = false;
+      state.quiz.mode = null;
+      state.quiz.pendingCoins = 0;
+
+      await switchTheme("#0d1b2a");
+
+      document.getElementById("endEndlessBtn").classList.add("hidden");
+
+      document.getElementById("quizBox").innerHTML = `
+        <div class="quiz-progress">エンドレス終了</div>
+        <div class="quiz-question">${streak}連続正解</div>
+        <div class="quiz-result">${maxClear ? "ガチャ語を全獲得！" : coins + "コイン獲得。"}</div>
+      `;
+
+      renderCoin();
+      renderStats();
+      saveState();
+    }
+
+    function unlockAllGacha(){
+      const exists = new Set(state.gachaWords.map(w=>w.kr));
+
+      GACHA_POOL.forEach(item=>{
+        if(!exists.has(item.kr)){
+          state.gachaWords.push({
+            kr:item.kr,
+            jp:item.jp,
+            kana:item.kana,
+            type:"gacha"
+          });
+        }
+      });
+
+      rebuildDictionary();
+    }
+
+    async function gachaPull(times){
+      const cost = times === 10 ? 5000 : 500;
+
+      if(state.coin < cost){
+        document.getElementById("gachaStage").textContent = "コイン不足です。";
+        return;
+      }
+
+      state.coin -= cost;
+      const result = [];
+
+      for(let i=0;i<times;i++){
+        const item = pickRandom(GACHA_POOL);
+        result.push(item);
+
+        if(!state.gachaWords.some(w=>w.kr === item.kr)){
+          state.gachaWords.push({
+            kr:item.kr,
+            jp:item.jp,
+            kana:item.kana,
+            type:"gacha"
+          });
+        }
+      }
+
+      rebuildDictionary();
+      renderCoin();
+      renderStats();
+      saveState();
+
+      document.getElementById("gachaStage").textContent = `${times}回引きました。`;
+
+      document.getElementById("gachaLog").innerHTML = result.map(item=>`
+        <div class="gacha-item">[${item.rarity}] ${escapeHtml(item.kr)} - ${escapeHtml(item.jp)}</div>
+      `).join("");
+
+      await playGachaEffect(result);
+    }
+
+    async function playGachaEffect(items){
+      const effect = document.getElementById("gachaEffect");
+      const note = document.getElementById("noteLines");
+
+      note.innerHTML = "";
+      effect.classList.add("show");
+
+      for(let i=0;i<items.length;i++){
+        await wait(450);
+        note.innerHTML += `<div class="note-line">[${items[i].rarity}] ${escapeHtml(items[i].kr)} - ${escapeHtml(items[i].jp)}</div>`;
+      }
+
+      await wait(1200);
+      effect.classList.remove("show");
+    }
+
+    function wait(ms){
+      return new Promise(resolve=>setTimeout(resolve,ms));
+    }
+
+    function speakText(text){
+      if(!text) return;
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = "ko-KR";
+      speechSynthesis.cancel();
+      speechSynthesis.speak(uttr);
+    }
+
+    function openWordModal(){
+      document.getElementById("addWordModal").classList.add("show");
+      syncSubtypeField();
+    }
+
+    function closeWordModal(){
+      document.getElementById("addWordModal").classList.remove("show");
+    }
+
+    function syncSubtypeField(){
+      const type = document.getElementById("newType").value;
+      document.getElementById("nounSubtypeField").style.display = type === "noun" ? "block" : "none";
+    }
+
+    function addWord(){
+      const kr = document.getElementById("newKr").value.trim();
+      const jp = document.getElementById("newJp").value.trim();
+      const kana = document.getElementById("newKana").value.trim();
+      const type = document.getElementById("newType").value;
+      const subType = document.getElementById("newSubType").value;
+
+      if(!kr || !jp){
+        alert("韓国語と日本語は必須です。");
+        return;
+      }
+
+      state.customWords.push({
+        kr,
+        jp,
+        kana,
+        type,
+        subType:type === "noun" ? subType : null
+      });
+
+      rebuildDictionary();
+      renderWordCards();
+      renderStats();
+      saveState();
+      closeWordModal();
+
+      document.getElementById("newKr").value = "";
+      document.getElementById("newJp").value = "";
+      document.getElementById("newKana").value = "";
+    }
+
+    function openPhraseModal(){
+      const select = document.getElementById("newPhraseCategory");
+
+      select.innerHTML = Object.entries(PHRASE_CATEGORY_LABELS).map(([key,label])=>{
+        return `<option value="${key}">${label}</option>`;
+      }).join("");
+
+      select.value = state.currentPhraseCategory;
+      document.getElementById("addPhraseModal").classList.add("show");
+    }
+
+    function closePhraseModal(){
+      document.getElementById("addPhraseModal").classList.remove("show");
+    }
+
+    function addPhrase(){
+      const category = document.getElementById("newPhraseCategory").value;
+      const kr = document.getElementById("newPhraseKr").value.trim();
+      const jp = document.getElementById("newPhraseJp").value.trim();
+      const kana = document.getElementById("newPhraseKana").value.trim();
+
+      if(!kr || !jp){
+        alert("韓国語と日本語は必須です。");
+        return;
+      }
+
+      if(!state.customPhrases[category]){
+        state.customPhrases[category] = [];
+      }
+
+      state.customPhrases[category].push({ kr, jp, kana });
+
+      saveState();
+      closePhraseModal();
+      renderPhraseGroup(category);
+
+      document.getElementById("newPhraseKr").value = "";
+      document.getElementById("newPhraseJp").value = "";
+      document.getElementById("newPhraseKana").value = "";
+    }
+
+    function bindEvents(){
+      document.querySelectorAll(".tab-btn").forEach(btn=>{
+        btn.addEventListener("click",()=>{
+          switchTab(btn.dataset.tab);
+        });
+      });
+
+      document.getElementById("dynamicBarRow").addEventListener("click",e=>{
+        const wordCat = e.target.closest("[data-word-cat]");
+        const nounSub = e.target.closest("[data-noun-sub]");
+        const phraseCat = e.target.closest("[data-phrase-cat]");
+
+        if(wordCat){
+          state.currentWordCategory = wordCat.dataset.wordCat;
+
+          if(state.currentWordCategory !== "noun"){
+            state.currentNounSubType = "all";
+          }
+
+          renderDynamicBar();
+          renderWordCards();
+          renderStats();
+          saveState();
+        }
+
+        if(nounSub){
+          state.currentNounSubType = nounSub.dataset.nounSub;
+          renderDynamicBar();
+          renderWordCards();
+          saveState();
+        }
+
+        if(phraseCat){
+          renderPhraseGroup(phraseCat.dataset.phraseCat);
+        }
+      });
+
+      document.getElementById("toggleMeaningBtn").addEventListener("click",()=>{
+        state.showAllMeanings = !state.showAllMeanings;
+        renderWordCards();
+        saveState();
+      });
+
+      document.getElementById("randomSentenceBtn").addEventListener("click",()=>{
+        showRandomSentence();
+      });
+
+      document.getElementById("speakSentenceBtn").addEventListener("click",()=>{
+        speakText(state.sentence);
+      });
+
+      document.getElementById("wordList").addEventListener("click",e=>{
+        const audio = e.target.closest(".audio-btn");
+
+        if(audio){
+          e.stopPropagation();
+          speakText(audio.dataset.audio);
+          return;
+        }
+
+        const card = e.target.closest(".word-card");
+
+        if(card){
+          card.classList.toggle("show-answer");
+        }
+      });
+
+      document.getElementById("phrasePanel").addEventListener("click",e=>{
+        const audio = e.target.closest(".phrase-audio-btn");
+
+        if(audio){
+          e.stopPropagation();
+          speakText(audio.dataset.audio);
+          return;
+        }
+
+        const card = e.target.closest(".phrase-item");
+
+        if(card){
+          card.classList.toggle("show");
+        }
+      });
+
+      document.getElementById("selectNormalQuizBtn").addEventListener("click",()=>{
+        showQuizStartScreen("normal");
+      });
+
+      document.getElementById("selectEndlessQuizBtn").addEventListener("click",()=>{
+        showQuizStartScreen("endless");
+      });
+
+      document.getElementById("endEndlessBtn").addEventListener("click",()=>{
+        if(state.quiz.mode === "endless"){
+          finishEndlessQuiz(false);
+        }
+      });
+
+      document.getElementById("quizBox").addEventListener("click",e=>{
+        const btn = e.target.closest(".answer-btn");
+        if(btn) handleQuizAnswer(btn.dataset.answer);
+      });
+
+      document.getElementById("gachaOneBtn").addEventListener("click",()=>gachaPull(1));
+      document.getElementById("gachaTenBtn").addEventListener("click",()=>gachaPull(10));
+
+      document.getElementById("fabBtn").addEventListener("click",()=>{
+        if(state.currentTab === "word") openWordModal();
+        if(state.currentTab === "phrase") openPhraseModal();
+      });
+
+      document.getElementById("newType").addEventListener("change",syncSubtypeField);
+      document.getElementById("cancelAddWordBtn").addEventListener("click",closeWordModal);
+      document.getElementById("submitAddWordBtn").addEventListener("click",addWord);
+
+      document.getElementById("cancelAddPhraseBtn").addEventListener("click",closePhraseModal);
+      document.getElementById("submitAddPhraseBtn").addEventListener("click",addPhrase);
+
+      document.getElementById("resetBtn").addEventListener("click",()=>{
+        const ok = confirm("保存データを初期化しますか？");
+        if(!ok) return;
+
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(CUSTOM_WORDS_KEY);
+        localStorage.removeItem(CUSTOM_PHRASES_KEY);
+        localStorage.removeItem(GACHA_WORDS_KEY);
+        location.reload();
+      });
+    }
+
+    function init(){
+      loadState();
+      rebuildDictionary();
+      bindEvents();
+      renderDynamicBar();
+      renderWordCards();
+      renderPhraseGroup(state.currentPhraseCategory);
+      renderSentenceBoard();
+      renderCoin();
+      renderStats();
+      syncSubtypeField();
+      switchTab(state.currentTab);
+    }
+
+    init();
+  </script>
+</body>
+</html>
