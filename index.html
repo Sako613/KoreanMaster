@@ -1,0 +1,3567 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KoreanMaster</title>
+
+<style>
+:root{
+  --main:#0d1b2a;
+  --sub:#1b263b;
+  --sub2:#24364f;
+  --on:#ffffff;
+  --text:#111827;
+  --press:#9aa3af;
+  --shadow:rgba(0,0,0,.32);
+  --line:#d7dee8;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:var(--main);
+  color:var(--on);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+  transition:.25s;
+}
+
+button{
+  font-family:inherit;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.app{
+  max-width:760px;
+  min-height:100vh;
+  margin:0 auto;
+  padding-bottom:100px;
+}
+
+.pressable{
+  transition:.15s;
+}
+
+.pressable:active{
+  background:var(--press) !important;
+  color:#fff !important;
+  box-shadow:0 0 0 4px rgba(160,160,160,.32) !important;
+  transform:scale(.985);
+}
+
+/* ===== スプラッシュ ===== */
+#splash{
+  position:fixed;
+  inset:0;
+  background:var(--main);
+  z-index:3000;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  animation:splashOut .75s ease 1.2s forwards;
+}
+
+#splash img{
+  width:86px;
+  height:86px;
+  object-fit:contain;
+  margin-bottom:12px;
+}
+
+#splash .title{
+  font-size:28px;
+  font-weight:800;
+}
+
+@keyframes splashOut{
+  to{
+    opacity:0;
+    visibility:hidden;
+  }
+}
+
+/* ===== ヘッダー ===== */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:90;
+  height:64px;
+  background:var(--main);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 16px;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  transition:.25s;
+  overflow:hidden;
+}
+
+.brand-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:36px;
+  height:36px;
+  object-fit:contain;
+}
+
+.brand{
+  font-size:22px;
+  font-weight:800;
+}
+
+.menu-btn{
+  border:none;
+  background:transparent;
+  color:var(--on);
+  font-size:24px;
+  border-radius:10px;
+  padding:8px 10px;
+}
+
+/* ===== 上バー ===== */
+.top-filter{
+  position:sticky;
+  top:64px;
+  z-index:80;
+  background:var(--sub);
+  padding:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.12);
+  transition:.25s;
+}
+
+.filter-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.left-filter,
+.right-filter{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.left-filter{
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+.chip{
+  border:none;
+  background:var(--sub2);
+  color:var(--on);
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.chip.active{
+  background:#fff;
+  color:#0d1b2a;
+}
+
+.status-chip{
+  min-width:44px;
+  height:38px;
+  border:none;
+  border-radius:999px;
+  background:var(--sub2);
+  color:var(--on);
+  font-weight:900;
+  font-size:17px;
+}
+
+.status-chip.active{
+  background:#fff;
+  color:#0d1b2a;
+}
+
+/* ===== 名詞分類バー ===== */
+.noun-subbar{
+  position:sticky;
+  top:116px;
+  z-index:75;
+  padding:8px 10px 10px;
+  background:var(--sub2);
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.bar-title{
+  font-size:12px;
+  font-weight:800;
+  margin:0 0 6px 2px;
+}
+
+.noun-row{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+/* ===== ランダム文体バー ===== */
+.style-subbar{
+  position:sticky;
+  top:116px;
+  z-index:75;
+  padding:8px 10px 10px;
+  background:var(--sub2);
+}
+
+.style-row{
+  display:flex;
+  gap:8px;
+}
+
+/* ===== 画面 ===== */
+.screen{
+  display:none;
+  padding:14px 0 22px;
+}
+
+.screen.active{
+  display:block;
+  animation:screenFade .2s ease;
+}
+
+@keyframes screenFade{
+  from{
+    opacity:.4;
+    transform:translateY(6px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.section-title{
+  margin:8px 20px 12px;
+  font-size:18px;
+  font-weight:800;
+}
+
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:0 20px 10px;
+}
+
+.action-btn{
+  border:none;
+  background:var(--sub);
+  color:var(--on);
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:800;
+  box-shadow:0 4px 0 rgba(0,0,0,.24);
+}
+
+.action-btn.secondary{
+  background:var(--sub2);
+}
+
+.action-btn.light{
+  background:#fff;
+  color:#0d1b2a;
+  border:2px solid var(--line);
+  box-shadow:none;
+}
+
+.action-btn.selected{
+  outline:3px solid #fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,.35);
+}
+
+/* ===== カード ===== */
+.card-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.word-card,
+.phrase-card,
+.sentence-card,
+.wrong-card{
+  margin:0 20px;
+  padding:14px;
+  border-radius:10px;
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 8px 18px var(--shadow);
+  border:1px solid rgba(15,23,42,.06);
+}
+
+.word-card:active,
+.phrase-card:active,
+.sentence-card:active,
+.wrong-card:active{
+  background:#f1f5f9;
+  transform:scale(.992);
+}
+
+.top-row{
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+.card-left{
+  flex:1;
+  min-width:0;
+}
+
+.kr{
+  font-size:24px;
+  font-weight:800;
+  color:#0f172a;
+  margin-bottom:4px;
+  word-break:break-all;
+}
+
+.pron{
+  font-size:13px;
+  color:#6b7280;
+  margin-bottom:8px;
+}
+
+.jp{
+  display:none;
+  color:#334155;
+  margin-top:8px;
+  line-height:1.5;
+}
+
+.word-card.show .jp,
+.phrase-card.show .jp,
+.sentence-card.show .jp{
+  display:block;
+}
+
+.tag-row{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag{
+  font-size:12px;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:999px;
+  color:#0d1b2a;
+  background:#edf2f7;
+  border:1px solid #d5dbe5;
+}
+
+/* ===== 単語右側操作 ===== */
+.word-actions{
+  width:74px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  align-items:center;
+  flex-shrink:0;
+}
+
+.audio-btn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:10px;
+  background:var(--main);
+  color:var(--on);
+  font-size:18px;
+}
+
+.mark-row{
+  display:flex;
+  gap:5px;
+  justify-content:center;
+  align-items:center;
+}
+
+.mark-btn{
+  width:34px;
+  height:30px;
+  border:none;
+  border-radius:9px;
+  font-weight:900;
+  background:#eef2f9;
+  color:#0d1b2a;
+}
+
+.mark-btn.good.active{
+  background:#d1fae5;
+  color:#065f46;
+}
+
+.mark-btn.bad.active{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+/* ===== ランダム ===== */
+.sentence-board,
+.quiz-box,
+.gacha-box{
+  margin:0 20px 12px;
+  padding:16px;
+  border-radius:10px;
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 8px 18px var(--shadow);
+}
+
+.sentence-title,
+.quiz-progress{
+  font-size:13px;
+  font-weight:800;
+  color:#54606d;
+  margin-bottom:8px;
+  white-space:pre-line;
+}
+
+.sentence-text,
+.quiz-question{
+  font-size:24px;
+  font-weight:800;
+  color:#0f172a;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+
+.sentence-jp{
+  display:none;
+  padding:12px;
+  border-radius:10px;
+  background:#f4f7fb;
+  color:#334155;
+  line-height:1.6;
+}
+
+.sentence-board.show .sentence-jp{
+  display:block;
+}
+
+.saved-title,
+.wrong-title{
+  margin:18px 20px 12px;
+  font-size:16px;
+  font-weight:800;
+}
+
+/* ===== クイズ ===== */
+.answers{
+  display:grid;
+  gap:10px;
+}
+
+.answer-btn{
+  border:none;
+  background:#eef2f9;
+  color:#0d1b2a;
+  border-radius:10px;
+  padding:14px;
+  text-align:left;
+  font-weight:800;
+}
+
+.quiz-result{
+  margin-top:12px;
+  padding:12px;
+  border-radius:10px;
+  background:#f4f7fb;
+  color:#334155;
+  line-height:1.6;
+  white-space:pre-line;
+}
+
+/* ===== ガチャ ===== */
+.coin-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.coin-badge{
+  background:var(--main);
+  color:var(--on);
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:800;
+}
+
+.gacha-stage{
+  min-height:150px;
+  border:2px dashed #cfd8e5;
+  border-radius:10px;
+  background:#f7f9fd;
+  color:#5c6675;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  margin-bottom:14px;
+}
+
+.gacha-log{
+  margin-top:14px;
+  padding:12px;
+  background:#f7f9fd;
+  border-radius:10px;
+  min-height:100px;
+}
+
+.gacha-item{
+  padding:8px 0;
+  color:#334155;
+  border-bottom:1px solid #e5e7eb;
+}
+
+/* ===== 統計 ===== */
+.stats-box{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin:12px 20px 0;
+}
+
+.stat{
+  background:#fff;
+  color:var(--text);
+  border-radius:10px;
+  padding:14px;
+  box-shadow:0 8px 18px var(--shadow);
+}
+
+.stat-label{
+  font-size:12px;
+  color:#637083;
+  font-weight:800;
+}
+
+.stat-value{
+  font-size:22px;
+  font-weight:800;
+  color:#0f172a;
+}
+
+/* ===== FAB ===== */
+.fab{
+  position:fixed;
+  right:18px;
+  bottom:100px;
+  width:58px;
+  height:58px;
+  border:none;
+  border-radius:50%;
+  background:var(--sub);
+  color:var(--on);
+  font-size:32px;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  z-index:90;
+}
+
+/* ===== 下タブ ===== */
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:80;
+  display:flex;
+  background:var(--main);
+  box-shadow:0 -6px 18px rgba(0,0,0,.16);
+}
+
+.tab-btn{
+  flex:1;
+  border:none;
+  background:transparent;
+  color:var(--on);
+  padding:13px 4px 17px;
+  font-size:13px;
+  font-weight:800;
+  opacity:.72;
+}
+
+.tab-btn.active{
+  opacity:1;
+  background:rgba(255,255,255,.14);
+}
+
+/* ===== モーダル ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:1000;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:min(520px,100%);
+  background:#fff;
+  color:var(--text);
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
+}
+
+.modal-title{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:12px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #cfd8e3;
+  border-radius:10px;
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+/* ===== 設定 ===== */
+.settings-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(5px);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:1400;
+}
+
+.settings-backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.settings-panel{
+  position:fixed;
+  top:0;
+  right:0;
+  width:min(340px,86vw);
+  height:100vh;
+  background:#fff;
+  color:var(--text);
+  transform:translateX(100%);
+  transition:.25s;
+  z-index:1500;
+  padding:20px;
+  box-shadow:-8px 0 28px rgba(0,0,0,.3);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.settings-panel.show{
+  transform:translateX(0);
+}
+
+.settings-title{
+  font-size:22px;
+  font-weight:800;
+}
+
+.settings-section{
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:12px;
+}
+
+.settings-section-title{
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.settings-col{
+  display:grid;
+  gap:8px;
+}
+
+.empty{
+  margin:0 20px;
+  padding:18px;
+  border-radius:10px;
+  background:#fff;
+  color:#526072;
+  box-shadow:0 8px 18px var(--shadow);
+}
+
+@media(min-width:768px){
+  .stats-box{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash">
+  <img src="logo.png" alt="logo">
+  <div class="title">KoreanMaster</div>
+</div>
+
+<div class="app">
+
+<header class="topbar">
+  <div class="brand-wrap">
+    <img src="logo.png" class="logo" alt="logo">
+    <div class="brand">KoreanMaster</div>
+  </div>
+  <button class="menu-btn" id="settingsBtn">≡</button>
+</header>
+
+<div class="top-filter">
+  <div class="filter-row">
+    <div class="left-filter" id="leftFilter"></div>
+    <div class="right-filter" id="rightFilter"></div>
+  </div>
+</div>
+
+<div class="noun-subbar hidden" id="nounSubbar">
+  <div class="bar-title">名詞の分類</div>
+  <div class="noun-row" id="nounSubRow"></div>
+</div>
+
+<div class="style-subbar hidden" id="styleSubbar">
+  <div class="bar-title">文体</div>
+  <div class="style-row" id="styleRow"></div>
+</div>
+
+<section class="screen active" id="screen-word">
+  <div class="section-title">単語帳</div>
+  <div class="card-list" id="wordList"></div>
+</section>
+
+<section class="screen" id="screen-phrase">
+  <div class="section-title">フレーズ</div>
+  <div class="card-list" id="phrasePanel"></div>
+</section>
+
+<section class="screen" id="screen-random">
+  <div class="section-title">ランダム文章</div>
+
+  <div class="toolbar">
+    <button class="action-btn pressable" id="randomSentenceBtn">ランダム表示</button>
+    <button class="action-btn secondary pressable" id="saveSentenceBtn">保存</button>
+    <button class="action-btn light pressable" id="speakSentenceBtn">読み上げ</button>
+  </div>
+
+  <div class="sentence-board" id="sentenceBoard">
+    <div class="sentence-title">表示中の文章</div>
+    <div class="sentence-text" id="sentenceText">ボタンを押すとここに文章が出ます</div>
+    <div class="sentence-jp" id="sentenceJp">日本語訳</div>
+  </div>
+
+  <div class="saved-title">保存した文章</div>
+  <div class="card-list" id="savedSentenceList"></div>
+</section>
+
+<section class="screen" id="screen-quiz">
+  <div class="section-title">クイズ</div>
+
+  <div class="toolbar">
+    <button class="action-btn pressable" id="selectNormalQuizBtn">10問クイズ</button>
+    <button class="action-btn secondary pressable" id="selectEndlessQuizBtn">エンドレスモード</button>
+    <button class="action-btn light pressable hidden" id="endEndlessBtn">終了</button>
+  </div>
+
+  <div class="quiz-box" id="quizBox">
+    <div class="quiz-result">上のボタンからクイズ形式を選んでください。</div>
+  </div>
+
+  <div class="wrong-title">間違えた単語（最大50）</div>
+  <div class="card-list" id="wrongWordList"></div>
+</section>
+
+<section class="screen" id="screen-gacha">
+  <div class="section-title">ガチャ</div>
+
+  <div class="gacha-box">
+    <div class="coin-row">
+      <div class="coin-badge">コイン: <span id="coinDisplay">0</span></div>
+      <div>1回 500 / 10連 5000</div>
+    </div>
+
+    <div class="gacha-stage" id="gachaStage">ガチャ結果がここに出ます。</div>
+
+    <div class="toolbar">
+      <button class="action-btn pressable" id="gachaOneBtn">1回引く</button>
+      <button class="action-btn secondary pressable" id="gachaTenBtn">10連引く</button>
+    </div>
+
+    <div class="gacha-log" id="gachaLog"></div>
+  </div>
+
+  <div class="stats-box">
+    <div class="stat">
+      <div class="stat-label">所持単語数</div>
+      <div class="stat-value" id="statWordCount">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">獲得ガチャ語</div>
+      <div class="stat-value" id="statGachaCount">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">最高点</div>
+      <div class="stat-value" id="statBestScore">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">現在カテゴリ</div>
+      <div class="stat-value" id="statCurrentCategory">all</div>
+    </div>
+  </div>
+</section>
+
+<button class="fab pressable" id="fabBtn">＋</button>
+
+<!-- 単語追加 -->
+<div class="modal" id="addWordModal">
+  <div class="modal-box">
+    <div class="modal-title">単語を追加</div>
+
+    <div class="field">
+      <label>韓国語</label>
+      <input id="newKr">
+    </div>
+
+    <div class="field">
+      <label>日本語</label>
+      <input id="newJp">
+    </div>
+
+    <div class="field">
+      <label>英語表記</label>
+      <input id="newRoman">
+    </div>
+
+    <div class="field">
+      <label>カタカナ表記</label>
+      <input id="newKana">
+    </div>
+
+    <div class="field">
+      <label>分類</label>
+      <select id="newType">
+        <option value="noun">名詞</option>
+        <option value="verb">動詞</option>
+        <option value="adj">形容詞</option>
+        <option value="adv">副詞</option>
+        <option value="conj">接続詞</option>
+        <option value="react">リアクション</option>
+        <option value="time">時間</option>
+        <option value="pronoun">代名詞</option>
+        <option value="question">疑問詞</option>
+        <option value="number">数詞</option>
+      </select>
+    </div>
+
+    <div class="field" id="newNounSubTypeField">
+      <label>名詞分類</label>
+      <select id="newSubType">
+        <option value="person">人</option>
+        <option value="food">食べ物</option>
+        <option value="place">場所</option>
+        <option value="thing">物</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="action-btn light pressable" id="cancelAddWordBtn">キャンセル</button>
+      <button class="action-btn pressable" id="submitAddWordBtn">追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- フレーズ追加 -->
+<div class="modal" id="addPhraseModal">
+  <div class="modal-box">
+    <div class="modal-title">フレーズを追加</div>
+
+    <div class="field">
+      <label>分類</label>
+      <select id="newPhraseCategory"></select>
+    </div>
+
+    <div class="field">
+      <label>韓国語</label>
+      <input id="newPhraseKr">
+    </div>
+
+    <div class="field">
+      <label>日本語</label>
+      <input id="newPhraseJp">
+    </div>
+
+    <div class="field">
+      <label>英語表記</label>
+      <input id="newPhraseRoman">
+    </div>
+
+    <div class="field">
+      <label>カタカナ表記</label>
+      <input id="newPhraseKana">
+    </div>
+
+    <div class="modal-actions">
+      <button class="action-btn light pressable" id="cancelAddPhraseBtn">キャンセル</button>
+      <button class="action-btn pressable" id="submitAddPhraseBtn">追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 設定 -->
+<div class="settings-backdrop" id="settingsBackdrop"></div>
+
+<aside class="settings-panel" id="settingsPanel">
+  <div class="settings-title">設定</div>
+
+  <div class="settings-section">
+    <div class="settings-section-title">背景設定</div>
+    <div class="settings-col">
+      <button class="action-btn pressable" id="bgNavyBtn">紺色</button>
+      <button class="action-btn light pressable" id="bgBeigeBtn">ベージュ</button>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-title">発音表記</div>
+    <div class="settings-col">
+      <button class="action-btn pressable" id="pronRomanBtn">英語表記</button>
+      <button class="action-btn light pressable" id="pronKanaBtn">カタカナ表記</button>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-title">データ</div>
+    <button class="action-btn light pressable" id="clearCacheBtn">データ削除</button>
+  </div>
+
+  <button class="action-btn pressable" id="closeSettingsBtn">閉じる</button>
+</aside>
+
+<nav class="bottom-nav">
+  <button class="tab-btn pressable active" data-tab="word">単語帳</button>
+  <button class="tab-btn pressable" data-tab="phrase">フレーズ</button>
+  <button class="tab-btn pressable" data-tab="random">ランダム</button>
+  <button class="tab-btn pressable" data-tab="quiz">クイズ</button>
+  <button class="tab-btn pressable" data-tab="gacha">ガチャ</button>
+</nav>
+
+</div>
+
+<script>
+const STORAGE_KEY = "km_state_v11";
+const CUSTOM_WORDS_KEY = "km_custom_words_v11";
+const CUSTOM_PHRASES_KEY = "km_custom_phrases_v11";
+const GACHA_WORDS_KEY = "km_gacha_words_v11";
+const SAVED_SENTENCES_KEY = "km_saved_sentences_v11";
+const WRONG_WORDS_KEY = "km_wrong_words_v11";
+const MARKS_KEY = "km_word_marks_v11";
+
+const WORD_TYPES = [
+  ["all","すべて"],
+  ["noun","名詞"],
+  ["verb","動詞"],
+  ["adj","形容詞"],
+  ["adv","副詞"],
+  ["conj","接続詞"],
+  ["react","リアクション"],
+  ["time","時間"],
+  ["pronoun","代名詞"],
+  ["question","疑問詞"],
+  ["number","数詞"],
+  ["gacha","ガチャ"]
+];
+
+const NOUN_SUBTYPES = [
+  ["all","名詞すべて"],
+  ["person","人"],
+  ["food","食べ物"],
+  ["place","場所"],
+  ["thing","物"]
+];
+
+const PHRASE_TYPES = {
+  greeting:"挨拶",
+  emotion:"感情",
+  instruction:"指示",
+  slang:"スラング",
+  game:"ゲーム",
+  affirm:"肯定",
+  negative:"否定",
+  request:"要望",
+  question:"疑問"
+};
+
+const RANDOM_STYLES = [
+  ["casual","ため口"],
+  ["haeyo","へヨ体"],
+  ["hamnida","ハムニダ体"]
+];
+
+const RAW_WORDS = [
+  { kr:"나", jp:"私・僕", kana:"ナ", roman:"na", type:"noun", subType:"person" },
+{ kr:"저", jp:"私（わたくし）", kana:"チョ", roman:"jeo", type:"noun", subType:"person" },
+{ kr:"그", jp:"彼", kana:"グ", roman:"geu", type:"noun", subType:"person" },
+{ kr:"그녀", jp:"彼女", kana:"クニョ", roman:"geunyeo", type:"noun", subType:"person" },
+{ kr:"아버지", jp:"父", kana:"アボジ", roman:"abeoji", type:"noun", subType:"person" },
+{ kr:"어머니", jp:"母", kana:"オモニ", roman:"eomeoni", type:"noun", subType:"person" },
+{ kr:"할머니", jp:"祖母", kana:"ハルモニ", roman:"halmeoni", type:"noun", subType:"person" },
+{ kr:"할아버지", jp:"祖父", kana:"ハラボジ", roman:"harabeoji", type:"noun", subType:"person" },
+{ kr:"남동생", jp:"弟", kana:"ナムドンセン", roman:"namdongsaeng", type:"noun", subType:"person" },
+{ kr:"형", jp:"兄", kana:"ヒョン", roman:"hyeong", type:"noun", subType:"person" },
+{ kr:"여동생", jp:"妹", kana:"ヨドンセン", roman:"yeodongsaeng", type:"noun", subType:"person" },
+{ kr:"누나", jp:"姉", kana:"ヌナ", roman:"nuna", type:"noun", subType:"person" },
+{ kr:"사촌", jp:"いとこ", kana:"サチョン", roman:"sachon", type:"noun", subType:"person" },
+{ kr:"남자", jp:"男", kana:"ナムジャ", roman:"namja", type:"noun", subType:"person" },
+{ kr:"여자", jp:"女", kana:"ヨジャ", roman:"yeoja", type:"noun", subType:"person" },
+{ kr:"친구", jp:"友達", kana:"チング", roman:"chingu", type:"noun", subType:"person" },
+{ kr:"남자친구", jp:"ボーイフレンド", kana:"ナムジャチング", roman:"namjachingu", type:"noun", subType:"person" },
+{ kr:"여자친구", jp:"ガールフレンド", kana:"ヨジャチング", roman:"yeojachingu", type:"noun", subType:"person" },
+{ kr:"선배", jp:"先輩", kana:"ソンベ", roman:"seonbae", type:"noun", subType:"person" },
+{ kr:"후배", jp:"後輩", kana:"フベ", roman:"hubae", type:"noun", subType:"person" },
+{ kr:"선생님", jp:"先生", kana:"ソンセンニム", roman:"seonsaengnim", type:"noun", subType:"person" },
+{ kr:"학생", jp:"学生", kana:"ハクセン", roman:"haksaeng", type:"noun", subType:"person" },
+{ kr:"직장인", jp:"社会人", kana:"チクジャンイン", roman:"jikjangin", type:"noun", subType:"person" },
+{ kr:"점원", jp:"店員", kana:"チョムォン", roman:"jeomwon", type:"noun", subType:"person" },
+{ kr:"밥", jp:"ご飯", kana:"パプ", roman:"bap", type:"noun", subType:"food" },
+{ kr:"아침식사", jp:"朝食", kana:"アチムシクサ", roman:"achim-siksa", type:"noun", subType:"food" },
+{ kr:"점심식사", jp:"昼食", kana:"チョムシムシクサ", roman:"jeomsim-siksa", type:"noun", subType:"food" },
+{ kr:"저녁식사", jp:"夕食", kana:"チョニョクシクサ", roman:"jeonyeok-siksa", type:"noun", subType:"food" },
+{ kr:"된장국", jp:"味噌汁", kana:"テンジャングク", roman:"doenjang-guk", type:"noun", subType:"food" },
+{ kr:"김", jp:"海苔", kana:"キム", roman:"gim", type:"noun", subType:"food" },
+{ kr:"생선구이", jp:"焼き魚", kana:"センソングイ", roman:"saengseon-gui", type:"noun", subType:"food" },
+{ kr:"계란말이", jp:"卵焼き", kana:"ケランマリ", roman:"gyeran-mari", type:"noun", subType:"food" },
+{ kr:"고기구이", jp:"焼肉", kana:"コギグイ", roman:"gogi-gui", type:"noun", subType:"food" },
+{ kr:"회", jp:"刺身", kana:"フェ", roman:"hoe", type:"noun", subType:"food" },
+{ kr:"어묵", jp:"おでん", kana:"オムク", roman:"eomuk", type:"noun", subType:"food" },
+{ kr:"산", jp:"山", kana:"サン", roman:"san", type:"noun", subType:"place" },
+{ kr:"바다", jp:"海", kana:"パダ", roman:"bada", type:"noun", subType:"place" },
+{ kr:"사막", jp:"砂漠", kana:"サマク", roman:"samak", type:"noun", subType:"place" },
+{ kr:"언덕", jp:"丘", kana:"オンドク", roman:"eondeok", type:"noun", subType:"place" },
+{ kr:"계곡", jp:"谷", kana:"ケゴク", roman:"gyegok", type:"noun", subType:"place" },
+{ kr:"숲", jp:"森", kana:"スプ", roman:"sup", type:"noun", subType:"place" },
+{ kr:"섬", jp:"島", kana:"ソム", roman:"seom", type:"noun", subType:"place" },
+{ kr:"호수", jp:"湖", kana:"ホス", roman:"hosu", type:"noun", subType:"place" },
+{ kr:"공원", jp:"公園", kana:"コンウォン", roman:"gongwon", type:"noun", subType:"place" },
+{ kr:"집", jp:"家", kana:"チプ", roman:"jip", type:"noun", subType:"place" },
+{ kr:"학교", jp:"学校", kana:"ハッキョ", roman:"hakgyo", type:"noun", subType:"place" },
+{ kr:"회사", jp:"会社", kana:"フェサ", roman:"hoesa", type:"noun", subType:"place" },
+{ kr:"역", jp:"駅", kana:"ヨク", roman:"yeok", type:"noun", subType:"place" },
+{ kr:"공항", jp:"空港", kana:"コンハン", roman:"gonghang", type:"noun", subType:"place" },
+{ kr:"병원", jp:"病院", kana:"ピョンウォン", roman:"byeongwon", type:"noun", subType:"place" },
+{ kr:"은행", jp:"銀行", kana:"ウネン", roman:"eunhaeng", type:"noun", subType:"place" },
+{ kr:"우체국", jp:"郵便局", kana:"ウチェグク", roman:"ucheguk", type:"noun", subType:"place" },
+{ kr:"도서관", jp:"図書館", kana:"トソグァン", roman:"doseogwan", type:"noun", subType:"place" },
+{ kr:"영화관", jp:"映画館", kana:"ヨンファグァン", roman:"yeonghwagwan", type:"noun", subType:"place" },
+{ kr:"편의점", jp:"コンビニ", kana:"ピョニジョム", roman:"pyeonuijeom", type:"noun", subType:"place" },
+{ kr:"슈퍼", jp:"スーパー", kana:"シュポ", roman:"syupeo", type:"noun", subType:"place" },
+{ kr:"카페", jp:"カフェ", kana:"カペ", roman:"kape", type:"noun", subType:"place" },
+{ kr:"화장실", jp:"トイレ", kana:"ファジャンシル", roman:"hwajangsil", type:"noun", subType:"place" },
+{ kr:"백화점", jp:"デパート", kana:"ペックァジョム", roman:"baekhwajeom", type:"noun", subType:"place" },
+{ kr:"교실", jp:"教室", kana:"キョシル", roman:"gyosil", type:"noun", subType:"place" },
+{ kr:"운동장", jp:"運動場", kana:"ウンドンジャン", roman:"undongjang", type:"noun", subType:"place" },
+{ kr:"도서관", jp:"図書館", kana:"トソグァン", roman:"doseogwan", type:"noun", subType:"place" },
+{ kr:"식당", jp:"食堂", kana:"シクタン", roman:"sikdang", type:"noun", subType:"place" },
+{ kr:"복도", jp:"廊下", kana:"ポクト", roman:"bokdo", type:"noun", subType:"place" },
+{ kr:"입구", jp:"入口", kana:"イプク", roman:"ipgu", type:"noun", subType:"place" },
+{ kr:"출구", jp:"出口", kana:"チュルグ", roman:"chulgu", type:"noun", subType:"place" },
+{ kr:"길", jp:"道", kana:"キル", roman:"gil", type:"noun", subType:"place" },
+{ kr:"도로", jp:"道路", kana:"トロ", roman:"doro", type:"noun", subType:"place" },
+{ kr:"교차로", jp:"交差点", kana:"キョチャロ", roman:"gyocharo", type:"noun", subType:"place" },
+{ kr:"버스 정류장", jp:"バス停", kana:"ポス ジョンニュジャン", roman:"beoseu jeongnyujang", type:"noun", subType:"place" },
+{ kr:"주차장", jp:"駐車場", kana:"チュチャジャン", roman:"juchajang", type:"noun", subType:"place" },
+{ kr:"항구", jp:"港", kana:"ハング", roman:"hanggu", type:"noun", subType:"place" },
+{ kr:"주차장", jp:"駐車場", kana:"チュチャジャン", roman:"juchajang", type:"noun", subType:"place" },
+{ kr:"항구", jp:"港", kana:"ハング", roman:"hanggu", type:"noun", subType:"place" },
+{ kr:"다리", jp:"橋", kana:"タリ", roman:"dari", type:"noun", subType:"place" },
+{ kr:"지하철", jp:"地下鉄", kana:"チハチョル", roman:"jihacheol", type:"noun", subType:"place" },
+{ kr:"박물관", jp:"博物館", kana:"パンムルグァン", roman:"bangmulgwan", type:"noun", subType:"place" },
+{ kr:"미술관", jp:"美術館", kana:"ミスルグァン", roman:"misulgwan", type:"noun", subType:"place" },
+{ kr:"동물원", jp:"動物園", kana:"トンムルォン", roman:"dongmulwon", type:"noun", subType:"place" },
+{ kr:"놀이공원", jp:"遊園地", kana:"ノリゴンウォン", roman:"norigongwon", type:"noun", subType:"place" },
+{ kr:"수족관", jp:"水族館", kana:"スジョククァン", roman:"sujokgwan", type:"noun", subType:"place" },
+{ kr:"연필", jp:"鉛筆", kana:"ヨンピル", roman:"yeonpil", type:"noun", subType:"thing" },
+{ kr:"지우개", jp:"消しゴム", kana:"チウゲ", roman:"jiugae", type:"noun", subType:"thing" },
+{ kr:"펜", jp:"ペン", kana:"ペン", roman:"pen", type:"noun", subType:"thing" },
+{ kr:"노트", jp:"ノート", kana:"ノトゥ", roman:"noteu", type:"noun", subType:"thing" },
+{ kr:"교과서", jp:"教科書", kana:"キョグァソ", roman:"gyogwaseo", type:"noun", subType:"thing" },
+{ kr:"종이", jp:"紙", kana:"チョンイ", roman:"jongi", type:"noun", subType:"thing" },
+{ kr:"가위", jp:"ハサミ", kana:"カウィ", roman:"gawi", type:"noun", subType:"thing" },
+{ kr:"풀", jp:"のり", kana:"プル", roman:"pul", type:"noun", subType:"thing" },
+{ kr:"자", jp:"定規", kana:"チャ", roman:"ja", type:"noun", subType:"thing" },
+{ kr:"가방", jp:"かばん", kana:"カバン", roman:"gabang", type:"noun", subType:"thing" },
+{ kr:"책상", jp:"机", kana:"チェクサン", roman:"chaeksang", type:"noun", subType:"thing" },
+{ kr:"의자", jp:"椅子", kana:"ウィジャ", roman:"uija", type:"noun", subType:"thing" },
+{ kr:"텔레비전", jp:"テレビ", kana:"テルレビジョン", roman:"tellebijeon", type:"noun", subType:"thing" },
+{ kr:"냉장고", jp:"冷蔵庫", kana:"ネンジャンゴ", roman:"naengjanggo", type:"noun", subType:"thing" },
+{ kr:"세탁기", jp:"洗濯機", kana:"セタッキ", roman:"setakgi", type:"noun", subType:"thing" },
+{ kr:"전자레인지", jp:"電子レンジ", kana:"チョンジャレインジ", roman:"jeonjareinji", type:"noun", subType:"thing" },
+{ kr:"에어컨", jp:"エアコン", kana:"エオコン", roman:"eeokeon", type:"noun", subType:"thing" },
+{ kr:"시계", jp:"時計", kana:"シゲ", roman:"sigye", type:"noun", subType:"thing" },
+{ kr:"거울", jp:"鏡", kana:"コウル", roman:"geoul", type:"noun", subType:"thing" },
+{ kr:"침대", jp:"ベッド", kana:"チムデ", roman:"chimdae", type:"noun", subType:"thing" },
+{ kr:"이불", jp:"布団", kana:"イブル", roman:"ibul", type:"noun", subType:"thing" },
+{ kr:"베개", jp:"枕", kana:"ペゲ", roman:"begae", type:"noun", subType:"thing" },
+{ kr:"문", jp:"ドア", kana:"ムン", roman:"mun", type:"noun", subType:"thing" },
+{ kr:"창문", jp:"窓", kana:"チャンムン", roman:"changmun", type:"noun", subType:"thing" },
+{ kr:"열쇠", jp:"鍵", kana:"ヨルセ", roman:"yeolsoe", type:"noun", subType:"thing" },
+{ kr:"전기", jp:"電気", kana:"チョンギ", roman:"jeongi", type:"noun", subType:"thing" },
+{ kr:"전화", jp:"電話", kana:"チョナ", roman:"jeonhwa", type:"noun", subType:"thing" },
+{ kr:"스마트폰", jp:"スマホ", kana:"スマトゥポン", roman:"seumateupon", type:"noun", subType:"thing" },
+{ kr:"지갑", jp:"財布", kana:"チガプ", roman:"jigap", type:"noun", subType:"thing" },
+{ kr:"신발", jp:"靴", kana:"シンバル", roman:"sinbal", type:"noun", subType:"thing" },
+{ kr:"옷", jp:"服", kana:"オッ", roman:"ot", type:"noun", subType:"thing" },
+{ kr:"모자", jp:"帽子", kana:"モジャ", roman:"moja", type:"noun", subType:"thing" },
+{ kr:"안경", jp:"眼鏡", kana:"アンギョン", roman:"angyeong", type:"noun", subType:"thing" },
+{ kr:"마스크", jp:"マスク", kana:"マスク", roman:"maseukeu", type:"noun", subType:"thing" },
+{ kr:"수건", jp:"タオル", kana:"スゴン", roman:"sugeon", type:"noun", subType:"thing" },
+{ kr:"칫솔", jp:"歯ブラシ", kana:"チッソル", roman:"chitsol", type:"noun", subType:"thing" },
+{ kr:"컵", jp:"コップ", kana:"コプ", roman:"keop", type:"noun", subType:"thing" },
+{ kr:"접시", jp:"皿", kana:"チョプシ", roman:"jeopsi", type:"noun", subType:"thing" },
+{ kr:"숟가락", jp:"スプーン", kana:"スッカラク", roman:"sutgarak", type:"noun", subType:"thing" },
+{ kr:"포크", jp:"フォーク", kana:"ポク", roman:"pokeu", type:"noun", subType:"thing" },
+{ kr:"컴퓨터", jp:"パソコン", roman:"keompyuteo", kana:"コンピュト", type:"noun" },
+{ kr:"일어나다", jp:"起きる", roman:"ireonada", kana:"イロナダ", type:"verb" },
+{ kr:"먹다", jp:"食べる", roman:"meokda", kana:"モクタ", type:"verb" },
+{ kr:"가다", jp:"行く", roman:"gada", kana:"カダ", type:"verb" },
+{ kr:"타다", jp:"乗る", roman:"tada", kana:"タダ", type:"verb" },
+{ kr:"듣다", jp:"聞く", roman:"deutda", kana:"トゥッタ", type:"verb" },
+{ kr:"보다", jp:"見る", roman:"boda", kana:"ポダ", type:"verb" },
+{ kr:"말하다", jp:"話す", roman:"malhada", kana:"マラダ", type:"verb" },
+{ kr:"걷다", jp:"歩く", roman:"geotda", kana:"コッタ", type:"verb" },
+{ kr:"읽다", jp:"読む", roman:"ikda", kana:"イクタ", type:"verb" },
+{ kr:"달리다", jp:"走る", roman:"dallida", kana:"タルリダ", type:"verb" },
+{ kr:"공부하다", jp:"勉強する", roman:"gongbuhada", kana:"コンブハダ", type:"verb" },
+{ kr:"요리하다", jp:"料理する", roman:"yorihada", kana:"ヨリハダ", type:"verb" },
+{ kr:"청소하다", jp:"掃除する", roman:"cheongsohada", kana:"チョンソハダ", type:"verb" },
+{ kr:"마시다", jp:"飲む", roman:"masida", kana:"マシダ", type:"verb" },
+{ kr:"만지다", jp:"触る", roman:"manjida", kana:"マンジダ", type:"verb" },
+{ kr:"보내다", jp:"送る", roman:"bonaeda", kana:"ポネダ", type:"verb" },
+{ kr:"만나다", jp:"会う", roman:"mannada", kana:"マンナダ", type:"verb" },
+{ kr:"받다", jp:"貰う", roman:"batda", kana:"パッタ", type:"verb" },
+{ kr:"주다", jp:"あげる", roman:"juda", kana:"チュダ", type:"verb" },
+{ kr:"얻다", jp:"手に入れる", roman:"eotda", kana:"オッタ", type:"verb" },
+{ kr:"들어가다", jp:"入る", roman:"deureogada", kana:"トゥロガダ", type:"verb" },
+{ kr:"나가다", jp:"出る", roman:"nagada", kana:"ナガダ", type:"verb" },
+{ kr:"사다", jp:"買う", roman:"sada", kana:"サダ", type:"verb" },
+{ kr:"누르다", jp:"押す", roman:"nureuda", kana:"ヌルダ", type:"verb" },
+{ kr:"당기다", jp:"引っ張る", roman:"danggida", kana:"タンギダ", type:"verb" },
+{ kr:"늘리다", jp:"伸ばす", roman:"neullida", kana:"ヌルリダ", type:"verb" },
+{ kr:"서다", jp:"立つ", roman:"seoda", kana:"ソダ", type:"verb" },
+{ kr:"앉다", jp:"座る", roman:"anda", kana:"アンタ", type:"verb" },
+{ kr:"달리다", jp:"走る", roman:"dallida", kana:"タルリダ", type:"verb" },
+{ kr:"날다", jp:"飛ぶ", roman:"nalda", kana:"ナルダ", type:"verb" },
+{ kr:"쉬다", jp:"休む", roman:"swida", kana:"スィダ", type:"verb" },
+{ kr:"놀다", jp:"遊ぶ", roman:"nolda", kana:"ノルダ", type:"verb" },
+{ kr:"가르치다", jp:"教える", roman:"gareuchida", kana:"カルチダ", type:"verb" },
+{ kr:"묻다", jp:"尋ねる", roman:"mutda", kana:"ムッタ", type:"verb" },
+{ kr:"대답하다", jp:"答える", roman:"daedaphada", kana:"テダパダ", type:"verb" },
+{ kr:"알다", jp:"知る", roman:"alda", kana:"アルダ", type:"verb" },
+{ kr:"외우다", jp:"覚える", roman:"oeuda", kana:"ウェウダ", type:"verb" },
+{ kr:"잊다", jp:"忘れる", roman:"itda", kana:"イッタ", type:"verb" },
+{ kr:"이해하다", jp:"理解する", roman:"ihaehada", kana:"イヘハダ", type:"verb" },
+{ kr:"설명하다", jp:"説明する", roman:"seolmyeonghada", kana:"ソルミョンハダ", type:"verb" },
+{ kr:"시작하다", jp:"始める", roman:"sijakada", kana:"シジャカダ", type:"verb" },
+{ kr:"끝나다", jp:"終わる", roman:"kkeunnada", kana:"クンナダ", type:"verb" },
+{ kr:"만들다", jp:"作る", roman:"mandeulda", kana:"マンドゥルダ", type:"verb" },
+{ kr:"하다", jp:"する", roman:"hada", kana:"ハダ", type:"verb" },
+{ kr:"사랑하다", jp:"愛す", roman:"saranghada", kana:"サランハダ", type:"verb" },
+{ kr:"웃다", jp:"笑う", roman:"utda", kana:"ウッタ", type:"verb" },
+{ kr:"울다", jp:"無く", roman:"ulda", kana:"ウルダ", type:"verb" },
+{ kr:"기다리다", jp:"待つ", roman:"gidarida", kana:"キダリダ", type:"verb" },
+{ kr:"만나다", jp:"会う", roman:"mannada", kana:"マンナダ", type:"verb" },
+{ kr:"헤어지다", jp:"別れる", roman:"heeojida", kana:"ヘオジダ", type:"verb" },
+{ kr:"전화하다", jp:"電話する", roman:"jeonhwahada", kana:"チョナハダ", type:"verb" },
+{ kr:"연락하다", jp:"連絡する", roman:"yeollakada", kana:"ヨルラカダ", type:"verb" },
+{ kr:"팔다", jp:"売る", roman:"palda", kana:"パルダ", type:"verb" },
+{ kr:"입다", jp:"着る", roman:"ipda", kana:"イプタ", type:"verb" },
+{ kr:"벗다", jp:"脱ぐ", roman:"beotda", kana:"ポッタ", type:"verb" },
+{ kr:"신다", jp:"履く", roman:"sinda", kana:"シンタ", type:"verb" },
+{ kr:"씻다", jp:"洗う", roman:"ssitda", kana:"シッタ", type:"verb" },
+{ kr:"열다", jp:"開ける", roman:"yeolda", kana:"ヨルダ", type:"verb" },
+{ kr:"닫다", jp:"閉める", roman:"datda", kana:"タッタ", type:"verb" },
+{ kr:"켜다", jp:"つける", roman:"kyeoda", kana:"キョダ", type:"verb" },
+{ kr:"끄다", jp:"消す", roman:"kkeuda", kana:"クダ", type:"verb" },
+{ kr:"넣다", jp:"入れる", roman:"neotda", kana:"ノッタ", type:"verb" },
+{ kr:"꺼내다", jp:"取り出す", roman:"kkeonaeda", kana:"コネダ", type:"verb" },
+{ kr:"찾다", jp:"探す", roman:"chatda", kana:"チャッタ", type:"verb" },
+{ kr:"고치다", jp:"直す", roman:"gochida", kana:"コチダ", type:"verb" },
+{ kr:"바꾸다", jp:"変える", roman:"bakkuda", kana:"パックダ", type:"verb" },
+{ kr:"선택하다", jp:"選択する", roman:"seontaekada", kana:"ソンテカダ", type:"verb" },
+{ kr:"결정하다", jp:"決定する", roman:"gyeoljeonghada", kana:"キョルチョンハダ", type:"verb" },
+{ kr:"믿다", jp:"信じる", roman:"mitda", kana:"ミッタ", type:"verb" },
+{ kr:"돕다", jp:"手伝う", roman:"dopda", kana:"トプタ", type:"verb" },
+{ kr:"살다", jp:"住む", roman:"salda", kana:"サルダ", type:"verb" },
+{ kr:"죽다", jp:"死ぬ", roman:"jukda", kana:"チュクタ", type:"verb" },
+{ kr:"태어나다", jp:"生まれる", roman:"taeeonada", kana:"テオナダ", type:"verb" },
+{ kr:"자라다", jp:"育つ", roman:"jarada", kana:"チャラダ", type:"verb" },
+{ kr:"움직이다", jp:"動く", roman:"umjigida", kana:"ウムジギダ", type:"verb" },
+{ kr:"멈추다", jp:"止まる", roman:"meomchuda", kana:"モムチュダ", type:"verb" },
+{ kr:"도착하다", jp:"到着する", roman:"dochakhada", kana:"トチャカダ", type:"verb" },
+{ kr:"출발하다", jp:"出発する", roman:"chulbalhada", kana:"チュルバラダ", type:"verb" },
+{ kr:"떠나다", jp:"去る", roman:"tteonada", kana:"トナダ", type:"verb" },
+{ kr:"돌아오다", jp:"戻ってくる", roman:"doraoda", kana:"トラオダ", type:"verb" },
+{ kr:"돌아가다", jp:"戻っていく", roman:"doragada", kana:"トラガダ", type:"verb" },
+{ kr:"올라가다", jp:"上がる", roman:"ollagada", kana:"オルラガダ", type:"verb" },
+{ kr:"내려가다", jp:"下がる", roman:"naeryeogada", kana:"ネリョガダ", type:"verb" },
+{ kr:"지나가다", jp:"通り過ぎる", roman:"jinagada", kana:"チナガダ", type:"verb" },
+{ kr:"건너다", jp:"渡る", roman:"geonneoda", kana:"コンノダ", type:"verb" },
+{ kr:"운전하다", jp:"運転する", roman:"unjeonhada", kana:"ウンジョナダ", type:"verb" },
+{ kr:"내리다", jp:"降りる", roman:"naerida", kana:"ネリダ", type:"verb" },
+{ kr:"갈아타다", jp:"乗り換える", roman:"garatada", kana:"カラタダ", type:"verb" },
+{ kr:"주문하다", jp:"注文する", roman:"jumunhada", kana:"チュムナダ", type:"verb" },
+{ kr:"계산하다", jp:"計算する", roman:"gyesanhada", kana:"ケサナダ", type:"verb" },
+{ kr:"예약하다", jp:"予約する", roman:"yeyakada", kana:"イェヤカダ", type:"verb" },
+{ kr:"방문하다", jp:"訪問する", roman:"bangmunhada", kana:"パンムナダ", type:"verb" },
+{ kr:"여행하다", jp:"旅行する", roman:"yeohaenghada", kana:"ヨヘンハダ", type:"verb" },
+{ kr:"구경하다", jp:"見物する", roman:"gugyeonghada", kana:"クギョンハダ", type:"verb" },
+{ kr:"찍다", jp:"撮る", roman:"jjikda", kana:"チクタ", type:"verb" },
+{ kr:"그리다", jp:"描く", roman:"geurida", kana:"クリダ", type:"verb" },
+{ kr:"노래하다", jp:"歌う", roman:"noraehada", kana:"ノレハダ", type:"verb" },
+{ kr:"춤추다", jp:"踊る", roman:"chumchuda", kana:"チュムチュダ", type:"verb" },
+{ kr:"연주하다", jp:"演奏する", roman:"yeonjuhada", kana:"ヨンジュハダ", type:"verb" },
+{ kr:"운동하다", jp:"運動する", roman:"undonghada", kana:"ウンドンハダ", type:"verb" },
+{ kr:"수영하다", jp:"泳ぐ", roman:"suyeonghada", kana:"スヨンハダ", type:"verb" },
+{ kr:"축구하다", jp:"サッカーをする", roman:"chukguhada", kana:"チュックハダ", type:"verb" },
+{ kr:"게임하다", jp:"ゲームをする", roman:"geimhada", kana:"ゲイムハダ", type:"verb" },
+{ kr:"연습하다", jp:"練習する", roman:"yeonseuphada", kana:"ヨンスパダ", type:"verb" },
+{ kr:"참가하다", jp:"参加する", roman:"chamgahada", kana:"チャムガハダ", type:"verb" },
+{ kr:"사용하다", jp:"使用する", roman:"sayonghada", kana:"サヨンハダ", type:"verb" },
+{ kr:"저장하다", jp:"保存する", roman:"jeojanghada", kana:"チョジャンハダ", type:"verb" },
+{ kr:"삭제하다", jp:"削除する", roman:"sakjehada", kana:"サクチェハダ", type:"verb" },
+{ kr:"검색하다", jp:"検索する", roman:"geomsaekada", kana:"コムセカダ", type:"verb" },
+{ kr:"입력하다", jp:"入力する", roman:"imnyeokhada", kana:"イムニョカダ", type:"verb" },
+{ kr:"출력하다", jp:"出力する", roman:"chullyeokhada", kana:"チュルリョカダ", type:"verb" },
+{ kr:"복사하다", jp:"コピーする", roman:"boksahada", kana:"ポクサハダ", type:"verb" },
+{ kr:"설치하다", jp:"設置する", roman:"seolchihada", kana:"ソルチハダ", type:"verb" },
+{ kr:"실행하다", jp:"実行する", roman:"silhaenghada", kana:"シレハダ", type:"verb" },
+{ kr:"클릭하다", jp:"クリックする", roman:"keullikhada", kana:"クルリカダ", type:"verb" },
+{ kr:"걱정하다", jp:"心配する", roman:"geokjeonghada", kana:"コクチョンハダ", type:"verb" },
+{ kr:"화내다", jp:"怒る", roman:"hwanaeda", kana:"ファネダ", type:"verb" },
+{ kr:"참다", jp:"我慢する", roman:"chamda", kana:"チャムタ", type:"verb" },
+{ kr:"용서하다", jp:"許す", roman:"yongseohada", kana:"ヨンソハダ", type:"verb" },
+{ kr:"축하하다", jp:"祝う", roman:"chukhahada", kana:"チュカハダ", type:"verb" },
+{ kr:"감사하다", jp:"感謝する", roman:"gamsahada", kana:"カムサハダ", type:"verb" },
+{ kr:"사과하다", jp:"謝る", roman:"sagwahada", kana:"サグァハダ", type:"verb" },
+{ kr:"약속하다", jp:"約束する", roman:"yaksokhada", kana:"ヤクソカダ", type:"verb" },
+{ kr:"지키다", jp:"守る", roman:"jikida", kana:"チキダ", type:"verb" },
+{ kr:"깨다", jp:"破る", roman:"kkaeda", kana:"ケダ", type:"verb" },
+{ kr:"바라다", jp:"願う", roman:"barada", kana:"パラダ", type:"verb" },
+{ kr:"원하다", jp:"望む", roman:"wonhada", kana:"ウォナダ", type:"verb" },
+{ kr:"노력하다", jp:"努力する", roman:"noryeokhada", kana:"ノリョカダ", type:"verb" },
+{ kr:"실패하다", jp:"失敗する", roman:"silpaehada", kana:"シルペハダ", type:"verb" },
+{ kr:"이기다", jp:"勝つ", roman:"igida", kana:"イギダ", type:"verb" },
+{ kr:"지다", jp:"負ける", roman:"jida", kana:"チダ", type:"verb" },
+{ kr:"잡다", jp:"つかむ", roman:"japda", kana:"チャプタ", type:"verb" },
+{ kr:"놓다", jp:"置く", roman:"nota", kana:"ノッタ", type:"verb" },
+{ kr:"던지다", jp:"投げる", roman:"deonjida", kana:"トンジダ", type:"verb" },
+{ kr:"끌다", jp:"引く", roman:"kkeulda", kana:"クルダ", type:"verb" },
+{ kr:"치다", jp:"打つ", roman:"chida", kana:"チダ", type:"verb" },
+{ kr:"때리다", jp:"叩く", roman:"ttaerida", kana:"テリダ", type:"verb" },
+{ kr:"묶다", jp:"結ぶ", roman:"mukda", kana:"ムクタ", type:"verb" },
+{ kr:"풀다", jp:"解く", roman:"pulda", kana:"プルダ", type:"verb" },
+{ kr:"자르다", jp:"切る", roman:"jareuda", kana:"チャルダ", type:"verb" },
+{ kr:"붙이다", jp:"貼る", roman:"buchida", kana:"プチダ", type:"verb" },
+{ kr:"떼다", jp:"はがす", roman:"tteda", kana:"テダ", type:"verb" },
+{ kr:"섞다", jp:"混ぜる", roman:"seokda", kana:"ソッタ", type:"verb" },
+{ kr:"나누다", jp:"分ける", roman:"nanuda", kana:"ナヌダ", type:"verb" },
+{ kr:"모으다", jp:"集める", roman:"moeuda", kana:"モウダ", type:"verb" },
+{ kr:"더하다", jp:"足す", roman:"deohada", kana:"トハダ", type:"verb" },
+{ kr:"빼다", jp:"抜く", roman:"ppaeda", kana:"ペダ", type:"verb" },
+{ kr:"느끼다", jp:"感じる", roman:"neukkida", kana:"ヌッキダ", type:"verb" },
+{ kr:"보이다", jp:"見える", roman:"boida", kana:"ポイダ", type:"verb" },
+{ kr:"들리다", jp:"聞こえる", roman:"deullida", kana:"トゥルリダ", type:"verb" },
+{ kr:"냄새가 나다", jp:"においがする", roman:"naemsaega nada", kana:"ネムセガ ナダ", type:"verb" },
+{ kr:"맛보다", jp:"味見する", roman:"matboda", kana:"マッポダ", type:"verb" },
+{ kr:"출근하다", jp:"出勤する", roman:"chulgeunhada", kana:"チュルグナダ", type:"verb" },
+{ kr:"퇴근하다", jp:"退勤する", roman:"toegeunhada", kana:"テグナダ", type:"verb" },
+{ kr:"등교하다", jp:"登校する", roman:"deunggyohada", kana:"トゥンギョハダ", type:"verb" },
+{ kr:"하교하다", jp:"下校する", roman:"hagyohada", kana:"ハギョハダ", type:"verb" },
+{ kr:"쇼핑하다", jp:"買い物する", roman:"syopinghada", kana:"ショピンハダ", type:"verb" },
+{ kr:"산책하다", jp:"散歩する", roman:"sanchaekhada", kana:"サンチェカダ", type:"verb" },
+{ kr:"선택하다", jp:"選択する", roman:"seontaekada", kana:"ソンテカダ", type:"verb" },
+{ kr:"설거지하다", jp:"皿洗いする", roman:"seolgeoji-hada", kana:"ソルゴジハダ", type:"verb" },
+{ kr:"정리하다", jp:"整理する", roman:"jeongnihada", kana:"チョンニハダ", type:"verb" },
+{ kr:"수리하다", jp:"修理する", roman:"surihada", kana:"スリハダ", type:"verb" },
+{ kr:"확인하다", jp:"確認する", roman:"hwaginhada", kana:"ファギナダ", type:"verb" },
+{ kr:"비교하다", jp:"比較する", roman:"bigyohada", kana:"ピギョハダ", type:"verb" },
+{ kr:"평가하다", jp:"評価する", roman:"pyeonggahada", kana:"ピョンガハダ", type:"verb" },
+{ kr:"신청하다", jp:"申請する", roman:"sincheonghada", kana:"シンチョンハダ", type:"verb" },
+{ kr:"취소하다", jp:"取り消す", roman:"chwisohada", kana:"チュィソハダ", type:"verb" },
+{ kr:"변경하다", jp:"変更する", roman:"byeongyeonghada", kana:"ピョンギョンハダ", type:"verb" },
+{ kr:"계획하다", jp:"計画する", roman:"gyehoekhada", kana:"ケフェカダ", type:"verb" },
+{ kr:"소개하다", jp:"紹介する", roman:"sogaehada", kana:"ソゲハダ", type:"verb" },
+{ kr:"초대하다", jp:"招待する", roman:"chodaehada", kana:"チョデハダ", type:"verb" },
+{ kr:"거절하다", jp:"断る", roman:"geojeolhada", kana:"コジョラダ", type:"verb" },
+{ kr:"허락하다", jp:"許可する", roman:"heorakada", kana:"ホラカダ", type:"verb" },
+{ kr:"금지하다", jp:"禁止する", roman:"geumjihada", kana:"クムジハダ", type:"verb" },
+{ kr:"빌리다", jp:"借りる", roman:"billida", kana:"ピルリダ", type:"verb" },
+{ kr:"빌려주다", jp:"貸す", roman:"billyeojuda", kana:"ピルリョジュダ", type:"verb" },
+{ kr:"돌려주다", jp:"返す", roman:"dollyeojuda", kana:"トルリョジュダ", type:"verb" },
+{ kr:"맡기다", jp:"預ける", roman:"matgida", kana:"マッキダ", type:"verb" },
+{ kr:"맡다", jp:"引き受ける", roman:"matda", kana:"マッタ", type:"verb" },
+{ kr:"배달하다", jp:"配達する", roman:"baedalhada", kana:"ペダラダ", type:"verb" },
+{ kr:"막다", jp:"防ぐ", roman:"makda", kana:"マクタ", type:"verb" },
+{ kr:"늘다", jp:"増える", roman:"neulda", kana:"ヌルダ", type:"verb" },
+{ kr:"줄다", jp:"減る", roman:"julda", kana:"チュルダ", type:"verb" },
+{ kr:"싸우다", jp:"喧嘩する", roman:"ssauda", kana:"サウダ", type:"verb" },
+{ kr:"크다", jp:"大きい", roman:"keuda", kana:"クダ", type:"adj" },
+{ kr:"작다", jp:"小さい", roman:"jakda", kana:"チャクタ", type:"adj" },
+{ kr:"길다", jp:"長い", roman:"gilda", kana:"キルダ", type:"adj" },
+{ kr:"짧다", jp:"短い", roman:"jjalda", kana:"チャルタ", type:"adj" },
+{ kr:"굵다", jp:"太い", roman:"gukda", kana:"クッタ", type:"adj" },
+{ kr:"가늘다", jp:"細い", roman:"ganeulda", kana:"カヌルダ", type:"adj" },
+{ kr:"높다", jp:"高い", roman:"nopda", kana:"ノプタ", type:"adj" },
+{ kr:"낮다", jp:"低い", roman:"natda", kana:"ナッタ", type:"adj" },
+{ kr:"무겁다", jp:"重い", roman:"mugeopda", kana:"ムゴプタ", type:"adj" },
+{ kr:"가볍다", jp:"軽い", roman:"gabyeopda", kana:"カビョプタ", type:"adj" },
+{ kr:"넓다", jp:"広い", roman:"neolda", kana:"ノルタ", type:"adj" },
+{ kr:"좁다", jp:"狭い", roman:"jopda", kana:"チョプタ", type:"adj" },
+{ kr:"깊다", jp:"深い", roman:"gipda", kana:"キプタ", type:"adj" },
+{ kr:"얕다", jp:"浅い", roman:"yatda", kana:"ヤッタ", type:"adj" },
+{ kr:"많다", jp:"多い", roman:"manta", kana:"マンタ", type:"adj" },
+{ kr:"적다", jp:"少ない", roman:"jeokda", kana:"チョクタ", type:"adj" },
+{ kr:"가깝다", jp:"近い", roman:"gakkapda", kana:"カッカプタ", type:"adj" },
+{ kr:"멀다", jp:"遠い", roman:"meolda", kana:"モルダ", type:"adj" },
+{ kr:"이르다", jp:"早い", roman:"ireuda", kana:"イルダ", type:"adj" },
+{ kr:"늦다", jp:"遅い", roman:"neutda", kana:"ヌッタ", type:"adj" },
+{ kr:"빠르다", jp:"速い", roman:"ppareuda", kana:"ッパルダ", type:"adj" },
+{ kr:"느리다", jp:"遅い", roman:"neurida", kana:"ヌリダ", type:"adj" },
+{ kr:"새롭다", jp:"新しい", roman:"saeropda", kana:"セロプタ", type:"adj" },
+{ kr:"오래되다", jp:"古い", roman:"oraedoeda", kana:"オレドェダ", type:"adj" },
+{ kr:"젊다", jp:"若い", roman:"jeomda", kana:"チョムタ", type:"adj" },
+{ kr:"맛있다", jp:"おいしい", roman:"masitda", kana:"マシッタ", type:"adj" },
+{ kr:"맛없다", jp:"まずい", roman:"madeopda", kana:"マドプタ", type:"adj" },
+{ kr:"덥다", jp:"暑い", roman:"deopda", kana:"トプタ", type:"adj" },
+{ kr:"춥다", jp:"寒い", roman:"chupda", kana:"チュプタ", type:"adj" },
+{ kr:"따뜻하다", jp:"暖かい", roman:"ttatteuthada", kana:"ッタットゥタダ", type:"adj" },
+{ kr:"시원하다", jp:"涼しい", roman:"siwonhada", kana:"シウォナダ", type:"adj" },
+{ kr:"뜨겁다", jp:"熱い", roman:"tteugeopda", kana:"ットゥゴプタ", type:"adj" },
+{ kr:"차갑다", jp:"冷たい", roman:"chagapda", kana:"チャガプタ", type:"adj" },
+{ kr:"밝다", jp:"明るい", roman:"bakda", kana:"パクタ", type:"adj" },
+{ kr:"어둡다", jp:"暗い", roman:"eodupda", kana:"オドゥプタ", type:"adj" },
+{ kr:"강하다", jp:"強い", roman:"ganghada", kana:"カンハダ", type:"adj" },
+{ kr:"약하다", jp:"弱い", roman:"yakhada", kana:"ヤカダ", type:"adj" },
+{ kr:"딱딱하다", jp:"硬い", roman:"ttakttakhada", kana:"ッタクッタカダ", type:"adj" },
+{ kr:"부드럽다", jp:"柔らかい", roman:"budeureopda", kana:"プドゥロプタ", type:"adj" },
+{ kr:"좋다", jp:"良い", roman:"jota", kana:"チョタ", type:"adj" },
+{ kr:"나쁘다", jp:"悪い", roman:"nappeuda", kana:"ナップダ", type:"adj" },
+{ kr:"얇다", jp:"薄い", roman:"yalda", kana:"ヤルタ", type:"adj" },
+{ kr:"진하다", jp:"濃い", roman:"jinhada", kana:"チナダ", type:"adj" },
+{ kr:"달다", jp:"甘い", roman:"dalda", kana:"タルダ", type:"adj" },
+{ kr:"맵다", jp:"辛い", roman:"maepda", kana:"メプタ", type:"adj" },
+{ kr:"쓰다", jp:"苦い", roman:"sseuda", kana:"ッスダ", type:"adj" },
+{ kr:"시다", jp:"酸っぱい", roman:"sida", kana:"シダ", type:"adj" },
+{ kr:"짜다", jp:"塩辛い", roman:"jjada", kana:"ッチャダ", type:"adj" },
+{ kr:"둥글다", jp:"丸い", roman:"dunggeulda", kana:"トゥングルダ", type:"adj" },
+{ kr:"네모나다", jp:"四角い", roman:"nemonada", kana:"ネモナダ", type:"adj" },
+{ kr:"아름답다", jp:"美しい", roman:"areumdapda", kana:"アルムダプタ", type:"adj" },
+{ kr:"드물다", jp:"珍しい", roman:"deumulda", kana:"トゥムルダ", type:"adj" },
+{ kr:"그립다", jp:"懐かしい", roman:"geuripda", kana:"クリプタ", type:"adj" },
+{ kr:"항상", jp:"いつも", roman:"hangsang", kana:"ハンサン", type:"adv" },
+{ kr:"자주", jp:"よく", roman:"jaju", kana:"チャジュ", type:"adv" },
+{ kr:"때때로", jp:"時々", roman:"ttaettaero", kana:"ッテッテロ", type:"adv" },
+{ kr:"가끔", jp:"たまに", roman:"gakkeum", kana:"カックム", type:"adv" },
+{ kr:"별로", jp:"あまり", roman:"byeollo", kana:"ピョルロ", type:"adv" },
+{ kr:"전혀", jp:"全然", roman:"jeonhyeo", kana:"チョニョ", type:"adv" },
+{ kr:"매일", jp:"毎日", roman:"maeil", kana:"メイル", type:"adv" },
+{ kr:"매번", jp:"毎回", roman:"maebeon", kana:"メボン", type:"adv" },
+{ kr:"종종", jp:"しばしば", roman:"jongjong", kana:"チョンジョン", type:"adv" },
+{ kr:"좀처럼", jp:"めったに", roman:"jomcheoreom", kana:"チョムチョロム", type:"adv" },
+{ kr:"아주", jp:"とても", roman:"aju", kana:"アジュ", type:"adv" },
+{ kr:"정말", jp:"すごく", roman:"jeongmal", kana:"チョンマル", type:"adv" },
+{ kr:"꽤", jp:"かなり", roman:"kkwae", kana:"ックェ", type:"adv" },
+{ kr:"조금", jp:"少し", roman:"jogeum", kana:"チョグム", type:"adv" },
+{ kr:"잠깐", jp:"ちょっと", roman:"jamkkan", kana:"チャムッカン", type:"adv" },
+{ kr:"더", jp:"もっと", roman:"deo", kana:"ト", type:"adv" },
+{ kr:"가장", jp:"一番", roman:"gajang", kana:"カジャン", type:"adv" },
+{ kr:"상당히", jp:"だいぶ", roman:"sangdanghi", kana:"サンダンヒ", type:"adv" },
+{ kr:"거의", jp:"ほとんど", roman:"geoui", kana:"コイ", type:"adv" },
+{ kr:"완전히", jp:"完全に", roman:"wanjeonhi", kana:"ワンジョニ", type:"adv" },
+{ kr:"지금", jp:"今", roman:"jigeum", kana:"チグム", type:"adv" },
+{ kr:"어제", jp:"昨日", roman:"eoje", kana:"オジェ", type:"adv" },
+{ kr:"오늘", jp:"今日", roman:"oneul", kana:"オヌル", type:"adv" },
+{ kr:"내일", jp:"明日", roman:"naeil", kana:"ネイル", type:"adv" },
+{ kr:"아까", jp:"さっき", roman:"akka", kana:"アッカ", type:"adv" },
+{ kr:"나중에", jp:"あとで", roman:"najunge", kana:"ナジュンエ", type:"adv" },
+{ kr:"곧", jp:"すぐ", roman:"got", kana:"コッ", type:"adv" },
+{ kr:"이미", jp:"もう", roman:"imi", kana:"イミ", type:"adv" },
+{ kr:"아직", jp:"まだ", roman:"ajik", kana:"アジク", type:"adv" },
+{ kr:"이제부터", jp:"これから", roman:"ijebuteo", kana:"イジェブト", type:"adv" },
+{ kr:"빨리", jp:"早く", roman:"ppalli", kana:"ッパルリ", type:"adv" },
+{ kr:"천천히", jp:"ゆっくり", roman:"cheoncheonhi", kana:"チョンチョニ", type:"adv" },
+{ kr:"서둘러", jp:"急いで", roman:"seodulleo", kana:"ソドゥルロ", type:"adv" },
+{ kr:"바로", jp:"すぐに", roman:"baro", kana:"パロ", type:"adv" },
+{ kr:"조용히", jp:"静かに", roman:"joyonghi", kana:"チョヨンヒ", type:"adv" },
+{ kr:"크게", jp:"大きく", roman:"keuge", kana:"クゲ", type:"adv" },
+{ kr:"작게", jp:"小さく", roman:"jakge", kana:"チャッケ", type:"adv" },
+{ kr:"강하게", jp:"強く", roman:"ganghage", kana:"カンハゲ", type:"adv" },
+{ kr:"약하게", jp:"弱く", roman:"yakhage", kana:"ヤカゲ", type:"adv" },
+{ kr:"분명히", jp:"はっきり", roman:"bunmyeonghi", kana:"プンミョンヒ", type:"adv" },
+{ kr:"즐겁게", jp:"楽しく", roman:"jeulgeopge", kana:"チュルゴプケ", type:"adv" },
+{ kr:"슬프게", jp:"悲しく", roman:"seulpeuge", kana:"スルプゲ", type:"adv" },
+{ kr:"기쁘게", jp:"嬉しく", roman:"gippeuge", kana:"キップゲ", type:"adv" },
+{ kr:"진지하게", jp:"真剣に", roman:"jinjihage", kana:"チンジハゲ", type:"adv" },
+{ kr:"정중하게", jp:"丁寧に", roman:"jeongjunghage", kana:"チョンジュンハゲ", type:"adv" },
+{ kr:"친절하게", jp:"親切に", roman:"chinjeolhage", kana:"チンジョラゲ", type:"adv" },
+{ kr:"자유롭게", jp:"自由に", roman:"jayurobge", kana:"チャユロプケ", type:"adv" },
+{ kr:"자연스럽게", jp:"自然に", roman:"jayeonseureopge", kana:"チャヨンスロプケ", type:"adv" },
+{ kr:"솔직하게", jp:"正直に", roman:"soljikhage", kana:"ソルチカゲ", type:"adv" },
+{ kr:"열심히", jp:"一生懸命", roman:"yeolsimhi", kana:"ヨルシミ", type:"adv" },
+{ kr:"먼저", jp:"まず", roman:"meonjeo", kana:"モンジョ", type:"adv" },
+{ kr:"다음에", jp:"次に", roman:"daeume", kana:"タウメ", type:"adv" },
+{ kr:"마지막으로", jp:"最後に", roman:"majimageuro", kana:"マジマグロ", type:"adv" },
+{ kr:"다시 한번", jp:"もう一度", roman:"dasi hanbeon", kana:"タシ ハンボン", type:"adv" },
+{ kr:"처음으로", jp:"初めて", roman:"cheoeumeuro", kana:"チョウムロ", type:"adv" },
+{ kr:"결국", jp:"結局", roman:"gyeolguk", kana:"キョルグク", type:"adv" },
+{ kr:"역시", jp:"やっぱり", roman:"yeoksi", kana:"ヨクシ", type:"adv" },
+{ kr:"물론", jp:"もちろん", roman:"mullon", kana:"ムルロン", type:"adv" },
+{ kr:"아마", jp:"たぶん", roman:"ama", kana:"アマ", type:"adv" },
+{ kr:"만약", jp:"もし", roman:"manyak", kana:"マニャク", type:"adv" },
+{ kr:"함께", jp:"一緒に", roman:"hamkke", kana:"ハムッケ", type:"adv" },
+{ kr:"따로따로", jp:"別々に", roman:"ttarottaro", kana:"ッタロッタロ", type:"adv" },
+{ kr:"정말로", jp:"本当に", roman:"jeongmallo", kana:"チョンマルロ", type:"adv" },
+{ kr:"절대로", jp:"絶対に", roman:"jeoldaero", kana:"チョルテロ", type:"adv" },
+{ kr:"아마", jp:"多分", roman:"ama", kana:"アマ", type:"adv" },
+{ kr:"반드시", jp:"必ず", roman:"bandeusi", kana:"パンドゥシ", type:"adv" },
+{ kr:"갑자기", jp:"突然", roman:"gapjagi", kana:"カプチャギ", type:"adv" },
+{ kr:"우연히", jp:"偶然", roman:"uyeonhi", kana:"ウヨニ", type:"adv" },
+{ kr:"직접", jp:"直接", roman:"jikjeop", kana:"チクチョプ", type:"adv" },
+{ kr:"특히", jp:"特に", roman:"teuki", kana:"トゥキ", type:"adv" },
+{ kr:"그리고", jp:"そして", roman:"geurigo", kana:"クリゴ", type:"conj" },
+{ kr:"그다음에", jp:"それから", roman:"geudaeume", kana:"クダウメ", type:"conj" },
+{ kr:"또", jp:"また", roman:"tto", kana:"ット", type:"conj" },
+{ kr:"더욱이", jp:"さらに", roman:"deougi", kana:"トウギ", type:"conj" },
+{ kr:"게다가", jp:"そのうえ", roman:"gedaga", kana:"ケダガ", type:"conj" },
+{ kr:"게다가", jp:"しかも", roman:"gedaga", kana:"ケダガ", type:"conj" },
+{ kr:"거기에", jp:"それに", roman:"geogie", kana:"コギエ", type:"conj" },
+{ kr:"더하여", jp:"加えて", roman:"deohayeo", kana:"トハヨ", type:"conj" },
+{ kr:"또한", jp:"なお", roman:"ttohan", kana:"ットハン", type:"conj" },
+{ kr:"참고로", jp:"ちなみに", roman:"chamgoro", kana:"チャムゴロ", type:"conj" },
+{ kr:"하지만", jp:"でも", roman:"hajiman", kana:"ハジマン", type:"conj" },
+{ kr:"그러나", jp:"しかし", roman:"geureona", kana:"クロナ", type:"conj" },
+{ kr:"그렇지만", jp:"けれども", roman:"geureochiman", kana:"クロッチマン", type:"conj" },
+{ kr:"하지만", jp:"だけど", roman:"hajiman", kana:"ハジマン", type:"conj" },
+{ kr:"그런데", jp:"ところが", roman:"geureonde", kana:"クロンデ", type:"conj" },
+{ kr:"그래도", jp:"それでも", roman:"geuraedo", kana:"クレド", type:"conj" },
+{ kr:"그런데도", jp:"なのに", roman:"geureondedo", kana:"クロンデド", type:"conj" },
+{ kr:"한편으로", jp:"一方で", roman:"hanpyeoneuro", kana:"ハンピョヌロ", type:"conj" },
+{ kr:"반대로", jp:"反対に", roman:"bandaero", kana:"パンデロ", type:"conj" },
+{ kr:"오히려", jp:"むしろ", roman:"ohiryeo", kana:"オヒリョ", type:"conj" },
+{ kr:"왜냐하면", jp:"なぜなら", roman:"waenyahamyeon", kana:"ウェニャハミョン", type:"conj" },
+{ kr:"그 이유는", jp:"というのは", roman:"geu iyuneun", kana:"ク イユヌン", type:"conj" },
+{ kr:"그래서", jp:"だから", roman:"geuraeseo", kana:"クレソ", type:"conj" },
+{ kr:"그 때문에", jp:"そのため", roman:"geu ttaemune", kana:"ク テムネ", type:"conj" },
+{ kr:"그래서", jp:"それで", roman:"geuraeseo", kana:"クレソ", type:"conj" },
+{ kr:"따라서", jp:"したがって", roman:"ttaraseo", kana:"ッタラソ", type:"conj" },
+{ kr:"그러므로", jp:"ゆえに", roman:"geureomeuro", kana:"クロムロ", type:"conj" },
+{ kr:"즉", jp:"つまり", roman:"jeuk", kana:"チュク", type:"conj" },
+{ kr:"요컨대", jp:"要するに", roman:"yogeondae", kana:"ヨコンデ", type:"conj" },
+{ kr:"결과적으로", jp:"結果として", roman:"gyeolgwa-jeogeuro", kana:"キョルグァジョグロ", type:"conj" },
+{ kr:"만약", jp:"もし", roman:"manyak", kana:"マニャク", type:"conj" },
+{ kr:"만약에", jp:"もしも", roman:"manyage", kana:"マニャゲ", type:"conj" },
+{ kr:"그렇다면", jp:"それなら", roman:"geureotamyeon", kana:"クロッタミョン", type:"conj" },
+{ kr:"그럼", jp:"では", roman:"geureom", kana:"クロム", type:"conj" },
+{ kr:"그렇다면", jp:"ならば", roman:"geureotamyeon", kana:"クロッタミョン", type:"conj" },
+{ kr:"그렇게 하면", jp:"そうすれば", roman:"geureoke hamyeon", kana:"クロケ ハミョン", type:"conj" },
+{ kr:"그러면", jp:"そうしたら", roman:"geureomyeon", kana:"クロミョン", type:"conj" },
+{ kr:"그렇지 않으면", jp:"そうでなければ", roman:"geureochi aneumyeon", kana:"クロッチ アヌミョン", type:"conj" },
+{ kr:"비록", jp:"たとえ", roman:"birok", kana:"ピロク", type:"conj" },
+{ kr:"가령", jp:"仮に", roman:"garyeong", kana:"カリョン", type:"conj" },
+{ kr:"또는", jp:"または", roman:"ttoneun", kana:"ットヌン", type:"conj" },
+{ kr:"혹은", jp:"あるいは", roman:"hogeun", kana:"ホグン", type:"conj" },
+{ kr:"아니면", jp:"それとも", roman:"animyeon", kana:"アニミョン", type:"conj" },
+{ kr:"또는", jp:"もしくは", roman:"ttoneun", kana:"ットヌン", type:"conj" },
+{ kr:"한편", jp:"一方", roman:"hanpyeon", kana:"ハンピョン", type:"conj" },
+{ kr:"반대로", jp:"反対に", roman:"bandaero", kana:"パンデロ", type:"conj" },
+{ kr:"마찬가지로", jp:"同じく", roman:"machangajiro", kana:"マチャンガジロ", type:"conj" },
+{ kr:"그에 비해", jp:"それに比べて", roman:"geue bihae", kana:"クエ ピヘ", type:"conj" },
+{ kr:"예를 들면", jp:"例えば", roman:"yereul deulmyeon", kana:"イェルル トゥルミョン", type:"conj" },
+{ kr:"특히", jp:"特に", roman:"teuki", kana:"トゥキ", type:"conj" },
+{ kr:"와", jp:"わぁ", roman:"wa", kana:"ワ", type:"react" },
+{ kr:"오", jp:"おお", roman:"o", kana:"オ", type:"react" },
+{ kr:"아", jp:"あ", roman:"a", kana:"ア", type:"react" },
+{ kr:"아 / 어", jp:"あ/あれ", roman:"a / eo", kana:"ア / オ", type:"react" },
+{ kr:"어?", jp:"え？", roman:"eo?", kana:"オ？", type:"react" },
+{ kr:"응", jp:"うん", roman:"eung", kana:"ウン", type:"react" },
+{ kr:"네", jp:"はい", roman:"ne", kana:"ネ", type:"react" },
+{ kr:"아니", jp:"いや", roman:"ani", kana:"アニ", type:"react" },
+{ kr:"아니요", jp:"いいえ", roman:"aniyo", kana:"アニヨ", type:"react" },
+{ kr:"그래", jp:"そう", roman:"geurae", kana:"クレ", type:"react" },
+{ kr:"맞아", jp:"そう", roman:"maja", kana:"マジャ", type:"react" },
+{ kr:"맞아요", jp:"そうです", roman:"majayo", kana:"マジャヨ", type:"react" },
+{ kr:"그렇구나", jp:"そうなんだ", roman:"geureokuna", kana:"クロックナ", type:"react" },
+{ kr:"그렇군요", jp:"そうなんですね", roman:"geureokgunyo", kana:"クロックニョ", type:"react" },
+{ kr:"정말?", jp:"本当に？", roman:"jeongmal?", kana:"チョンマル？", type:"react" },
+{ kr:"진짜?", jp:"本当に？", roman:"jinjja?", kana:"チンチャ？", type:"react" },
+{ kr:"대박", jp:"すごい/やばい", roman:"daebak", kana:"テバク", type:"react" },
+{ kr:"진짜?", jp:"まじか", roman:"jinjja?", kana:"チンチャ？", type:"react" },
+{ kr:"어머", jp:"あら", roman:"eomeo", kana:"オモ", type:"react" },
+{ kr:"어머나", jp:"あらまあ", roman:"eomeona", kana:"オモナ", type:"react" },
+{ kr:"아이구", jp:"あらら/やれやれ", roman:"aigu", kana:"アイグ", type:"react" },
+{ kr:"그렇구나", jp:"なるほど", roman:"geureokuna", kana:"クロックナ", type:"react" },
+{ kr:"오케이", jp:"オーケー", roman:"okei", kana:"オケイ", type:"react" },
+{ kr:"좋아", jp:"いいよ", roman:"joa", kana:"チョア", type:"react" },
+{ kr:"싫어", jp:"嫌だ", roman:"sireo", kana:"シロ", type:"react" },
+{ kr:"괜찮아", jp:"大丈夫", roman:"gwaenchana", kana:"クェンチャナ", type:"react" },
+{ kr:"괜찮아요", jp:"大丈夫です", roman:"gwaenchanayo", kana:"クェンチャナヨ", type:"react" },
+{ kr:"안 돼", jp:"だめ", roman:"an dwae", kana:"アン ドェ", type:"react" },
+{ kr:"안 됩니다", jp:"だめです", roman:"an doemnida", kana:"アン ドェムニダ", type:"react" },
+{ kr:"잠깐만", jp:"ちょっと待って", roman:"jamkkanman", kana:"チャムッカンマン", type:"react" },
+{ kr:"뭐?", jp:"何？", roman:"mwo?", kana:"ムォ？", type:"react" },
+{ kr:"이게 뭐야?", jp:"何これ？", roman:"ige mwoya?", kana:"イゲ ムォヤ？", type:"react" },
+{ kr:"왜?", jp:"なんで？", roman:"wae?", kana:"ウェ？", type:"react" },
+{ kr:"왜요?", jp:"なぜですか？", roman:"waeyo?", kana:"ウェヨ？", type:"react" },
+{ kr:"어떡하지", jp:"どうしよう", roman:"eotteokaji", kana:"オットカジ", type:"react" },
+{ kr:"어떻게?", jp:"どうやって？", roman:"eotteoke?", kana:"オットケ？", type:"react" },
+{ kr:"몰라", jp:"知らない", roman:"molla", kana:"モルラ", type:"react" },
+{ kr:"모릅니다", jp:"知りません", roman:"moreumnida", kana:"モルムニダ", type:"react" },
+{ kr:"알아", jp:"知ってる", roman:"ara", kana:"アラ", type:"react" },
+{ kr:"알고 있어요", jp:"知っています", roman:"algo isseoyo", kana:"アルゴ イッソヨ", type:"react" },
+{ kr:"알았어", jp:"わかった", roman:"arasseo", kana:"アラッソ", type:"react" },
+{ kr:"알겠습니다", jp:"わかりました", roman:"algesseumnida", kana:"アルゲッスムニダ", type:"react" },
+{ kr:"이해했어", jp:"理解した", roman:"ihaehaesseo", kana:"イヘヘッソ", type:"react" },
+{ kr:"이해했습니다", jp:"理解しました", roman:"ihaehaetseumnida", kana:"イヘヘッスムニダ", type:"react" },
+{ kr:"좋겠다", jp:"いいなぁ", roman:"joketda", kana:"チョケッタ", type:"react" },
+{ kr:"부럽다", jp:"うらやましい", roman:"bureopda", kana:"プロプタ", type:"react" },
+{ kr:"멋있다", jp:"かっこいい", roman:"meositda", kana:"モシッタ", type:"react" },
+{ kr:"귀엽다", jp:"かわいい", roman:"gwiyeopda", kana:"キヨプタ", type:"react" },
+{ kr:"재미있다", jp:"面白い", roman:"jaemiitda", kana:"チェミイッタ", type:"react" },
+{ kr:"최고", jp:"最高", roman:"choego", kana:"チェゴ", type:"react" },
+{ kr:"최고야", jp:"最高だよ", roman:"choegoya", kana:"チェゴヤ", type:"react" },
+{ kr:"나이스", jp:"ナイス", roman:"naiseu", kana:"ナイス", type:"react" },
+{ kr:"수고했어", jp:"お疲れ", roman:"sugohaesseo", kana:"スゴヘッソ", type:"react" },
+{ kr:"고마워", jp:"ありがとう", roman:"gomawo", kana:"コマウォ", type:"react" },
+{ kr:"미안해", jp:"ごめん", roman:"mianhae", kana:"ミアネ", type:"react" },
+{ kr:"그냥", jp:"なんとなく", roman:"geunyang", kana:"クニャン", type:"react" },
+{ kr:"물론", jp:"もちろん", roman:"mullon", kana:"ムルロン", type:"react" },
+{ kr:"당연합니다", jp:"当然です", roman:"dangyeonhamnida", kana:"タンヨナムニダ", type:"react" },
+{ kr:"아마", jp:"たぶん", roman:"ama", kana:"アマ", type:"react" },
+{ kr:"글쎄", jp:"さあどうかな", roman:"geulsse", kana:"クルッセ", type:"react" },
+{ kr:"아깝다", jp:"惜しい", roman:"akkapda", kana:"アッカプタ", type:"react" },
+{ kr:"깜짝이야", jp:"びっくりした", roman:"kkamjjagiya", kana:"カムッチャギヤ", type:"react" },
+{ kr:"놀랐어", jp:"驚いた", roman:"nollasseo", kana:"ノルラッソ", type:"react" },
+{ kr:"힘들다", jp:"つらい", roman:"himdeulda", kana:"ヒムドゥルダ", type:"react" },
+{ kr:"배고파", jp:"お腹すいた", roman:"baegopa", kana:"ペゴパ", type:"react" },
+{ kr:"졸려", jp:"眠い", roman:"jollyeo", kana:"チョルリョ", type:"react" },
+{ kr:"시간", jp:"時間", roman:"sigan", kana:"シガン", type:"time" },
+{ kr:"시", jp:"時", roman:"si", kana:"シ", type:"time" },
+{ kr:"분", jp:"分", roman:"bun", kana:"プン", type:"time" },
+{ kr:"초", jp:"秒", roman:"cho", kana:"チョ", type:"time" },
+{ kr:"오늘", jp:"今日", roman:"oneul", kana:"オヌル", type:"time" },
+{ kr:"어제", jp:"昨日", roman:"eoje", kana:"オジェ", type:"time" },
+{ kr:"내일", jp:"明日", roman:"naeil", kana:"ネイル", type:"time" },
+{ kr:"오늘", jp:"今日", roman:"oneul", kana:"オヌル", type:"time" },
+{ kr:"아까", jp:"さっき", roman:"akka", kana:"アッカ", type:"time" },
+{ kr:"나중에", jp:"あとで", roman:"najunge", kana:"ナジュンエ", type:"time" },
+{ kr:"곧", jp:"すぐ", roman:"got", kana:"コッ", type:"time" },
+{ kr:"이미", jp:"もう", roman:"imi", kana:"イミ", type:"time" },
+{ kr:"아직", jp:"まだ", roman:"ajik", kana:"アジク", type:"time" },
+{ kr:"이제부터", jp:"これから", roman:"ijebuteo", kana:"イジェブト", type:"time" },
+{ kr:"아침", jp:"朝", roman:"achim", kana:"アチム", type:"time" },
+{ kr:"낮", jp:"昼", roman:"nat", kana:"ナッ", type:"time" },
+{ kr:"저녁", jp:"夕方", roman:"jeonyeok", kana:"チョニョク", type:"time" },
+{ kr:"밤", jp:"夜", roman:"bam", kana:"パム", type:"time" },
+{ kr:"심야", jp:"深夜", roman:"simya", kana:"シミャ", type:"time" },
+{ kr:"오전", jp:"午前", roman:"ojeon", kana:"オジョン", type:"time" },
+{ kr:"오후", jp:"午後", roman:"ohu", kana:"オフ", type:"time" },
+{ kr:"낮", jp:"昼間", roman:"nat", kana:"ナッ", type:"time" },
+{ kr:"한밤중", jp:"夜中", roman:"hanbamjung", kana:"ハンバムジュン", type:"time" },
+{ kr:"새벽", jp:"明け方", roman:"saebyeok", kana:"セビョク", type:"time" },
+{ kr:"월요일", jp:"月曜日", roman:"woryoil", kana:"ウォリョイル", type:"time" },
+{ kr:"화요일", jp:"火曜日", roman:"hwayoil", kana:"ファヨイル", type:"time" },
+{ kr:"수요일", jp:"水曜日", roman:"suyoil", kana:"スヨイル", type:"time" },
+{ kr:"목요일", jp:"木曜日", roman:"mogyoil", kana:"モギョイル", type:"time" },
+{ kr:"금요일", jp:"金曜日", roman:"geumyoil", kana:"クミョイル", type:"time" },
+{ kr:"토요일", jp:"土曜日", roman:"toyoil", kana:"トヨイル", type:"time" },
+{ kr:"일요일", jp:"日曜日", roman:"iryoil", kana:"イリョイル", type:"time" },
+{ kr:"평일", jp:"平日", roman:"pyeongil", kana:"ピョンイル", type:"time" },
+{ kr:"주말", jp:"週末", roman:"jumal", kana:"チュマル", type:"time" },
+{ kr:"일요일", jp:"日曜日", roman:"iryoil", kana:"イリョイル", type:"time" },
+{ kr:"하루", jp:"一日", roman:"haru", kana:"ハル", type:"time" },
+{ kr:"매일", jp:"毎日", roman:"maeil", kana:"メイル", type:"time" },
+{ kr:"주말", jp:"週末", roman:"jumal", kana:"チュマル", type:"time" },
+{ kr:"이번 주", jp:"今週", roman:"ibeon ju", kana:"イボン ジュ", type:"time" },
+{ kr:"지난주", jp:"先週", roman:"jinanju", kana:"チナンジュ", type:"time" },
+{ kr:"다음 주", jp:"来週", roman:"daeum ju", kana:"タウム ジュ", type:"time" },
+{ kr:"월요일", jp:"月曜日", roman:"woryoil", kana:"ウォリョイル", type:"time" },
+{ kr:"이번 달", jp:"今月", roman:"ibeon dal", kana:"イボン タル", type:"time" },
+{ kr:"지난달", jp:"先月", roman:"jinandal", kana:"チナンタル", type:"time" },
+{ kr:"다음 달", jp:"来月", roman:"daeum dal", kana:"タウム タル", type:"time" },
+{ kr:"년", jp:"年", roman:"nyeon", kana:"ニョン", type:"time" },
+{ kr:"올해", jp:"今年", roman:"orae", kana:"オレ", type:"time" },
+{ kr:"작년", jp:"去年", roman:"jangnyeon", kana:"チャンニョン", type:"time" },
+{ kr:"내년", jp:"来年", roman:"naenyeon", kana:"ネニョン", type:"time" },
+{ kr:"봄", jp:"春", roman:"bom", kana:"ポム", type:"time" },
+{ kr:"여름", jp:"夏", roman:"yeoreum", kana:"ヨルム", type:"time" },
+{ kr:"가을", jp:"秋", roman:"gaeul", kana:"カウル", type:"time" },
+{ kr:"겨울", jp:"冬", roman:"gyeoul", kana:"キョウル", type:"time" },
+{ kr:"계절", jp:"季節", roman:"gyejeol", kana:"ケジョル", type:"time" },
+{ kr:"저", jp:"私", roman:"jeo", kana:"チョ", type:"pronoun" },
+{ kr:"나", jp:"私/僕", roman:"na", kana:"ナ", type:"pronoun" },
+{ kr:"당신", jp:"あなた", roman:"dangsin", kana:"タンシン", type:"pronoun" },
+{ kr:"너", jp:"君", roman:"neo", kana:"ノ", type:"pronoun" },
+{ kr:"그", jp:"彼", roman:"geu", kana:"ク", type:"pronoun" },
+{ kr:"그녀", jp:"彼女", roman:"geunyeo", kana:"クニョ", type:"pronoun" },
+{ kr:"저희", jp:"私たち", roman:"jeohui", kana:"チョヒ", type:"pronoun" },
+{ kr:"우리", jp:"僕たち", roman:"uri", kana:"ウリ", type:"pronoun" },
+{ kr:"당신들", jp:"あなたたち", roman:"dangsindeul", kana:"タンシンドゥル", type:"pronoun" },
+{ kr:"너희", jp:"君たち", roman:"neohui", kana:"ノヒ", type:"pronoun" },
+{ kr:"그들", jp:"彼ら", roman:"geudeul", kana:"クドゥル", type:"pronoun" },
+{ kr:"그녀들", jp:"彼女たち", roman:"geunyeodeul", kana:"クニョドゥル", type:"pronoun" },
+{ kr:"모두", jp:"みんな", roman:"modu", kana:"モドゥ", type:"pronoun" },
+{ kr:"누구", jp:"誰", roman:"nugu", kana:"ヌグ", type:"pronoun" },
+{ kr:"누군가", jp:"誰か", roman:"nugunga", kana:"ヌグンガ", type:"pronoun" },
+{ kr:"아무도", jp:"誰も", roman:"amudo", kana:"アムド", type:"pronoun" },
+{ kr:"이것", jp:"これ", roman:"igeot", kana:"イゴッ", type:"pronoun" },
+{ kr:"그것", jp:"それ", roman:"geugeot", kana:"クゴッ", type:"pronoun" },
+{ kr:"저것", jp:"あれ", roman:"jeogeot", kana:"チョゴッ", type:"pronoun" },
+{ kr:"어느 것", jp:"どれ", roman:"eoneu geot", kana:"オヌ ゴッ", type:"pronoun" },
+{ kr:"여기", jp:"ここ", roman:"yeogi", kana:"ヨギ", type:"pronoun" },
+{ kr:"거기", jp:"そこ", roman:"geogi", kana:"コギ", type:"pronoun" },
+{ kr:"저기", jp:"あそこ", roman:"jeogi", kana:"チョギ", type:"pronoun" },
+{ kr:"어디", jp:"どこ", roman:"eodi", kana:"オディ", type:"pronoun" },
+{ kr:"이쪽", jp:"こちら", roman:"ijjok", kana:"イッチョク", type:"pronoun" },
+{ kr:"그쪽", jp:"そちら", roman:"geujjok", kana:"クッチョク", type:"pronoun" },
+{ kr:"저쪽", jp:"あちら", roman:"jeojjok", kana:"チョッチョク", type:"pronoun" },
+{ kr:"어느 쪽", jp:"どちら", roman:"eoneu jjok", kana:"オヌ チョク", type:"pronoun" },
+{ kr:"이것들", jp:"これら", roman:"igeotdeul", kana:"イゴットゥル", type:"pronoun" },
+{ kr:"그것들", jp:"それら", roman:"geugeotdeul", kana:"クゴットゥル", type:"pronoun" },
+{ kr:"저것들", jp:"あれら", roman:"jeogeotdeul", kana:"チョゴットゥル", type:"pronoun" },
+{ kr:"이", jp:"この", roman:"i", kana:"イ", type:"pronoun" },
+{ kr:"그", jp:"その", roman:"geu", kana:"ク", type:"pronoun" },
+{ kr:"저", jp:"あの", roman:"jeo", kana:"チョ", type:"pronoun" },
+{ kr:"어느", jp:"どの", roman:"eoneu", kana:"オヌ", type:"pronoun" },
+{ kr:"이런", jp:"こんな", roman:"ireon", kana:"イロン", type:"pronoun" },
+{ kr:"그런", jp:"そんあ", roman:"geureon", kana:"クロン", type:"pronoun" },
+{ kr:"저런", jp:"あんな", roman:"jeoreon", kana:"チョロン", type:"pronoun" },
+{ kr:"어떤", jp:"どんな", roman:"eotteon", kana:"オットン", type:"pronoun" },
+{ kr:"무엇", jp:"何", roman:"mueot", kana:"ムオッ", type:"question" },
+{ kr:"누구", jp:"誰", roman:"nugu", kana:"ヌグ", type:"question" },
+{ kr:"언제", jp:"いつ", roman:"eonje", kana:"オンジェ", type:"question" },
+{ kr:"어디", jp:"どこ", roman:"eodi", kana:"オディ", type:"question" },
+{ kr:"어느 것", jp:"どれ", roman:"eoneu geot", kana:"オヌ ゴッ", type:"question" },
+{ kr:"어느 쪽", jp:"どちら", roman:"eoneu jjok", kana:"オヌ チョク", type:"question" },
+{ kr:"왜", jp:"なぜ", roman:"wae", kana:"ウェ", type:"question" },
+{ kr:"왜", jp:"なんで", roman:"wae", kana:"ウェ", type:"question" },
+{ kr:"어째서", jp:"どうして", roman:"eojjaeseo", kana:"オッチェソ", type:"question" },
+{ kr:"어떻게", jp:"どう", roman:"eotteoke", kana:"オットケ", type:"question" },
+{ kr:"어떻게", jp:"どのように", roman:"eotteoke", kana:"オットケ", type:"question" },
+{ kr:"몇 개", jp:"いくつ", roman:"myeot gae", kana:"ミョッ ケ", type:"question" },
+{ kr:"얼마", jp:"いくら", roman:"eolma", kana:"オルマ", type:"question" },
+{ kr:"몇 시", jp:"何時", roman:"myeot si", kana:"ミョッ シ", type:"question" },
+{ kr:"몇 분", jp:"何分", roman:"myeot bun", kana:"ミョッ プン", type:"question" },
+{ kr:"무슨 요일", jp:"何曜日", roman:"museun yoil", kana:"ムスン ヨイル", type:"question" },
+{ kr:"몇 월", jp:"何月", roman:"myeot wol", kana:"ミョ ドォル", type:"question" },
+{ kr:"며칠", jp:"何日", roman:"myeochil", kana:"ミョチル", type:"question" },
+{ kr:"몇 년", jp:"何年", roman:"myeot nyeon", kana:"ミョン ニョン", type:"question" },
+{ kr:"몇 살", jp:"何歳", roman:"myeot sal", kana:"ミョッ サル", type:"question" },
+{ kr:"몇 명", jp:"何人", roman:"myeot myeong", kana:"ミョン ミョン", type:"question" },
+{ kr:"몇 개", jp:"何個", roman:"myeot gae", kana:"ミョッ ケ", type:"question" },
+{ kr:"몇 번", jp:"何回", roman:"myeot beon", kana:"ミョッ ポン", type:"question" },
+{ kr:"몇 번", jp:"何番", roman:"myeot beon", kana:"ミョッ ポン", type:"question" },
+{ kr:"무슨 색", jp:"何色", roman:"museun saek", kana:"ムスン セク", type:"question" },
+{ kr:"무슨 언어", jp:"何語", roman:"museun eoneo", kana:"ムスン オノ", type:"question" },
+{ kr:"무슨", jp:"何の", roman:"museun", kana:"ムスン", type:"question" },
+{ kr:"누구의", jp:"誰の", roman:"nuguui", kana:"ヌグエ", type:"question" },
+{ kr:"어디의", jp:"どこの", roman:"eodiui", kana:"オディエ", type:"question" },
+{ kr:"어떤", jp:"どんな", roman:"eotteon", kana:"オットン", type:"question" },
+{ kr:"어느", jp:"どの", roman:"eoneu", kana:"オヌ", type:"question" },
+{ kr:"얼마나", jp:"どれくらい", roman:"eolmana", kana:"オルマナ", type:"question" },
+{ kr:"어느 정도", jp:"どのくらい", roman:"eoneu jeongdo", kana:"オヌ チョンド", type:"question" },
+{ kr:"어느 쪽", jp:"どっち", roman:"eoneu jjok", kana:"オヌ チョク", type:"question" },
+{ kr:"누구세요", jp:"どちら様", roman:"nuguseyo", kana:"ヌグセヨ", type:"question" },
+{ kr:"무엇", jp:"何", roman:"mueot", kana:"ムオッ", type:"question" },
+{ kr:"누구", jp:"誰", roman:"nugu", kana:"ヌグ", type:"question" },
+{ kr:"언제", jp:"いつ", roman:"eonje", kana:"オンジェ", type:"question" },
+{ kr:"어디", jp:"どこ", roman:"eodi", kana:"オディ", type:"question" },
+{ kr:"어느 것", jp:"どれ", roman:"eoneu geot", kana:"オヌ ゴッ", type:"question" },
+{ kr:"어느 쪽", jp:"どちら", roman:"eoneu jjok", kana:"オヌ チョク", type:"question" },
+{ kr:"왜", jp:"なぜ", roman:"wae", kana:"ウェ", type:"question" },
+{ kr:"왜", jp:"なんで", roman:"wae", kana:"ウェ", type:"question" },
+{ kr:"어째서", jp:"どうして", roman:"eojjaeseo", kana:"オッチェソ", type:"question" },
+{ kr:"어떻게", jp:"どう", roman:"eotteoke", kana:"オットケ", type:"question" },
+{ kr:"어떻게", jp:"どのように", roman:"eotteoke", kana:"オットケ", type:"question" },
+{ kr:"몇 개", jp:"いくつ", roman:"myeot gae", kana:"ミョッ ケ", type:"question" },
+{ kr:"얼마", jp:"いくら", roman:"eolma", kana:"オルマ", type:"question" },
+{ kr:"몇 시", jp:"何時", roman:"myeot si", kana:"ミョッ シ", type:"question" },
+{ kr:"몇 분", jp:"何分", roman:"myeot bun", kana:"ミョッ プン", type:"question" },
+{ kr:"무슨 요일", jp:"何曜日", roman:"museun yoil", kana:"ムスン ヨイル", type:"question" },
+{ kr:"몇 월", jp:"何月", roman:"myeot wol", kana:"ミョ ドォル", type:"question" },
+{ kr:"며칠", jp:"何日", roman:"myeochil", kana:"ミョチル", type:"question" },
+{ kr:"몇 년", jp:"何年", roman:"myeot nyeon", kana:"ミョン ニョン", type:"question" },
+{ kr:"몇 살", jp:"何歳", roman:"myeot sal", kana:"ミョッ サル", type:"question" },
+{ kr:"몇 명", jp:"何人", roman:"myeot myeong", kana:"ミョン ミョン", type:"question" },
+{ kr:"몇 개", jp:"何個", roman:"myeot gae", kana:"ミョッ ケ", type:"question" },
+{ kr:"몇 번", jp:"何回", roman:"myeot beon", kana:"ミョッ ポン", type:"question" },
+{ kr:"몇 번", jp:"何番", roman:"myeot beon", kana:"ミョッ ポン", type:"question" },
+{ kr:"무슨 색", jp:"何色", roman:"museun saek", kana:"ムスン セク", type:"question" },
+{ kr:"무슨 언어", jp:"何語", roman:"museun eoneo", kana:"ムスン オノ", type:"question" },
+{ kr:"누구의", jp:"誰の", roman:"nuguui", kana:"ヌグエ", type:"question" },
+{ kr:"어디의", jp:"どこの", roman:"eodiui", kana:"オディエ", type:"question" },
+{ kr:"어떤", jp:"どんな", roman:"eotteon", kana:"オットン", type:"question" },
+{ kr:"어느", jp:"どの", roman:"eoneu", kana:"オヌ", type:"question" },
+{ kr:"얼마나", jp:"どれくらい", roman:"eolmana", kana:"オルマナ", type:"question" },
+{ kr:"어느 쪽", jp:"どっち", roman:"eoneu jjok", kana:"オヌ チョク", type:"question" },
+{ kr:"어떻게", jp:"どうやって", roman:"eotteoke", kana:"オットケ", type:"question" },
+{ kr:"어디에서", jp:"どこから", roman:"eodieseo", kana:"オディエソ", type:"question" },
+{ kr:"어디까지", jp:"どこまで", roman:"eodikkaji", kana:"オディッカジ", type:"question" },
+{ kr:"언제부터", jp:"いつから", roman:"eonjebuteo", kana:"オンジェブト", type:"question" },
+{ kr:"언제까지", jp:"いつまで", roman:"eonjegaji", kana:"オンジェッカジ", type:"question" },
+{ kr:"누구와", jp:"誰と", roman:"nuguwa", kana:"ヌグワ", type:"question" },
+{ kr:"누구에게", jp:"誰に", roman:"nuguege", kana:"ヌグエゲ", type:"question" },
+{ kr:"무엇을", jp:"何を", roman:"mueoseul", kana:"ムオスル", type:"question" },
+{ kr:"무엇이", jp:"何が", roman:"mueosi", kana:"ムオシ", type:"question" },
+{ kr:"영", jp:"０（漢数詞）", roman:"yeong", kana:"ヨン", type:"number" },
+{ kr:"일", jp:"１（漢数詞）", roman:"il", kana:"イル", type:"number" },
+{ kr:"이", jp:"2（漢数詞）", roman:"i", kana:"イ", type:"number" },
+{ kr:"삼", jp:"3（漢数詞）", roman:"sam", kana:"サム", type:"number" },
+{ kr:"사", jp:"4（漢数詞）", roman:"sa", kana:"サ", type:"number" },
+{ kr:"오", jp:"5（漢数詞）", roman:"o", kana:"オ", type:"number" },
+{ kr:"육", jp:"6（漢数詞）", roman:"yuk", kana:"ユク", type:"number" },
+{ kr:"칠", jp:"７(漢数詞)", roman:"chil", kana:"チル", type:"number" },
+{ kr:"팔", jp:"8（漢数詞）", roman:"pal", kana:"パル", type:"number" },
+{ kr:"구", jp:"9（漢数詞）", roman:"gu", kana:"ク", type:"number" },
+{ kr:"십", jp:"10（漢数詞）", roman:"sip", kana:"シプ", type:"number" },
+{ kr:"십일", jp:"11（漢数詞）", roman:"sibil", kana:"シビル", type:"number" },
+{ kr:"십이", jp:"12（漢数詞）", roman:"sibi", kana:"シビ", type:"number" },
+{ kr:"십삼", jp:"13（漢数詞）", roman:"sipsam", kana:"シプサム", type:"number" },
+{ kr:"십사", jp:"14（漢数詞）", roman:"sipsa", kana:"シプサ", type:"number" },
+{ kr:"십오", jp:"15（漢数詞）", roman:"sibo", kana:"シボ", type:"number" },
+{ kr:"십육", jp:"16（漢数詞）", roman:"simnyuk", kana:"シムニュク", type:"number" },
+{ kr:"십칠", jp:"17（漢数詞）", roman:"sipchil", kana:"シプチル", type:"number" },
+{ kr:"십팔", jp:"18（漢数詞）", roman:"sip-pal", kana:"シッパル", type:"number" },
+{ kr:"십구", jp:"19（漢数詞）", roman:"sipgu", kana:"シプク", type:"number" },
+{ kr:"이십", jp:"20（漢数詞）", roman:"isip", kana:"イシプ", type:"number" },
+{ kr:"이십일", jp:"21（漢数詞）", roman:"isibil", kana:"イシビル", type:"number" },
+{ kr:"이십이", jp:"22（漢数詞）", roman:"isibi", kana:"イシビ", type:"number" },
+{ kr:"이십삼", jp:"23（漢数詞）", roman:"isipsam", kana:"イシプサム", type:"number" },
+{ kr:"이십사", jp:"24（漢数詞）", roman:"isipsa", kana:"イシプサ", type:"number" },
+{ kr:"이십오", jp:"25（漢数詞）", roman:"isibo", kana:"イシボ", type:"number" },
+{ kr:"이십육", jp:"26（漢数詞）", roman:"isimnyuk", kana:"イシムニュク", type:"number" },
+{ kr:"이십칠", jp:"27（漢数詞）", roman:"isipchil", kana:"イシプチル", type:"number" },
+{ kr:"이십팔", jp:"28（漢数詞）", roman:"isip-pal", kana:"イシッパル", type:"number" },
+{ kr:"이십구", jp:"29（漢数詞）", roman:"isipgu", kana:"イシプク", type:"number" },
+{ kr:"삼십", jp:"30（漢数詞）", roman:"samsip", kana:"サムシプ", type:"number" },
+{ kr:"삼십일", jp:"31（漢数詞）", roman:"samsibil", kana:"サムシビル", type:"number" },
+{ kr:"삼십이", jp:"32（漢数詞）", roman:"samsibi", kana:"サムシビ", type:"number" },
+{ kr:"삼십삼", jp:"33（漢数詞）", roman:"samsipsam", kana:"サムシプサム", type:"number" },
+{ kr:"삼십사", jp:"34（漢数詞）", roman:"samsipsa", kana:"サムシプサ", type:"number" },
+{ kr:"삼십오", jp:"35（漢数詞）", roman:"samsibo", kana:"サムシボ", type:"number" },
+{ kr:"삼십육", jp:"36（漢数詞）", roman:"samsimnyuk", kana:"サムシムニュク", type:"number" },
+{ kr:"삼십칠", jp:"37（漢数詞）", roman:"samsipchil", kana:"サムシプチル", type:"number" },
+{ kr:"삼십팔", jp:"38（漢数詞）", roman:"samsip-pal", kana:"サムシッパル", type:"number" },
+{ kr:"삼십구", jp:"39（漢数詞）", roman:"samsipgu", kana:"サムシプク", type:"number" },
+{ kr:"사십", jp:"40（漢数詞）", roman:"sasip", kana:"サシプ", type:"number" },
+{ kr:"사십일", jp:"41（漢数詞）", roman:"sasibil", kana:"サシビル", type:"number" },
+{ kr:"사십이", jp:"42（漢数詞）", roman:"sasibi", kana:"サシビ", type:"number" },
+{ kr:"사십삼", jp:"43（漢数詞）", roman:"sasipsam", kana:"サシプサム", type:"number" },
+{ kr:"사십사", jp:"44（漢数詞）", roman:"sasipsa", kana:"サシプサ", type:"number" },
+{ kr:"사십오", jp:"45（漢数詞）", roman:"sasibo", kana:"サシボ", type:"number" },
+{ kr:"사십육", jp:"46（漢数詞）", roman:"sasimnyuk", kana:"サシムニュク", type:"number" },
+{ kr:"사십칠", jp:"47（漢数詞）", roman:"sasipchil", kana:"サシプチル", type:"number" },
+{ kr:"사십팔", jp:"48（漢数詞）", roman:"sasip-pal", kana:"サシッパル", type:"number" },
+{ kr:"사십구", jp:"49（漢数詞）", roman:"sasipgu", kana:"サシプク", type:"number" },
+{ kr:"오십", jp:"50（漢数詞）", roman:"osip", kana:"オシプ", type:"number" },
+{ kr:"오십일", jp:"51（漢数詞）", roman:"osibil", kana:"オシビル", type:"number" },
+{ kr:"오십이", jp:"52（漢数詞）", roman:"osibi", kana:"オシビ", type:"number" },
+{ kr:"오십삼", jp:"53（漢数詞）", roman:"osipsam", kana:"オシプサム", type:"number" },
+{ kr:"오십사", jp:"54（漢数詞）", roman:"osipsa", kana:"オシプサ", type:"number" },
+{ kr:"오십오", jp:"55（漢数詞）", roman:"osibo", kana:"オシボ", type:"number" },
+{ kr:"오십육", jp:"56（漢数詞）", roman:"osimnyuk", kana:"オシムニュク", type:"number" },
+{ kr:"오십칠", jp:"57（漢数詞）", roman:"osipchil", kana:"オシプチル", type:"number" },
+{ kr:"오십팔", jp:"58（漢数詞）", roman:"osip-pal", kana:"オシッパル", type:"number" },
+{ kr:"오십구", jp:"59（漢数詞）", roman:"osipgu", kana:"オシプク", type:"number" },
+{ kr:"육십", jp:"60（漢数詞）", roman:"yuksip", kana:"ユクシプ", type:"number" },
+{ kr:"육십일", jp:"61（漢数詞）", roman:"yuksibil", kana:"ユクシビル", type:"number" },
+{ kr:"육십이", jp:"62（漢数詞）", roman:"yuksibi", kana:"ユクシビ", type:"number" },
+{ kr:"육십삼", jp:"63（漢数詞）", roman:"yuksipsam", kana:"ユクシプサム", type:"number" },
+{ kr:"육십사", jp:"64（漢数詞）", roman:"yuksipsa", kana:"ユクシプサ", type:"number" },
+{ kr:"육십오", jp:"65（漢数詞）", roman:"yuksibo", kana:"ユクシボ", type:"number" },
+{ kr:"육십육", jp:"66（漢数詞）", roman:"yuksimnyuk", kana:"ユクシムニュク", type:"number" },
+{ kr:"육십칠", jp:"67（漢数詞）", roman:"yuksipchil", kana:"ユクシプチル", type:"number" },
+{ kr:"육십팔", jp:"68（漢数詞）", roman:"yuksip-pal", kana:"ユクシッパル", type:"number" },
+{ kr:"육십구", jp:"69（漢数詞）", roman:"yuksipgu", kana:"ユクシプク", type:"number" },
+{ kr:"칠십", jp:"70（漢数詞）", roman:"chilsip", kana:"チルシプ", type:"number" },
+{ kr:"칠십일", jp:"71（漢数詞）", roman:"chilsibil", kana:"チルシビル", type:"number" },
+{ kr:"칠십이", jp:"72（漢数詞）", roman:"chilsibi", kana:"チルシビ", type:"number" },
+{ kr:"칠십삼", jp:"73（漢数詞）", roman:"chilsipsam", kana:"チルシプサム", type:"number" },
+{ kr:"칠십사", jp:"74（漢数詞）", roman:"chilsipsa", kana:"チルシプサ", type:"number" },
+{ kr:"칠십오", jp:"75（漢数詞）", roman:"chilsibo", kana:"チルシボ", type:"number" },
+{ kr:"칠십육", jp:"76（漢数詞）", roman:"chilsimnyuk", kana:"チルシムニュク", type:"number" },
+{ kr:"칠십칠", jp:"77（漢数詞）", roman:"chilsipchil", kana:"チルシプチル", type:"number" },
+{ kr:"칠십팔", jp:"78（漢数詞）", roman:"chilsip-pal", kana:"チルシッパル", type:"number" },
+{ kr:"칠십구", jp:"79（漢数詞）", roman:"chilsipgu", kana:"チルシプク", type:"number" },
+{ kr:"팔십", jp:"80（漢数詞）", roman:"palsip", kana:"パルシプ", type:"number" },
+{ kr:"팔십일", jp:"81（漢数詞）", roman:"palsibil", kana:"パルシビル", type:"number" },
+{ kr:"팔십이", jp:"82（漢数詞）", roman:"palsibi", kana:"パルシビ", type:"number" },
+{ kr:"팔십삼", jp:"83（漢数詞）", roman:"palsipsam", kana:"パルシプサム", type:"number" },
+{ kr:"팔십사", jp:"84（漢数詞）", roman:"palsipsa", kana:"パルシプサ", type:"number" },
+{ kr:"팔십오", jp:"85（漢数詞）", roman:"palsibo", kana:"パルシボ", type:"number" },
+{ kr:"팔십육", jp:"86（漢数詞）", roman:"palsimnyuk", kana:"パルシムニュク", type:"number" },
+{ kr:"팔십칠", jp:"87（漢数詞）", roman:"palsipchil", kana:"パルシプチル", type:"number" },
+{ kr:"팔십팔", jp:"88（漢数詞）", roman:"palsip-pal", kana:"パルシッパル", type:"number" },
+{ kr:"팔십구", jp:"89（漢数詞）", roman:"palsipgu", kana:"パルシプク", type:"number" },
+{ kr:"구십", jp:"90（漢数詞）", roman:"gusip", kana:"クシプ", type:"number" },
+{ kr:"구십일", jp:"91（漢数詞）", roman:"gusibil", kana:"クシビル", type:"number" },
+{ kr:"구십이", jp:"92（漢数詞）", roman:"gusibi", kana:"クシビ", type:"number" },
+{ kr:"구십삼", jp:"93（漢数詞）", roman:"gusipsam", kana:"クシプサム", type:"number" },
+{ kr:"구십사", jp:"94（漢数詞）", roman:"gusipsa", kana:"クシプサ", type:"number" },
+{ kr:"구십오", jp:"95（漢数詞）", roman:"gusibo", kana:"クシボ", type:"number" },
+{ kr:"구십육", jp:"96（漢数詞）", roman:"gusimnyuk", kana:"クシムニュク", type:"number" },
+{ kr:"구십칠", jp:"97（漢数詞）", roman:"gusipchil", kana:"クシプチル", type:"number" },
+{ kr:"구십팔", jp:"98（漢数詞）", roman:"gusip-pal", kana:"クシッパル", type:"number" },
+{ kr:"구십구", jp:"99（漢数詞）", roman:"gusipgu", kana:"クシプク", type:"number" },
+{ kr:"백", jp:"100（漢数詞）", roman:"baek", kana:"ペク", type:"number" },
+{ kr:"하나", jp:"1(固有数詞)", roman:"hana", kana:"ハナ", type:"number" },
+{ kr:"둘", jp:"2(固有数詞)", roman:"dul", kana:"トゥル", type:"number" },
+{ kr:"셋", jp:"3(固有数詞)", roman:"set", kana:"セッ", type:"number" },
+{ kr:"넷", jp:"4(固有数詞)", roman:"net", kana:"ネッ", type:"number" },
+{ kr:"다섯", jp:"5(固有数詞)", roman:"daseot", kana:"タソッ", type:"number" },
+{ kr:"여섯", jp:"6(固有数詞)", roman:"yeoseot", kana:"ヨソッ", type:"number" },
+{ kr:"일곱", jp:"7(固有数詞)", roman:"ilgop", kana:"イルゴプ", type:"number" },
+{ kr:"여덟", jp:"8(固有数詞)", roman:"yeodeol", kana:"ヨドル", type:"number" },
+{ kr:"아홉", jp:"9(固有数詞)", roman:"ahop", kana:"アホプ", type:"number" },
+{ kr:"열", jp:"10(固有数詞)", roman:"yeol", kana:"ヨル", type:"number" },
+{ kr:"열하나", jp:"11(固有数詞)", roman:"yeolhana", kana:"ヨラナ", type:"number" },
+{ kr:"열둘", jp:"12(固有数詞)", roman:"yeoldul", kana:"ヨルトゥル", type:"number" },
+{ kr:"열셋", jp:"13(固有数詞)", roman:"yeolset", kana:"ヨルセッ", type:"number" },
+{ kr:"열넷", jp:"14(固有数詞)", roman:"yeolnet", kana:"ヨルネッ", type:"number" },
+{ kr:"열다섯", jp:"15(固有数詞)", roman:"yeoldaseot", kana:"ヨルタソッ", type:"number" },
+{ kr:"열여섯", jp:"16(固有数詞)", roman:"yeolyeoseot", kana:"ヨルヨソッ", type:"number" },
+{ kr:"열일곱", jp:"17(固有数詞)", roman:"yeolilgop", kana:"ヨリルゴプ", type:"number" },
+{ kr:"열여덟", jp:"18(固有数詞)", roman:"yeolyeodeol", kana:"ヨルヨドル", type:"number" },
+{ kr:"열아홉", jp:"19(固有数詞)", roman:"yeolahop", kana:"ヨラホプ", type:"number" },
+{ kr:"스물", jp:"20(固有数詞)", roman:"seumul", kana:"スムル", type:"number" },
+{ kr:"스물하나", jp:"21(固有数詞)", roman:"seumulhana", kana:"スムラナ", type:"number" },
+{ kr:"스물둘", jp:"22(固有数詞)", roman:"seumuldul", kana:"スムルトゥル", type:"number" },
+{ kr:"스물셋", jp:"23(固有数詞)", roman:"seumulset", kana:"スムルセッ", type:"number" },
+{ kr:"스물넷", jp:"24(固有数詞)", roman:"seumulnet", kana:"スムルネッ", type:"number" },
+{ kr:"스물다섯", jp:"25(固有数詞)", roman:"seumuldaseot", kana:"スムルタソッ", type:"number" },
+{ kr:"스물여섯", jp:"26(固有数詞)", roman:"seumulyeoseot", kana:"スムルヨソッ", type:"number" },
+{ kr:"스물일곱", jp:"27(固有数詞)", roman:"seumulilgop", kana:"スムリルゴプ", type:"number" },
+{ kr:"스물여덟", jp:"28(固有数詞)", roman:"seumulyeodeol", kana:"スムルヨドル", type:"number" },
+{ kr:"스물아홉", jp:"29(固有数詞)", roman:"seumulahop", kana:"スムラホプ", type:"number" },
+{ kr:"서른", jp:"30(固有数詞)", roman:"seoreun", kana:"ソルン", type:"number" },
+{ kr:"서른하나", jp:"31(固有数詞)", roman:"seoreunhana", kana:"ソルナナ", type:"number" },
+{ kr:"서른둘", jp:"32(固有数詞)", roman:"seoreundul", kana:"ソルンドゥル", type:"number" },
+{ kr:"서른셋", jp:"33(固有数詞)", roman:"seoreunset", kana:"ソルンセッ", type:"number" },
+{ kr:"서른넷", jp:"34(固有数詞)", roman:"seoreunnet", kana:"ソルンネッ", type:"number" },
+{ kr:"서른다섯", jp:"35(固有数詞)", roman:"seoreundaseot", kana:"ソルンタソッ", type:"number" },
+{ kr:"서른여섯", jp:"36(固有数詞)", roman:"seoreunyeoseot", kana:"ソルンヨソッ", type:"number" },
+{ kr:"서른일곱", jp:"37(固有数詞)", roman:"seoreunilgop", kana:"ソルニルゴプ", type:"number" },
+{ kr:"서른여덟", jp:"38(固有数詞)", roman:"seoreunyeodeol", kana:"ソルンヨドル", type:"number" },
+{ kr:"서른아홉", jp:"39(固有数詞)", roman:"seoreunahop", kana:"ソルナホプ", type:"number" },
+{ kr:"마흔", jp:"40(固有数詞)", roman:"maheun", kana:"マフン", type:"number" },
+{ kr:"마흔하나", jp:"41(固有数詞)", roman:"maheunhana", kana:"マフナナ", type:"number" },
+{ kr:"마흔둘", jp:"42(固有数詞)", roman:"maheundul", kana:"マフンドゥル", type:"number" },
+{ kr:"마흔셋", jp:"43(固有数詞)", roman:"maheunset", kana:"マフンセッ", type:"number" },
+{ kr:"마흔넷", jp:"44(固有数詞)", roman:"maheunnet", kana:"マフンネッ", type:"number" },
+{ kr:"마흔다섯", jp:"45(固有数詞)", roman:"maheundaseot", kana:"マフンタソッ", type:"number" },
+{ kr:"마흔여섯", jp:"46(固有数詞)", roman:"maheunyeoseot", kana:"マフンヨソッ", type:"number" },
+{ kr:"마흔일곱", jp:"47(固有数詞)", roman:"maheunilgop", kana:"マフニルゴプ", type:"number" },
+{ kr:"마흔여덟", jp:"48(固有数詞)", roman:"maheunyeodeol", kana:"マフンヨドル", type:"number" },
+{ kr:"마흔아홉", jp:"49(固有数詞)", roman:"maheunahop", kana:"マフナホプ", type:"number" },
+{ kr:"쉰", jp:"50(固有数詞)", roman:"swin", kana:"スィン", type:"number" },
+{ kr:"쉰하나", jp:"51(固有数詞)", roman:"swinhana", kana:"スィナナ", type:"number" },
+{ kr:"쉰둘", jp:"52(固有数詞)", roman:"swindul", kana:"スィンドゥル", type:"number" },
+{ kr:"쉰셋", jp:"53(固有数詞)", roman:"swinset", kana:"スィンセッ", type:"number" },
+{ kr:"쉰넷", jp:"54(固有数詞)", roman:"swinnet", kana:"スィンネッ", type:"number" },
+{ kr:"쉰다섯", jp:"55(固有数詞)", roman:"swindaseot", kana:"スィンタソッ", type:"number" },
+{ kr:"쉰여섯", jp:"56(固有数詞)", roman:"swinyeoseot", kana:"スィンヨソッ", type:"number" },
+{ kr:"쉰일곱", jp:"57(固有数詞)", roman:"swinilgop", kana:"スィニルゴプ", type:"number" },
+{ kr:"쉰여덟", jp:"58(固有数詞)", roman:"swinyeodeol", kana:"スィンヨドル", type:"number" },
+{ kr:"쉰아홉", jp:"59(固有数詞)", roman:"swinahop", kana:"スィナホプ", type:"number" },
+{ kr:"예순", jp:"60(固有数詞)", roman:"yesun", kana:"イェスン", type:"number" },
+{ kr:"예순하나", jp:"61(固有数詞)", roman:"yesunhana", kana:"イェスナナ", type:"number" },
+{ kr:"예순둘", jp:"62(固有数詞)", roman:"yesundul", kana:"イェスンドゥル", type:"number" },
+{ kr:"예순셋", jp:"63(固有数詞)", roman:"yesunset", kana:"イェスンセッ", type:"number" },
+{ kr:"예순넷", jp:"64(固有数詞)", roman:"yesunnet", kana:"イェスンネッ", type:"number" },
+{ kr:"예순다섯", jp:"65(固有数詞)", roman:"yesundaseot", kana:"イェスンタソッ", type:"number" },
+{ kr:"예순여섯", jp:"66(固有数詞)", roman:"yesunyeoseot", kana:"イェスンヨソッ", type:"number" },
+{ kr:"예순일곱", jp:"67(固有数詞)", roman:"yesunilgop", kana:"イェスニルゴプ", type:"number" },
+{ kr:"예순여덟", jp:"68(固有数詞)", roman:"yesunyeodeol", kana:"イェスンヨドル", type:"number" },
+{ kr:"예순아홉", jp:"69(固有数詞)", roman:"yesunahop", kana:"イェスナホプ", type:"number" },
+{ kr:"일흔", jp:"70(固有数詞)", roman:"ireun", kana:"イルン", type:"number" },
+{ kr:"일흔하나", jp:"71(固有数詞)", roman:"ireunhana", kana:"イルナナ", type:"number" },
+{ kr:"일흔둘", jp:"72(固有数詞)", roman:"ireundul", kana:"イルンドゥル", type:"number" },
+{ kr:"일흔셋", jp:"73(固有数詞)", roman:"ireunset", kana:"イルンセッ", type:"number" },
+{ kr:"일흔넷", jp:"74(固有数詞)", roman:"ireunnet", kana:"イルンネッ", type:"number" },
+{ kr:"일흔다섯", jp:"75(固有数詞)", roman:"ireundaseot", kana:"イルンタソッ", type:"number" },
+{ kr:"일흔여섯", jp:"76(固有数詞)", roman:"ireunyeoseot", kana:"イルンヨソッ", type:"number" },
+{ kr:"일흔일곱", jp:"77(固有数詞)", roman:"ireunilgop", kana:"イルニルゴプ", type:"number" },
+{ kr:"일흔여덟", jp:"78(固有数詞)", roman:"ireunyeodeol", kana:"イルンヨドル", type:"number" },
+{ kr:"일흔아홉", jp:"79(固有数詞)", roman:"ireunahop", kana:"イルナホプ", type:"number" },
+{ kr:"여든", jp:"80(固有数詞)", roman:"yeodeun", kana:"ヨドゥン", type:"number" },
+{ kr:"여든하나", jp:"81(固有数詞)", roman:"yeodeunhana", kana:"ヨドゥナナ", type:"number" },
+{ kr:"여든둘", jp:"82(固有数詞)", roman:"yeodeundul", kana:"ヨドゥンドゥル", type:"number" },
+{ kr:"여든셋", jp:"83(固有数詞)", roman:"yeodeunset", kana:"ヨドゥンセッ", type:"number" },
+{ kr:"여든넷", jp:"84(固有数詞)", roman:"yeodeunnet", kana:"ヨドゥンネッ", type:"number" },
+{ kr:"여든다섯", jp:"85(固有数詞)", roman:"yeodeundaseot", kana:"ヨドゥンタソッ", type:"number" },
+{ kr:"여든여섯", jp:"86(固有数詞)", roman:"yeodeunyeoseot", kana:"ヨドゥンヨソッ", type:"number" },
+{ kr:"여든일곱", jp:"87(固有数詞)", roman:"yeodeunilgop", kana:"ヨドゥニルゴプ", type:"number" },
+{ kr:"여든여덟", jp:"88(固有数詞)", roman:"yeodeunyeodeol", kana:"ヨドゥンヨドル", type:"number" },
+{ kr:"여든아홉", jp:"89(固有数詞)", roman:"yeodeunahop", kana:"ヨドゥナホプ", type:"number" },
+{ kr:"아흔", jp:"90(固有数詞)", roman:"aheun", kana:"アフン", type:"number" },
+{ kr:"아흔하나", jp:"91(固有数詞)", roman:"aheunhana", kana:"アフナナ", type:"number" },
+{ kr:"아흔둘", jp:"92(固有数詞)", roman:"aheundul", kana:"アフンドゥル", type:"number" },
+{ kr:"아흔셋", jp:"93(固有数詞)", roman:"aheunset", kana:"アフンセッ", type:"number" },
+{ kr:"아흔넷", jp:"94(固有数詞)", roman:"aheunnet", kana:"アフンネッ", type:"number" },
+{ kr:"아흔다섯", jp:"95(固有数詞)", roman:"aheundaseot", kana:"アフンタソッ", type:"number" },
+{ kr:"아흔여섯", jp:"96(固有数詞)", roman:"aheunyeoseot", kana:"アフンヨソッ", type:"number" },
+{ kr:"아흔일곱", jp:"97(固有数詞)", roman:"aheunilgop", kana:"アフニルゴプ", type:"number" },
+{ kr:"아흔여덟", jp:"98(固有数詞)", roman:"aheunyeodeol", kana:"アフンヨドル", type:"number" },
+{ kr:"아흔아홉", jp:"99(固有数詞)", roman:"aheunahop", kana:"アフナホプ", type:"number" },
+{ kr:"백", jp:"100(固有数詞)", roman:"baek", kana:"ペク", type:"number" },
+{ kr:"분", jp:"分（漢数詞）", roman:"bun", kana:"プン", type:"number" },
+{ kr:"초", jp:"秒（漢数詞）", roman:"cho", kana:"チョ", type:"number" },
+{ kr:"년", jp:"年（漢数詞）", roman:"nyeon", kana:"ニョン", type:"number" },
+{ kr:"월", jp:"月（漢数詞）", roman:"wol", kana:"ウォル", type:"number" },
+{ kr:"일", jp:"日（漢数詞）", roman:"il", kana:"イル", type:"number" },
+{ kr:"주일", jp:"週間（漢数詞）", roman:"juil", kana:"チュイル", type:"number" },
+{ kr:"개월", jp:"か月（漢数詞）", roman:"gaewol", kana:"ケウォル", type:"number" },
+{ kr:"번", jp:"番（漢数詞）", roman:"beon", kana:"ボン", type:"number" },
+{ kr:"호", jp:"号（漢数詞）", roman:"ho", kana:"ホ", type:"number" },
+{ kr:"층", jp:"階（漢数詞）", roman:"cheung", kana:"チュン", type:"number" },
+{ kr:"페이지", jp:"ページ（漢数詞）", roman:"peiji", kana:"ペイジ", type:"number" },
+{ kr:"원", jp:"ウォン（漢数詞）", roman:"won", kana:"ウォン", type:"number" },
+{ kr:"엔", jp:"円（漢数詞）", roman:"en", kana:"エン", type:"number" },
+{ kr:"달러", jp:"ドル（漢数詞）", roman:"dalleo", kana:"タルロ", type:"number" },
+{ kr:"미터", jp:"メートル（漢数詞）", roman:"miteo", kana:"ミト", type:"number" },
+{ kr:"킬로미터", jp:"キロメートル（漢数詞）", roman:"killomiteo", kana:"キルロミト", type:"number" },
+{ kr:"그램", jp:"グラム（漢数詞）", roman:"geuraem", kana:"グレム", type:"number" },
+{ kr:"킬로그램", jp:"キログラム（漢数詞）", roman:"killogeuraem", kana:"キルログレム", type:"number" },
+{ kr:"센티미터", jp:"センチメートル（漢数詞）", roman:"sentimiteo", kana:"センチミト", type:"number" },
+{ kr:"개", jp:"個（固有数詞）", roman:"gae", kana:"ケ", type:"number" },
+{ kr:"사람", jp:"人（固有数詞）", roman:"saram", kana:"サラム", type:"number" },
+{ kr:"명", jp:"名（固有数詞）", roman:"myeong", kana:"ミョン", type:"number" },
+{ kr:"살", jp:"歳（固有数詞）", roman:"sal", kana:"サル", type:"number" },
+{ kr:"시", jp:"時（固有数詞）", roman:"si", kana:"シ", type:"number" },
+{ kr:"마리", jp:"匹（固有数詞）", roman:"mari", kana:"マリ", type:"number" },
+{ kr:"권", jp:"冊（固有数詞）", roman:"gwon", kana:"クォン", type:"number" },
+{ kr:"장", jp:"枚（固有数詞）", roman:"jang", kana:"チャン", type:"number" },
+{ kr:"대", jp:"台（固有数詞）", roman:"dae", kana:"テ", type:"number" },
+{ kr:"자루", jp:"本（固有数詞）", roman:"jaru", kana:"チャル", type:"number" },
+{ kr:"잔", jp:"杯（固有数詞）", roman:"jan", kana:"チャン", type:"number" },
+{ kr:"접시", jp:"皿（固有数詞）", roman:"jeopsi", kana:"チョプシ", type:"number" },
+{ kr:"벌", jp:"着（固有数詞）", roman:"beol", kana:"ポル", type:"number" },
+{ kr:"켤레", jp:"足（固有数詞）", roman:"kyeolle", kana:"キョルレ", type:"number" },
+{ kr:"번", jp:"回（固有数詞）", roman:"beon", kana:"ボン", type:"number" },
+{ kr:"도", jp:"度（固有数詞）", roman:"do", kana:"ド", type:"number" },
+{ kr:"번째", jp:"番目（固有数詞）", roman:"beonjjae", kana:"ボンチェ", type:"number" },
+{ kr:"개념", jp:"概念", roman:"gaenyeom", kana:"ケニョム", type:"gacha" },
+{ kr:"현상", jp:"現象", roman:"hyeonsang", kana:"ヒョンサン", type:"gacha" },
+{ kr:"원리", jp:"原理", roman:"wolli", kana:"ウォルリ", type:"gacha" },
+{ kr:"구조", jp:"構造", roman:"gujo", kana:"クジョ", type:"gacha" },
+{ kr:"요소", jp:"要素", roman:"yoso", kana:"ヨソ", type:"gacha" },
+{ kr:"조건", jp:"条件", roman:"jogeon", kana:"チョコン", type:"gacha" },
+{ kr:"기준", jp:"基準", roman:"gijun", kana:"キジュン", type:"gacha" },
+{ kr:"규칙", jp:"規則", roman:"gyuchik", kana:"キュチク", type:"gacha" },
+{ kr:"수단", jp:"手段", roman:"sudan", kana:"スダン", type:"gacha" },
+{ kr:"목적", jp:"目的", roman:"mokjeok", kana:"モクチョク", type:"gacha" },
+{ kr:"대상", jp:"対象", roman:"daesang", kana:"テサン", type:"gacha" },
+{ kr:"영향", jp:"影響", roman:"yeonghyang", kana:"ヨンヒャン", type:"gacha" },
+{ kr:"경향", jp:"傾向", roman:"gyeonghyang", kana:"キョンヒャン", type:"gacha" },
+{ kr:"과제", jp:"課題", roman:"gwaje", kana:"クァジェ", type:"gacha" },
+{ kr:"해결책", jp:"解決策", roman:"haegyeolchaek", kana:"ヘギョルチェク", type:"gacha" },
+{ kr:"가설", jp:"仮説", roman:"gaseol", kana:"カソル", type:"gacha" },
+{ kr:"증거", jp:"証拠", roman:"jeunggeo", kana:"チュンゴ", type:"gacha" },
+{ kr:"근거", jp:"根拠", roman:"geungeo", kana:"クンゴ", type:"gacha" },
+{ kr:"결론", jp:"結論", roman:"gyeollon", kana:"キョルロン", type:"gacha" },
+{ kr:"논점", jp:"論点", roman:"nonjeom", kana:"ノンジョム", type:"gacha" },
+{ kr:"의견", jp:"意見", roman:"uigyeon", kana:"ウィギョン", type:"gacha" },
+{ kr:"주장", jp:"主張", roman:"jujang", kana:"チュジャン", type:"gacha" },
+{ kr:"반론", jp:"反論", roman:"ballon", kana:"パンロン", type:"gacha" },
+{ kr:"설득", jp:"説得", roman:"seoldeuk", kana:"ソルトゥク", type:"gacha" },
+{ kr:"논의", jp:"議論", roman:"nonui", kana:"ノニ", type:"gacha" },
+{ kr:"분석", jp:"分析", roman:"bunseok", kana:"プンソク", type:"gacha" },
+{ kr:"통계", jp:"統計", roman:"tonggye", kana:"トンゲ", type:"gacha" },
+{ kr:"자료", jp:"資料", roman:"jaryo", kana:"チャリョ", type:"gacha" },
+{ kr:"정보", jp:"情報", roman:"jeongbo", kana:"チョンボ", type:"gacha" },
+{ kr:"지식", jp:"知識", roman:"jisik", kana:"チシク", type:"gacha" },
+{ kr:"기술", jp:"技術", roman:"gisul", kana:"キスル", type:"gacha" },
+{ kr:"방법", jp:"方法", roman:"bangbeop", kana:"パンボプ", type:"gacha" },
+{ kr:"절차", jp:"手順", roman:"jeolcha", kana:"チョルチャ", type:"gacha" },
+{ kr:"과정", jp:"過程", roman:"gwajeong", kana:"クァジョン", type:"gacha" },
+{ kr:"성과", jp:"成果", roman:"seonggwa", kana:"ソングァ", type:"gacha" },
+{ kr:"수요", jp:"需要", roman:"suyo", kana:"スヨ", type:"gacha" },
+{ kr:"공급", jp:"供給", roman:"gonggeup", kana:"コングプ", type:"gacha" },
+{ kr:"가치", jp:"価値", roman:"gachi", kana:"カチ", type:"gacha" },
+{ kr:"이익", jp:"利益", roman:"iik", kana:"イイク", type:"gacha" },
+{ kr:"손실", jp:"損失", roman:"sons실", kana:"ソンシル", type:"gacha" },
+{ kr:"효과", jp:"効果", roman:"hyogwa", kana:"ヒョグァ", type:"gacha" },
+{ kr:"효율", jp:"効率", roman:"hyoyul", kana:"ヒョユル", type:"gacha" },
+{ kr:"가능성", jp:"可能性", roman:"ganeungseong", kana:"カヌンソン", type:"gacha" },
+{ kr:"한계", jp:"限界", roman:"hangye", kana:"ハンゲ", type:"gacha" },
+{ kr:"배경", jp:"背景", roman:"baegyeong", kana:"ペギョン", type:"gacha" },
+{ kr:"맥락", jp:"文脈", roman:"maengnak", kana:"メンナク", type:"gacha" },
+{ kr:"방침", jp:"方針", roman:"bangchim", kana:"パンチム", type:"gacha" },
+{ kr:"전략", jp:"戦略", roman:"jeollyak", kana:"チョンリャク", type:"gacha" },
+{ kr:"체계", jp:"体系", roman:"chegye", kana:"チェゲ", type:"gacha" },
+{ kr:"관점", jp:"視点", roman:"gwanjeom", kana:"クァンジョム", type:"gacha" },
+{ kr:"조직", jp:"組織", roman:"jojik", kana:"チョジク", type:"gacha" },
+{ kr:"제도", jp:"制度", roman:"jedo", kana:"チェド", type:"gacha" },
+{ kr:"정책", jp:"政策", roman:"jeongchaek", kana:"チョンチェク", type:"gacha" },
+{ kr:"법률", jp:"法律", roman:"beomnyul", kana:"ポムリュル", type:"gacha" },
+{ kr:"권리", jp:"権利", roman:"gwonni", kana:"クォルリ", type:"gacha" },
+{ kr:"의무", jp:"義務", roman:"uimu", kana:"ウィム", type:"gacha" },
+{ kr:"책임", jp:"責任", roman:"chaegim", kana:"チェギム", type:"gacha" },
+{ kr:"역할", jp:"役割", roman:"yeokal", kana:"ヨカル", type:"gacha" },
+{ kr:"입장", jp:"立場", roman:"ipjang", kana:"イプチャン", type:"gacha" },
+{ kr:"자격", jp:"資格", roman:"jagyeok", kana:"チャギョク", type:"gacha" },
+{ kr:"계약", jp:"契約", roman:"gyeyak", kana:"ケヤク", type:"gacha" },
+{ kr:"협상", jp:"交渉", roman:"hyeopsang", kana:"ヒョプサン", type:"gacha" },
+{ kr:"회의", jp:"会議", roman:"hoeui", kana:"フェイ", type:"gacha" },
+{ kr:"보고", jp:"報告", roman:"bogo", kana:"ポゴ", type:"gacha" },
+{ kr:"지시", jp:"指示", roman:"jisi", kana:"チシ", type:"gacha" },
+{ kr:"통지", jp:"通知", roman:"tongji", kana:"トンジ", type:"gacha" },
+{ kr:"의뢰", jp:"依頼", roman:"uirye", kana:"ウィレ", type:"gacha" },
+{ kr:"제안", jp:"提案", roman:"jean", kana:"チェアン", type:"gacha" },
+{ kr:"상담", jp:"相談", roman:"sangdam", kana:"サンダム", type:"gacha" },
+{ kr:"관리", jp:"管理", roman:"gwalli", kana:"クァルリ", type:"gacha" },
+{ kr:"운영", jp:"運営", roman:"unyeong", kana:"ウニョン", type:"gacha" },
+{ kr:"개발", jp:"開発", roman:"gaebal", kana:"ケバル", type:"gacha" },
+{ kr:"연구", jp:"研究", roman:"yeongu", kana:"ヨング", type:"gacha" },
+{ kr:"조사", jp:"調査", roman:"josa", kana:"チョサ", type:"gacha" },
+{ kr:"교육", jp:"教育", roman:"gyoyuk", kana:"キョユク", type:"gacha" },
+{ kr:"연수", jp:"研修", roman:"yeonsu", kana:"ヨンス", type:"gacha" },
+{ kr:"채용", jp:"採用", roman:"chaeyong", kana:"チェヨン", type:"gacha" },
+{ kr:"취업", jp:"就職", roman:"chwieop", kana:"チュィオプ", type:"gacha" },
+{ kr:"이직", jp:"転職", roman:"ijik", kana:"イジク", type:"gacha" },
+{ kr:"면접", jp:"面接", roman:"myeonjeop", kana:"ミョンジョプ", type:"gacha" },
+{ kr:"급여", jp:"給料", roman:"geubyeo", kana:"クビョ", type:"gacha" },
+{ kr:"세금", jp:"税金", roman:"segeum", kana:"セグム", type:"gacha" },
+{ kr:"보험", jp:"保険", roman:"boheom", kana:"ポホム", type:"gacha" },
+{ kr:"연금", jp:"年金", roman:"yeongeum", kana:"ヨングム", type:"gacha" },
+{ kr:"예산", jp:"予算", roman:"yesan", kana:"イェサン", type:"gacha" },
+{ kr:"비용", jp:"費用", roman:"biyong", kana:"ピヨン", type:"gacha" },
+{ kr:"가격", jp:"価格", roman:"gagyeok", kana:"カギョク", type:"gacha" },
+{ kr:"수입", jp:"収入", roman:"suip", kana:"スイプ", type:"gacha" },
+{ kr:"지출", jp:"支出", roman:"jichul", kana:"チチュル", type:"gacha" },
+{ kr:"빚", jp:"借金", roman:"bit", kana:"ピッ", type:"gacha" },
+{ kr:"저축", jp:"貯金", roman:"jeochuk", kana:"チョチュク", type:"gacha" },
+{ kr:"투자", jp:"投資", roman:"tuja", kana:"トゥジャ", type:"gacha" },
+{ kr:"고객", jp:"顧客", roman:"gogaek", kana:"コゲク", type:"gacha" },
+{ kr:"거래", jp:"取引", roman:"georae", kana:"コレ", type:"gacha" },
+{ kr:"청구", jp:"請求", roman:"cheonggu", kana:"チョング", type:"gacha" },
+{ kr:"영수증", jp:"領収書", roman:"yeongsujeung", kana:"ヨンスジュン", type:"gacha" },
+{ kr:"재고", jp:"在庫", roman:"jaego", kana:"チェゴ", type:"gacha" },
+{ kr:"납기", jp:"納期", roman:"napgi", kana:"ナプキ", type:"gacha" },
+{ kr:"품질", jp:"品質", roman:"pumjil", kana:"プムジル", type:"gacha" },
+{ kr:"보증", jp:"保証", roman:"bojeung", kana:"ポジュン", type:"gacha" },
+{ kr:"통신", jp:"通信", roman:"tongsin", kana:"トンシン", type:"gacha" },
+{ kr:"회선", jp:"回線", roman:"hoeseon", kana:"フェソン", type:"gacha" },
+{ kr:"전파", jp:"電波", roman:"jeonpa", kana:"チョンパ", type:"gacha" },
+{ kr:"단말기", jp:"端末", roman:"danmalgi", kana:"タンマルギ", type:"gacha" },
+{ kr:"화면", jp:"画面", roman:"hwamyeon", kana:"ファミョン", type:"gacha" },
+{ kr:"이미지", jp:"画像", roman:"imiji", kana:"イミジ", type:"gacha" },
+{ kr:"영상", jp:"映像", roman:"yeongsang", kana:"ヨンサン", type:"gacha" },
+{ kr:"음성", jp:"音声", roman:"eumseong", kana:"ウムソン", type:"gacha" },
+{ kr:"녹음", jp:"録音", roman:"nogeum", kana:"ノグム", type:"gacha" },
+{ kr:"녹화", jp:"録画", roman:"nokhwa", kana:"ノクァ", type:"gacha" },
+{ kr:"배포", jp:"配信", roman:"baepo", kana:"ペポ", type:"gacha" },
+{ kr:"게시", jp:"投稿", roman:"gesi", kana:"ケシ", type:"gacha" },
+{ kr:"답장", jp:"返信", roman:"dapjang", kana:"タプチャン", type:"gacha" },
+{ kr:"공유", jp:"共有", roman:"gongyu", kana:"コンユ", type:"gacha" },
+{ kr:"설정", jp:"設定", roman:"seoljeong", kana:"ソルジョン", type:"gacha" },
+{ kr:"업데이트", jp:"更新", roman:"eopdeiteu", kana:"オプデイトゥ", type:"gacha" },
+{ kr:"등록", jp:"登録", roman:"deungnok", kana:"トゥンノク", type:"gacha" },
+{ kr:"인증", jp:"認証", roman:"injeung", kana:"インジュン", type:"gacha" },
+{ kr:"암호", jp:"暗号", roman:"amho", kana:"アモ", type:"gacha" },
+{ kr:"비밀번호", jp:"パスワード", roman:"bimilbeonho", kana:"ピミルボノ", type:"gacha" },
+{ kr:"계정", jp:"アカウント", roman:"gyejeong", kana:"ケジョン", type:"gacha" },
+{ kr:"데이터", jp:"データ", roman:"deiteo", kana:"デイト", type:"gacha" },
+{ kr:"파일", jp:"ファイル", roman:"pail", kana:"パイル", type:"gacha" },
+{ kr:"폴더", jp:"フォルダ", roman:"poldeo", kana:"ポルド", type:"gacha" },
+{ kr:"형식", jp:"形式", roman:"hyeongsik", kana:"ヒョンシク", type:"gacha" },
+{ kr:"용량", jp:"容量", roman:"yongnyang", kana:"ヨンニャン", type:"gacha" },
+{ kr:"충전", jp:"充電", roman:"chungjeon", kana:"チュンジョン", type:"gacha" },
+{ kr:"배터리", jp:"電池", roman:"baeteori", kana:"ペトリ", type:"gacha" },
+{ kr:"화질", jp:"画質", roman:"hwajil", kana:"ファジル", type:"gacha" },
+{ kr:"해상도", jp:"解像度", roman:"haesangdo", kana:"ヘサンド", type:"gacha" },
+{ kr:"음량", jp:"音量", roman:"eumnyang", kana:"ウムニャン", type:"gacha" },
+{ kr:"조작", jp:"操作", roman:"jojak", kana:"チョジャク", type:"gacha" },
+{ kr:"기능", jp:"機能", roman:"gineung", kana:"キヌン", type:"gacha" },
+{ kr:"고장", jp:"故障", roman:"gojang", kana:"コジャン", type:"gacha" },
+{ kr:"장애", jp:"障害", roman:"jangae", kana:"チャンエ", type:"gacha" },
+{ kr:"복구", jp:"復旧", roman:"bokgu", kana:"ポック", type:"gacha" },
+{ kr:"동기화", jp:"同期", roman:"donggihwa", kana:"トンギファ", type:"gacha" },
+{ kr:"연결", jp:"接続", roman:"yeongyeol", kana:"ヨンギョル", type:"gacha" },
+{ kr:"차단", jp:"切断", roman:"chadan", kana:"チャダン", type:"gacha" },
+{ kr:"데이터 사용량", jp:"通信量", roman:"deiteo sayongnyang", kana:"デイト サヨンニャン", type:"gacha" },
+{ kr:"기록", jp:"履歴", roman:"girok", kana:"キロク", type:"gacha" },
+{ kr:"광고", jp:"広告", roman:"gwanggo", kana:"クァンゴ", type:"gacha" },
+{ kr:"기사", jp:"記事", roman:"gisa", kana:"キサ", type:"gacha" },
+{ kr:"편집", jp:"編集", roman:"pyeonjip", kana:"ピョンジプ", type:"gacha" },
+{ kr:"자막", jp:"字幕", roman:"jamak", kana:"チャマク", type:"gacha" },
+{ kr:"번역", jp:"翻訳", roman:"beonyeok", kana:"ポニョク", type:"gacha" },
+{ kr:"재생", jp:"再生", roman:"jaesaeng", kana:"チェセン", type:"gacha" },
+{ kr:"확장", jp:"拡張", roman:"hwakjang", kana:"ファクチャン", type:"gacha" },
+{ kr:"압축", jp:"圧縮", roman:"apchuk", kana:"アプチュク", type:"gacha" },
+{ kr:"압축 해제", jp:"展開", roman:"apchuk haeje", kana:"アプチュク ヘジェ", type:"gacha" },
+{ kr:"호흡", jp:"呼吸", roman:"hoheup", kana:"ホフプ", type:"gacha" },
+{ kr:"체온", jp:"体温", roman:"cheon", kana:"チェオン", type:"gacha" },
+{ kr:"혈압", jp:"血圧", roman:"hyeorap", kana:"ヒョラプ", type:"gacha" },
+{ kr:"맥박", jp:"脈", roman:"maekbak", kana:"メクパク", type:"gacha" },
+{ kr:"증상", jp:"症状", roman:"jeungsang", kana:"チュンサン", type:"gacha" },
+{ kr:"기침", jp:"咳", roman:"gichim", kana:"キチム", type:"gacha" },
+{ kr:"콧물", jp:"鼻水", roman:"konmul", kana:"コンムル", type:"gacha" },
+{ kr:"두통", jp:"頭痛", roman:"dutong", kana:"トゥトン", type:"gacha" },
+{ kr:"복통", jp:"腹痛", roman:"boktong", kana:"ポクトン", type:"gacha" },
+{ kr:"발열", jp:"発熱", roman:"baryeol", kana:"パリョル", type:"gacha" },
+{ kr:"피로", jp:"疲労", roman:"piro", kana:"ピロ", type:"gacha" },
+{ kr:"부상", jp:"けが", roman:"busang", kana:"プサン", type:"gacha" },
+{ kr:"상처", jp:"傷", roman:"sangcheo", kana:"サンチョ", type:"gacha" },
+{ kr:"약", jp:"薬", roman:"yak", kana:"ヤク", type:"gacha" },
+{ kr:"치료", jp:"治療", roman:"chiryo", kana:"チリョ", type:"gacha" },
+{ kr:"진찰", jp:"診察", roman:"jinchal", kana:"チンチャル", type:"gacha" },
+{ kr:"검사", jp:"検査", roman:"geomsa", kana:"コムサ", type:"gacha" },
+{ kr:"수술", jp:"手術", roman:"susul", kana:"ススル", type:"gacha" },
+{ kr:"입원", jp:"入院", roman:"ibwon", kana:"イブォン", type:"gacha" },
+{ kr:"퇴원", jp:"退院", roman:"toewon", kana:"テウォン", type:"gacha" },
+{ kr:"예방", jp:"予防", roman:"yebang", kana:"イェバン", type:"gacha" },
+{ kr:"영양", jp:"栄養", roman:"yeongyang", kana:"ヨンヤン", type:"gacha" },
+{ kr:"식욕", jp:"食欲", roman:"sigyok", kana:"シギョク", type:"gacha" },
+{ kr:"수면", jp:"睡眠", roman:"sumyeon", kana:"スミョン", type:"gacha" },
+{ kr:"휴식", jp:"休憩", roman:"hyusik", kana:"ヒュシク", type:"gacha" },
+{ kr:"스트레스", jp:"ストレス", roman:"seuteureseu", kana:"ストゥレス", type:"gacha" },
+{ kr:"체력", jp:"体力", roman:"cheryeok", kana:"チェリョク", type:"gacha" },
+{ kr:"근육", jp:"筋肉", roman:"geunyuk", kana:"クニュク", type:"gacha" },
+{ kr:"뼈", jp:"骨", roman:"ppyeo", kana:"ピョ", type:"gacha" },
+{ kr:"관절", jp:"関節", roman:"gwanjeol", kana:"クァンジョル", type:"gacha" },
+{ kr:"피부", jp:"皮膚", roman:"pibu", kana:"ピブ", type:"gacha" },
+{ kr:"혈액", jp:"血液", roman:"hyeoraek", kana:"ヒョレク", type:"gacha" },
+{ kr:"소화", jp:"消化", roman:"sohwa", kana:"ソファ", type:"gacha" },
+{ kr:"면역", jp:"免疫", roman:"myeonyeok", kana:"ミョニョク", type:"gacha" },
+{ kr:"감염", jp:"感染", roman:"gamyeom", kana:"カミョム", type:"gacha" },
+{ kr:"회복", jp:"回復", roman:"hoebok", kana:"フェボク", type:"gacha" },
+{ kr:"악화", jp:"悪化", roman:"akhwa", kana:"アクァ", type:"gacha" },
+{ kr:"안정", jp:"安静", roman:"anjeong", kana:"アンジョン", type:"gacha" },
+{ kr:"컨디션", jp:"体調", roman:"keondisyeon", kana:"コンディション", type:"gacha" },
+{ kr:"위생", jp:"衛生", roman:"wisaeng", kana:"ウィセン", type:"gacha" },
+{ kr:"자세", jp:"姿勢", roman:"jase", kana:"チャセ", type:"gacha" },
+{ kr:"시력", jp:"視力", roman:"siryeok", kana:"シリョク", type:"gacha" },
+{ kr:"청력", jp:"聴力", roman:"cheongnyeok", kana:"チョンニョク", type:"gacha" },
+{ kr:"내장", jp:"内臓", roman:"naejang", kana:"ネジャン", type:"gacha" },
+{ kr:"신경", jp:"神経", roman:"singyeong", kana:"シンギョン", type:"gacha" },
+{ kr:"체중", jp:"体重", roman:"chejung", kana:"チェジュン", type:"gacha" },
+{ kr:"키", jp:"身長", roman:"ki", kana:"キ", type:"gacha" },
+{ kr:"탈수", jp:"脱水", roman:"talsu", kana:"タルス", type:"gacha" },
+{ kr:"오한", jp:"寒気", roman:"ohan", kana:"オハン", type:"gacha" },
+{ kr:"어지럼증", jp:"めまい", roman:"eojiromjeung", kana:"オジロムチュン", type:"gacha" },
+{ kr:"비", jp:"雨", roman:"bi", kana:"ピ", type:"gacha" },
+{ kr:"구름", jp:"雲", roman:"gureum", kana:"クルム", type:"gacha" },
+{ kr:"바람", jp:"風", roman:"baram", kana:"パラム", type:"gacha" },
+{ kr:"천둥", jp:"雷", roman:"cheondung", kana:"チョンドゥン", type:"gacha" },
+{ kr:"눈", jp:"雪", roman:"nun", kana:"ヌン", type:"gacha" },
+{ kr:"안개", jp:"霧", roman:"angae", kana:"アンゲ", type:"gacha" },
+{ kr:"폭풍", jp:"嵐", roman:"pokpung", kana:"ポクプン", type:"gacha" },
+{ kr:"기온", jp:"気温", roman:"gion", kana:"キオン", type:"gacha" },
+{ kr:"습도", jp:"湿度", roman:"seupdo", kana:"スプト", type:"gacha" },
+{ kr:"건조", jp:"乾燥", roman:"geonjo", kana:"コンジョ", type:"gacha" },
+{ kr:"홍수", jp:"洪水", roman:"hongsu", kana:"ホンス", type:"gacha" },
+{ kr:"지진", jp:"地震", roman:"jijin", kana:"チジン", type:"gacha" },
+{ kr:"화산", jp:"火山", roman:"hwasan", kana:"ファサン", type:"gacha" },
+{ kr:"파도", jp:"波", roman:"pado", kana:"パド", type:"gacha" },
+{ kr:"해안", jp:"岸", roman:"haean", kana:"ヘアン", type:"gacha" },
+{ kr:"절벽", jp:"崖", roman:"jeolbyeok", kana:"チョルビョク", type:"gacha" },
+{ kr:"초원", jp:"草原", roman:"chowon", kana:"チョウォン", type:"gacha" },
+{ kr:"평야", jp:"平野", roman:"pyeongya", kana:"ピョンヤ", type:"gacha" },
+{ kr:"불", jp:"火", roman:"bul", kana:"プル", type:"gacha" },
+{ kr:"물", jp:"水", roman:"mul", kana:"ムル", type:"gacha" },
+{ kr:"흙", jp:"土", roman:"heuk", kana:"フク", type:"gacha" },
+{ kr:"돌", jp:"石", roman:"dol", kana:"トル", type:"gacha" },
+{ kr:"바위", jp:"岩", roman:"bawi", kana:"パウィ", type:"gacha" },
+{ kr:"모래", jp:"砂", roman:"morae", kana:"モレ", type:"gacha" },
+{ kr:"진흙", jp:"泥", roman:"jinheuk", kana:"チンフク", type:"gacha" },
+{ kr:"잎", jp:"葉", roman:"ip", kana:"イプ", type:"gacha" },
+{ kr:"꽃", jp:"花", roman:"kkot", kana:"コッ", type:"gacha" },
+{ kr:"뿌리", jp:"根", roman:"ppuri", kana:"プリ", type:"gacha" },
+{ kr:"가지", jp:"枝", roman:"gaji", kana:"カジ", type:"gacha" },
+{ kr:"씨앗", jp:"種", roman:"ssiat", kana:"シアッ", type:"gacha" },
+{ kr:"열매", jp:"実", roman:"yeolmae", kana:"ヨルメ", type:"gacha" },
+{ kr:"벌레", jp:"虫", roman:"beolle", kana:"ポルレ", type:"gacha" },
+{ kr:"새", jp:"鳥", roman:"sae", kana:"セ", type:"gacha" },
+{ kr:"물고기", jp:"魚", roman:"mulgogi", kana:"ムルコギ", type:"gacha" },
+{ kr:"개", jp:"犬", roman:"gae", kana:"ケ", type:"gacha" },
+{ kr:"고양이", jp:"猫", roman:"goyangi", kana:"コヤンイ", type:"gacha" },
+{ kr:"말", jp:"馬", roman:"mal", kana:"マル", type:"gacha" },
+{ kr:"소", jp:"牛", roman:"so", kana:"ソ", type:"gacha" },
+{ kr:"돼지", jp:"豚", roman:"dwaeji", kana:"テジ", type:"gacha" },
+{ kr:"닭", jp:"鶏", roman:"dak", kana:"タク", type:"gacha" },
+{ kr:"양", jp:"羊", roman:"yang", kana:"ヤン", type:"gacha" },
+{ kr:"사슴", jp:"鹿", roman:"saseum", kana:"サスム", type:"gacha" },
+{ kr:"곰", jp:"熊", roman:"gom", kana:"コム", type:"gacha" },
+{ kr:"원숭이", jp:"猿", roman:"wonsungi", kana:"ウォンスンイ", type:"gacha" },
+{ kr:"뱀", jp:"蛇", roman:"baem", kana:"ペム", type:"gacha" },
+{ kr:"거북이", jp:"亀", roman:"geobugi", kana:"コブギ", type:"gacha" },
+{ kr:"나비", jp:"蝶", roman:"nabi", kana:"ナビ", type:"gacha" },
+{ kr:"벌", jp:"蜂", roman:"beol", kana:"ポル", type:"gacha" },
+{ kr:"개미", jp:"蟻", roman:"gaemi", kana:"ケミ", type:"gacha" },
+{ kr:"개구리", jp:"蛙", roman:"gaeguri", kana:"ケグリ", type:"gacha" },
+{ kr:"재료", jp:"材料", roman:"jaeryo", kana:"チェリョ", type:"gacha" },
+{ kr:"조미료", jp:"調味料", roman:"jomiryo", kana:"チョミリョ", type:"gacha" },
+{ kr:"소금", jp:"塩", roman:"sogeum", kana:"ソグム", type:"gacha" },
+{ kr:"설탕", jp:"砂糖", roman:"seoltang", kana:"ソルタン", type:"gacha" },
+{ kr:"간장", jp:"醤油", roman:"ganjang", kana:"カンジャン", type:"gacha" },
+{ kr:"식초", jp:"酢", roman:"sikcho", kana:"シクチョ", type:"gacha" },
+{ kr:"기름", jp:"油", roman:"gireum", kana:"キルム", type:"gacha" },
+{ kr:"밀가루", jp:"小麦粉", roman:"milgaru", kana:"ミルカル", type:"gacha" },
+{ kr:"쌀", jp:"米", roman:"ssal", kana:"ッサル", type:"gacha" },
+{ kr:"고기", jp:"肉", roman:"gogi", kana:"コギ", type:"gacha" },
+{ kr:"채소", jp:"野菜", roman:"chaeso", kana:"チェソ", type:"gacha" },
+{ kr:"과일", jp:"果物", roman:"gwail", kana:"クァイル", type:"gacha" },
+{ kr:"우유", jp:"牛乳", roman:"uyu", kana:"ウユ", type:"gacha" },
+{ kr:"치즈", jp:"チーズ", roman:"chijeu", kana:"チジュ", type:"gacha" },
+{ kr:"버터", jp:"バター", roman:"beoteo", kana:"ポト", type:"gacha" },
+{ kr:"빵", jp:"パン", roman:"ppang", kana:"ッパン", type:"gacha" },
+{ kr:"면", jp:"麺", roman:"myeon", kana:"ミョン", type:"gacha" },
+{ kr:"국물", jp:"スープ", roman:"gungmul", kana:"クンムル", type:"gacha" },
+{ kr:"샐러드", jp:"サラダ", roman:"saelleodeu", kana:"セルロドゥ", type:"gacha" },
+{ kr:"카레", jp:"カレー", roman:"kare", kana:"カレ", type:"gacha" },
+{ kr:"라면", jp:"ラーメン", roman:"ramyeon", kana:"ラミョン", type:"gacha" },
+{ kr:"초밥", jp:"寿司", roman:"chobap", kana:"チョバプ", type:"gacha" },
+{ kr:"피자", jp:"ピザ", roman:"pija", kana:"ピジャ", type:"gacha" },
+{ kr:"햄버거", jp:"ハンバーガー", roman:"haembeogeo", kana:"ヘンボゴ", type:"gacha" },
+{ kr:"케이크", jp:"ケーキ", roman:"keikeu", kana:"ケイク", type:"gacha" },
+{ kr:"아이스크림", jp:"アイス", roman:"aiseukeurim", kana:"アイスクリム", type:"gacha" },
+{ kr:"초콜릿", jp:"チョコ", roman:"chokollit", kana:"チョコルリッ", type:"gacha" },
+{ kr:"커피", jp:"コーヒー", roman:"keopi", kana:"コピ", type:"gacha" },
+{ kr:"홍차", jp:"紅茶", roman:"hongcha", kana:"ホンチャ", type:"gacha" },
+{ kr:"주스", jp:"ジュース", roman:"juseu", kana:"ジュス", type:"gacha" },
+{ kr:"향기", jp:"香り", roman:"hyanggi", kana:"ヒャンギ", type:"gacha" },
+{ kr:"식감", jp:"食感", roman:"sikgam", kana:"シクカム", type:"gacha" },
+{ kr:"맛", jp:"味", roman:"mat", kana:"マッ", type:"gacha" },
+{ kr:"단맛", jp:"甘さ", roman:"danmat", kana:"タンマッ", type:"gacha" },
+{ kr:"매운맛", jp:"辛さ", roman:"maeunmat", kana:"メウンマッ", type:"gacha" },
+{ kr:"신맛", jp:"酸味", roman:"sinmat", kana:"シンマッ", type:"gacha" },
+{ kr:"쓴맛", jp:"苦味", roman:"sseunmat", kana:"ッスンマッ", type:"gacha" },
+{ kr:"짠맛", jp:"塩味", roman:"jjanmat", kana:"ッチャンマッ", type:"gacha" },
+{ kr:"느끼하다", jp:"油っぽい", roman:"neukkihada", kana:"ヌッキハダ", type:"gacha" },
+{ kr:"신선하다", jp:"新鮮", roman:"sinseonhada", kana:"シンソナダ", type:"gacha" },
+{ kr:"숙성", jp:"熟成", roman:"sukseong", kana:"スクソン", type:"gacha" },
+{ kr:"보존료", jp:"保存料", roman:"bojonryo", kana:"ポジョンニョ", type:"gacha" },
+{ kr:"유통기한", jp:"賞味期限", roman:"yutonggihan", kana:"ユトンギハン", type:"gacha" },
+{ kr:"냉동", jp:"冷凍", roman:"naengdong", kana:"ネンドン", type:"gacha" },
+{ kr:"해동", jp:"解凍", roman:"haedong", kana:"ヘドン", type:"gacha" },
+{ kr:"가열", jp:"加熱", roman:"gayeol", kana:"カヨル", type:"gacha" },
+{ kr:"비등", jp:"沸騰", roman:"bideung", kana:"ピドゥン", type:"gacha" },
+{ kr:"발효", jp:"発酵", roman:"balhyo", kana:"パリョ", type:"gacha" },
+{ kr:"담음새", jp:"盛り付け", roman:"dameumsae", kana:"タムムセ", type:"gacha" },
+{ kr:"리필", jp:"おかわり", roman:"ripil", kana:"リピル", type:"gacha" },
+{ kr:"집중하다", jp:"集中する", roman:"jipjunghada", kana:"チプチュンハダ", type:"gacha" },
+{ kr:"기대하다", jp:"期待する", roman:"gidaehada", kana:"キデハダ", type:"gacha" },
+{ kr:"추측하다", jp:"推測する", roman:"chucheukhada", kana:"チュチュカダ", type:"gacha" },
+{ kr:"상상하다", jp:"想像する", roman:"sangsanghada", kana:"サンサンハダ", type:"gacha" },
+{ kr:"발견하다", jp:"発見する", roman:"balgyeonhada", kana:"パルギョナダ", type:"gacha" },
+{ kr:"표현하다", jp:"表現する", roman:"pyohyeonhada", kana:"ピョヒョナダ", type:"gacha" },
+{ kr:"반성하다", jp:"反省する", roman:"banseonghada", kana:"パンソンハダ", type:"gacha" },
+{ kr:"납득하다", jp:"納得する", roman:"napdeukhada", kana:"ナプトゥカダ", type:"gacha" },
+{ kr:"의존하다", jp:"依存する", roman:"uijonhada", kana:"ウィジョナダ", type:"gacha" },
+{ kr:"극복하다", jp:"克服する", roman:"geukbokhada", kana:"ククポカダ", type:"gacha" },
+{ kr:"도전하다", jp:"挑戦する", roman:"dojeonhada", kana:"トジョナダ", type:"gacha" },
+{ kr:"협력하다", jp:"協力する", roman:"hyeomnyeokhada", kana:"ヒョムニョカダ", type:"gacha" },
+{ kr:"경쟁하다", jp:"競争する", roman:"gyeongjaenghada", kana:"キョンジェンハダ", type:"gacha" },
+{ kr:"반대하다", jp:"反対する", roman:"bandaehada", kana:"パンデハダ", type:"gacha" },
+{ kr:"찬성하다", jp:"賛成する", roman:"chanseonghada", kana:"チャンソンハダ", type:"gacha" },
+{ kr:"토론하다", jp:"議論する", roman:"toronhada", kana:"トロナダ", type:"gacha" },
+{ kr:"협상하다", jp:"交渉する", roman:"hyeopsanghada", kana:"ヒョプサンハダ", type:"gacha" },
+{ kr:"보고하다", jp:"報告する", roman:"bogohada", kana:"ポゴハダ", type:"gacha" },
+{ kr:"기록하다", jp:"記録する", roman:"girokhada", kana:"キロカダ", type:"gacha" },
+{ kr:"관찰하다", jp:"観察する", roman:"gwanchalhada", kana:"クァンチャラダ", type:"gacha" },
+{ kr:"측정하다", jp:"測定する", roman:"cheukjeonghada", kana:"チュクチョンハダ", type:"gacha" },
+{ kr:"관리하다", jp:"管理する", roman:"gwallihada", kana:"クァルリハダ", type:"gacha" },
+{ kr:"개발하다", jp:"開発する", roman:"gaebalhada", kana:"ケバラダ", type:"gacha" },
+{ kr:"개선하다", jp:"改善する", roman:"gaeseonhada", kana:"ケソナダ", type:"gacha" },
+{ kr:"유지하다", jp:"維持する", roman:"yujihada", kana:"ユジハダ", type:"gacha" },
+{ kr:"확대하다", jp:"拡大する", roman:"hwakdaehada", kana:"ファクテハダ", type:"gacha" },
+{ kr:"축소하다", jp:"縮小する", roman:"chuksohada", kana:"チュクソハダ", type:"gacha" },
+{ kr:"공유하다", jp:"共有する", roman:"gongyuhada", kana:"コンユハダ", type:"gacha" },
+{ kr:"등록하다", jp:"登録する", roman:"deungnokhada", kana:"トゥンノカダ", type:"gacha" },
+{ kr:"업데이트하다", jp:"更新する", roman:"eopdeiteuhada", kana:"オプデイトゥハダ", type:"gacha" },
+{ kr:"연결하다", jp:"接続する", roman:"yeongyeolhada", kana:"ヨンギョラダ", type:"gacha" },
+{ kr:"차단하다", jp:"切断する", roman:"chadanhada", kana:"チャダナダ", type:"gacha" },
+{ kr:"답장하다", jp:"返信する", roman:"dapjanghada", kana:"タプチャンハダ", type:"gacha" },
+{ kr:"게시하다", jp:"投稿する", roman:"gesihada", kana:"ケシハダ", type:"gacha" },
+{ kr:"의뢰하다", jp:"依頼する", roman:"uiryehada", kana:"ウィレハダ", type:"gacha" },
+{ kr:"제안하다", jp:"提案する", roman:"jeanhada", kana:"チェアナダ", type:"gacha" },
+{ kr:"상담하다", jp:"相談する", roman:"sangdamhada", kana:"サンダマダ", type:"gacha" },
+{ kr:"휴식하다", jp:"休憩する", roman:"hyusikhada", kana:"ヒュシカダ", type:"gacha" },
+{ kr:"지각하다", jp:"遅刻する", roman:"jigakhada", kana:"チガカダ", type:"gacha" },
+{ kr:"결석하다", jp:"欠席する", roman:"gyeolseokhada", kana:"キョルソカダ", type:"gacha" },
+{ kr:"출석하다", jp:"出席する", roman:"chulseokhada", kana:"チュルソカダ", type:"gacha" },
+{ kr:"졸업하다", jp:"卒業する", roman:"joreophada", kana:"チョロパダ", type:"gacha" },
+{ kr:"입학하다", jp:"入学する", roman:"iphakada", kana:"イパカダ", type:"gacha" },
+{ kr:"합격하다", jp:"合格する", roman:"hapgyeokhada", kana:"ハプキョカダ", type:"gacha" },
+{ kr:"낙제하다", jp:"落第する", roman:"nakjehada", kana:"ナクチェハダ", type:"gacha" },
+{ kr:"질문하다", jp:"質問する", roman:"jilmunhada", kana:"チルムナダ", type:"gacha" },
+{ kr:"발표하다", jp:"発表する", roman:"balpyohada", kana:"パルピョハダ", type:"gacha" },
+{ kr:"응원하다", jp:"応援する", roman:"ungwonhada", kana:"ウンウォナダ", type:"gacha" },
+{ kr:"존경하다", jp:"尊敬する", roman:"jongyeonghada", kana:"チョンギョンハダ", type:"gacha" },
+{ kr:"경멸하다", jp:"軽蔑する", roman:"gyeongmyeolhada", kana:"キョンミョラダ", type:"gacha" },
+{ kr:"정확한", jp:"正確な", roman:"jeonghwakhan", kana:"チョンファカン", type:"gacha" },
+{ kr:"애매한", jp:"曖昧な", roman:"aemaehan", kana:"エメハン", type:"gacha" },
+{ kr:"객관적인", jp:"客観的な", roman:"gaekgwanjeogin", kana:"ケックァンジョギン", type:"gacha" },
+{ kr:"주관적인", jp:"主観的な", roman:"jugwanjeogin", kana:"チュグァンジョギン", type:"gacha" },
+{ kr:"논리적인", jp:"論理的な", roman:"nollijeogin", kana:"ノルリジョギン", type:"gacha" },
+{ kr:"감정적인", jp:"感情的な", roman:"gamjeongjeogin", kana:"カムジョンジョギン", type:"gacha" },
+{ kr:"합리적인", jp:"合理的な", roman:"hamnijeogin", kana:"ハムニジョギン", type:"gacha" },
+{ kr:"비합리적인", jp:"非合理的な", roman:"bihamnijeogin", kana:"ピハムニジョギン", type:"gacha" },
+{ kr:"구체적인", jp:"具体的な", roman:"guchejeogin", kana:"クチェジョギン", type:"gacha" },
+{ kr:"추상적인", jp:"抽象的な", roman:"chusangjeogin", kana:"チュサンジョギン", type:"gacha" },
+{ kr:"공식적인", jp:"公式な", roman:"gongsikjeogin", kana:"コンシクチョギン", type:"gacha" },
+{ kr:"비공식적인", jp:"非公式な", roman:"bigongsikjeogin", kana:"ピゴンシクチョギン", type:"gacha" },
+{ kr:"전통적인", jp:"伝統的な", roman:"jeontongjeogin", kana:"チョントンジョギン", type:"gacha" },
+{ kr:"현대적인", jp:"現代的な", roman:"hyeondaejeogin", kana:"ヒョンデジョギン", type:"gacha" },
+{ kr:"전형적인", jp:"典型的な", roman:"jeonhyeongjeogin", kana:"チョンヒョンジョギン", type:"gacha" },
+{ kr:"예외적인", jp:"例外的な", roman:"yewaejeogin", kana:"イェウェジョギン", type:"gacha" },
+{ kr:"적극적인", jp:"積極的な", roman:"jeokgeukjeogin", kana:"チョッククチョギン", type:"gacha" },
+{ kr:"소극적인", jp:"消極的な", roman:"sogeukjeogin", kana:"ソグクチョギン", type:"gacha" },
+{ kr:"긍정적인", jp:"肯定的な", roman:"geungjeongjeogin", kana:"クンジョンジョギン", type:"gacha" },
+{ kr:"부정적인", jp:"否定的な", roman:"bujeongjeogin", kana:"プジョンジョギン", type:"gacha" },
+{ kr:"안정된", jp:"安定した", roman:"anjeongdoen", kana:"アンジョンドェン", type:"gacha" },
+{ kr:"불안정한", jp:"不安定な", roman:"buranjeonghan", kana:"プランジョンハン", type:"gacha" },
+{ kr:"활발한", jp:"活発な", roman:"hwalbalhan", kana:"ファルバラン", type:"gacha" },
+{ kr:"신중한", jp:"慎重な", roman:"sinjunghan", kana:"シンジュンハン", type:"gacha" },
+{ kr:"대담한", jp:"大胆な", roman:"daedamhan", kana:"テダマン", type:"gacha" },
+{ kr:"엄밀한", jp:"厳密な", roman:"eommilhan", kana:"オンミラン", type:"gacha" },
+{ kr:"적절한", jp:"適切な", roman:"jeokjeolhan", kana:"チョクチョラン", type:"gacha" },
+{ kr:"부적절한", jp:"不適切な", roman:"bujeokjeolhan", kana:"プジョクチョラン", type:"gacha" },
+{ kr:"명확한", jp:"明確な", roman:"myeonghwakhan", kana:"ミョンファカン", type:"gacha" },
+{ kr:"불명확한", jp:"不明確な", roman:"bulmyeonghwakhan", kana:"プルミョンファカン", type:"gacha" },
+{ kr:"쾌적한", jp:"快適な", roman:"kwaejeokhan", kana:"クェジョカン", type:"gacha" },
+{ kr:"불쾌한", jp:"不快な", roman:"bulkwaehan", kana:"プルクェハン", type:"gacha" },
+{ kr:"지루한", jp:"退屈な", roman:"jiruhan", kana:"チルハン", type:"gacha" },
+{ kr:"유효한", jp:"有効な", roman:"yuhyohan", kana:"ユヒョハン", type:"gacha" },
+{ kr:"무효한", jp:"無効な", roman:"muhyohan", kana:"ムヒョハン", type:"gacha" },
+{ kr:"투명한", jp:"透明な", roman:"tumyeonghan", kana:"トゥミョンハン", type:"gacha" },
+{ kr:"불투명한", jp:"不透明な", roman:"bultumyeonghan", kana:"プルトゥミョンハン", type:"gacha" },
+{ kr:"공정한", jp:"公平な", roman:"gongjeonghan", kana:"コンジョンハン", type:"gacha" },
+{ kr:"불공정한", jp:"不公平な", roman:"bulgongjeonghan", kana:"プルゴンジョンハン", type:"gacha" },
+{ kr:"전문적인", jp:"専門的な", roman:"jeonmunjeogin", kana:"チョンムンジョギン", type:"gacha" },
+{ kr:"기본적인", jp:"基本的な", roman:"gibonjeogin", kana:"キボンジョギン", type:"gacha" },
+{ kr:"응용적인", jp:"応用的な", roman:"eungyongjeogin", kana:"ウンヨンジョギン", type:"gacha" },
+{ kr:"지속적인", jp:"継続的な", roman:"jisokjeogin", kana:"チソクチョギン", type:"gacha" },
+{ kr:"일시적인", jp:"一時的な", roman:"ilsijeogin", kana:"イルシジョギン", type:"gacha" },
+{ kr:"예비의", jp:"予備の", roman:"yebiui", kana:"イェビエ", type:"gacha" },
+{ kr:"여분의", jp:"余分な", roman:"yeobunui", kana:"ヨブネ", type:"gacha" },
+{ kr:"부족한", jp:"不足した", roman:"bujokhan", kana:"プジョカン", type:"gacha" },
+{ kr:"날카로운", jp:"鋭い", roman:"nalkaroun", kana:"ナルカロウン", type:"gacha" },
+{ kr:"둔한", jp:"鈍い", roman:"dunhan", kana:"トゥナン", type:"gacha" },
+{ kr:"미묘한", jp:"微妙な", roman:"mimyohan", kana:"ミミョハン", type:"gacha" },
+{ kr:"문화", jp:"文化", roman:"munhwa", kana:"ムンファ", type:"gacha" },
+{ kr:"전통", jp:"伝統", roman:"jeontong", kana:"チョントン", type:"gacha" },
+{ kr:"습관", jp:"習慣", roman:"seupgwan", kana:"スプクァン", type:"gacha" },
+{ kr:"예절", jp:"礼儀", roman:"yejeol", kana:"イェジョル", type:"gacha" },
+{ kr:"예법", jp:"作法", roman:"yebeop", kana:"イェポプ", type:"gacha" },
+{ kr:"의식", jp:"儀式", roman:"uisik", kana:"ウィシク", type:"gacha" },
+{ kr:"축제", jp:"祭り", roman:"chukje", kana:"チュクチェ", type:"gacha" },
+{ kr:"전시회", jp:"展覧会", roman:"jeonsihoe", kana:"チョンシフェ", type:"gacha" },
+{ kr:"작품", jp:"作品", roman:"jakpum", kana:"チャクプム", type:"gacha" },
+{ kr:"작가", jp:"作者", roman:"jakga", kana:"チャッカ", type:"gacha" },
+{ kr:"독자", jp:"読者", roman:"dokja", kana:"トクチャ", type:"gacha" },
+{ kr:"관객", jp:"観客", roman:"gwangaek", kana:"クァンゲク", type:"gacha" },
+{ kr:"연기", jp:"演技", roman:"yeongi", kana:"ヨンギ", type:"gacha" },
+{ kr:"무대", jp:"舞台", roman:"mudae", kana:"ムデ", type:"gacha" },
+{ kr:"극장", jp:"劇場", roman:"geukjang", kana:"ククチャン", type:"gacha" },
+{ kr:"대본", jp:"台本", roman:"daebon", kana:"テボン", type:"gacha" },
+{ kr:"소설", jp:"小説", roman:"soseol", kana:"ソソル", type:"gacha" },
+{ kr:"시", jp:"詩", roman:"si", kana:"シ", type:"gacha" },
+{ kr:"하이쿠", jp:"俳句", roman:"haiku", kana:"ハイク", type:"gacha" },
+{ kr:"만화", jp:"漫画", roman:"manhwa", kana:"マンファ", type:"gacha" },
+{ kr:"잡지", jp:"雑誌", roman:"japji", kana:"チャプチ", type:"gacha" },
+{ kr:"신문", jp:"新聞", roman:"sinmun", kana:"シンムン", type:"gacha" },
+{ kr:"방송", jp:"放送", roman:"bangsong", kana:"パンソン", type:"gacha" },
+{ kr:"프로그램", jp:"番組", roman:"peurogeuraem", kana:"プログレム", type:"gacha" },
+{ kr:"감독", jp:"監督", roman:"gamdok", kana:"カムドク", type:"gacha" },
+{ kr:"가수", jp:"歌手", roman:"gasu", kana:"カス", type:"gacha" },
+{ kr:"악기", jp:"楽器", roman:"akki", kana:"アッキ", type:"gacha" },
+{ kr:"음악", jp:"音楽", roman:"eumak", kana:"ウマク", type:"gacha" },
+{ kr:"미술", jp:"美術", roman:"misul", kana:"ミスル", type:"gacha" },
+{ kr:"디자인", jp:"デザイン", roman:"dijain", kana:"ディジャイン", type:"gacha" },
+{ kr:"건축", jp:"建築", roman:"geonchuk", kana:"コンチュク", type:"gacha" },
+{ kr:"역사", jp:"歴史", roman:"yeoksa", kana:"ヨクサ", type:"gacha" },
+{ kr:"지리", jp:"地理", roman:"jiri", kana:"チリ", type:"gacha" },
+{ kr:"화학", jp:"化学", roman:"hwahak", kana:"ファハク", type:"gacha" },
+{ kr:"물리", jp:"物理", roman:"mulli", kana:"ムルリ", type:"gacha" },
+{ kr:"생물", jp:"生物", roman:"saengmul", kana:"センムル", type:"gacha" },
+{ kr:"수학", jp:"数学", roman:"suhak", kana:"スハク", type:"gacha" },
+{ kr:"국어", jp:"国語", roman:"gugeo", kana:"クゴ", type:"gacha" },
+{ kr:"시험", jp:"試験", roman:"siheom", kana:"シホム", type:"gacha" },
+{ kr:"숙제", jp:"宿題", roman:"sukje", kana:"スクチェ", type:"gacha" },
+{ kr:"성적", jp:"成績", roman:"seongjeok", kana:"ソンジョク", type:"gacha" },
+{ kr:"과정", jp:"課程", roman:"gwajeong", kana:"クァジョン", type:"gacha" },
+{ kr:"전공", jp:"専攻", roman:"jeongong", kana:"チョンゴン", type:"gacha" },
+{ kr:"학부", jp:"学部", roman:"hakbu", kana:"ハクプ", type:"gacha" },
+{ kr:"강의", jp:"講義", roman:"gangui", kana:"カンイ", type:"gacha" },
+{ kr:"학점", jp:"単位", roman:"hakjeom", kana:"ハクチョム", type:"gacha" },
+{ kr:"유학", jp:"留学", roman:"yuhak", kana:"ユハク", type:"gacha" },
+{ kr:"장학금", jp:"奨学金", roman:"janghakgeum", kana:"チャンハックム", type:"gacha" },
+{ kr:"졸업식", jp:"卒業式", roman:"joreopsik", kana:"チョロプシク", type:"gacha" },
+{ kr:"입학식", jp:"入学式", roman:"iphaksik", kana:"イパクシク", type:"gacha" },
+{ kr:"경계", jp:"境界", roman:"gyeonggye", kana:"キョンゲ", type:"gacha" },
+{ kr:"영역", jp:"領域", roman:"yeongyeok", kana:"ヨンヨク", type:"gacha" },
+{ kr:"범위", jp:"範囲", roman:"beomwi", kana:"ポムウィ", type:"gacha" },
+{ kr:"중심", jp:"中心", roman:"jungsim", kana:"チュンシム", type:"gacha" },
+{ kr:"주변", jp:"周辺", roman:"jubyeon", kana:"チュビョン", type:"gacha" },
+{ kr:"내부", jp:"内部", roman:"naebu", kana:"ネブ", type:"gacha" },
+{ kr:"외부", jp:"外部", roman:"oebu", kana:"ウェブ", type:"gacha" },
+{ kr:"표면", jp:"表面", roman:"pyomyeon", kana:"ピョミョン", type:"gacha" },
+{ kr:"뒷면", jp:"裏側", roman:"dwinmyeon", kana:"トゥィンミョン", type:"gacha" },
+{ kr:"방향", jp:"方向", roman:"banghyang", kana:"パンヒャン", type:"gacha" },
+{ kr:"거리", jp:"距離", roman:"geori", kana:"コリ", type:"gacha" },
+{ kr:"위치", jp:"位置", roman:"wichi", kana:"ウィチ", type:"gacha" },
+{ kr:"고도", jp:"高度", roman:"godo", kana:"コド", type:"gacha" },
+{ kr:"심도", jp:"深度", roman:"simdo", kana:"シムド", type:"gacha" },
+{ kr:"밀도", jp:"密度", roman:"mildo", kana:"ミルド", type:"gacha" },
+{ kr:"온도", jp:"温度", roman:"ondo", kana:"オンド", type:"gacha" },
+{ kr:"각도", jp:"角度", roman:"gakdo", kana:"カクト", type:"gacha" },
+{ kr:"면적", jp:"面積", roman:"myeonjeok", kana:"ミョンジョク", type:"gacha" },
+{ kr:"부피", jp:"体積", roman:"bupi", kana:"プピ", type:"gacha" },
+{ kr:"중력", jp:"重力", roman:"jungnyeok", kana:"チュンニョク", type:"gacha" },
+{ kr:"전류", jp:"電流", roman:"jeollyu", kana:"チョルリュ", type:"gacha" },
+{ kr:"전압", jp:"電圧", roman:"jeonap", kana:"チョナプ", type:"gacha" },
+{ kr:"자석", jp:"磁石", roman:"jaseok", kana:"チャソク", type:"gacha" },
+{ kr:"금속", jp:"金属", roman:"geumsok", kana:"クムソク", type:"gacha" },
+{ kr:"물질", jp:"物質", roman:"muljil", kana:"ムルチル", type:"gacha" },
+{ kr:"입자", jp:"粒子", roman:"ipja", kana:"イプチャ", type:"gacha" },
+{ kr:"세포", jp:"細胞", roman:"sepo", kana:"セポ", type:"gacha" },
+{ kr:"유전자", jp:"遺伝子", roman:"yujeonja", kana:"ユジョンジャ", type:"gacha" },
+{ kr:"환경", jp:"環境", roman:"hwan-gyeong", kana:"ファンギョン", type:"gacha" },
+{ kr:"자원", jp:"資源", roman:"jawon", kana:"チャウォン", type:"gacha" },
+{ kr:"연료", jp:"燃料", roman:"yeollyo", kana:"ヨルリョ", type:"gacha" },
+{ kr:"전력", jp:"電力", roman:"jeollyeok", kana:"チョルリョク", type:"gacha" },
+{ kr:"교통", jp:"交通", roman:"gyotong", kana:"キョトン", type:"gacha" },
+{ kr:"정체", jp:"渋滞", roman:"jeongche", kana:"チョンチェ", type:"gacha" },
+{ kr:"사고", jp:"事故", roman:"sago", kana:"サゴ", type:"gacha" },
+{ kr:"위기", jp:"危機", roman:"wigi", kana:"ウィギ", type:"gacha" },
+{ kr:"재해", jp:"災害", roman:"jaehae", kana:"チェヘ", type:"gacha" },
+{ kr:"피난", jp:"避難", roman:"pinan", kana:"ピナン", type:"gacha" },
+{ kr:"구조", jp:"救助", roman:"gujo", kana:"クジョ", type:"gacha" },
+{ kr:"훈련", jp:"訓練", roman:"hullyeon", kana:"フルリョン", type:"gacha" },
+{ kr:"실험", jp:"実験", roman:"silheom", kana:"シルホム", type:"gacha" },
+{ kr:"장치", jp:"装置", roman:"jangchi", kana:"チャンチ", type:"gacha" },
+{ kr:"부품", jp:"部品", roman:"bupum", kana:"ププム", type:"gacha" },
+{ kr:"제품", jp:"製品", roman:"jepum", kana:"チェプム", type:"gacha" },
+{ kr:"공장", jp:"工場", roman:"gongjang", kana:"コンジャン", type:"gacha" },
+{ kr:"농업", jp:"農業", roman:"nongeop", kana:"ノンオプ", type:"gacha" },
+{ kr:"어업", jp:"漁業", roman:"eoeop", kana:"オオプ", type:"gacha" },
+{ kr:"산업", jp:"産業", roman:"saneop", kana:"サノプ", type:"gacha" },
+{ kr:"무역", jp:"貿易", roman:"muyeok", kana:"ムヨク", type:"gacha" },
+{ kr:"물류", jp:"物流", roman:"mullyu", kana:"ムルリュ", type:"gacha" },
+
+];
+
+const RANDOM_SENTENCES = [
+  { style:"casual", kr:"나 학교에 가.", jp:"私は学校に行く。" },
+  { style:"casual", kr:"너 밥 먹어?", jp:"君、ご飯食べる？" },
+  { style:"haeyo", kr:"저는 학교에 가요.", jp:"私は学校に行きます。" },
+  { style:"haeyo", kr:"친구는 밥을 먹어요.", jp:"友達はご飯を食べます。" },
+  { style:"hamnida", kr:"저는 학교에 갑니다.", jp:"私は学校に行きます。" },
+  { style:"hamnida", kr:"친구는 밥을 먹습니다.", jp:"友達はご飯を食べます。" }
+];
+
+const BASE_PHRASES = {
+  greeting:[
+    { kr:"안녕하세요", jp:"こんにちは", roman:"annyeonghaseyo", kana:"アンニョンハセヨ" }
+  ],
+  emotion:[
+    { kr:"기분이 좋아요", jp:"気分がいいです", roman:"gibuni joayo", kana:"キブニ チョアヨ" }
+  ],
+  instruction:[
+    { kr:"천천히 말해 주세요", jp:"ゆっくり話してください", roman:"cheoncheonhi malhae juseyo", kana:"チョンチョニ マレ ジュセヨ" }
+  ],
+  slang:[
+    { kr:"대박", jp:"やばい / すごい", roman:"daebak", kana:"テバク" }
+  ],
+  game:[
+    { kr:"같이 가자", jp:"一緒に行こう", roman:"gachi gaja", kana:"カチ カジャ" }
+  ],
+  affirm:[
+    { kr:"좋아요", jp:"いいです", roman:"joayo", kana:"チョアヨ" }
+  ],
+  negative:[
+    { kr:"아니요", jp:"いいえ", roman:"aniyo", kana:"アニヨ" }
+  ],
+  request:[
+    { kr:"주세요", jp:"ください", roman:"juseyo", kana:"ジュセヨ" }
+  ],
+  question:[
+    { kr:"어디예요?", jp:"どこですか？", roman:"eodiyeyo", kana:"オディエヨ" }
+  ]
+};
+
+const GACHA_POOL = [
+  { kr:"대박", jp:"すごい / やばい", roman:"daebak", kana:"テバク" },
+  { kr:"진짜", jp:"マジで", roman:"jinjja", kana:"チンチャ" },
+  { kr:"최애", jp:"最推し", roman:"choeae", kana:"チェエ" }
+];
+
+const state = {
+  currentTab:"word",
+  wordType:"all",
+  nounSubType:"all",
+  wordStatus:"all",
+  typeExpanded:false,
+  currentPhraseCategory:"greeting",
+  randomStyle:"casual",
+  coin:1000,
+  sentence:"",
+  sentenceJp:"",
+  bestScore:0,
+  bgMode:"navy",
+  pronMode:"roman",
+  customWords:[],
+  customPhrases:{},
+  gachaWords:[],
+  savedSentences:[],
+  wrongWords:[],
+  marks:{},
+  quiz:{
+    mode:null,
+    inProgress:false,
+    items:[],
+    index:0,
+    score:0,
+    currentQuestion:null,
+    streak:0,
+    pendingCoins:0
+  }
+};
+
+function loadState(){
+  try{ Object.assign(state, JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")); }catch(e){}
+  try{ state.customWords = JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY) || "[]"); }catch(e){}
+  try{ state.customPhrases = JSON.parse(localStorage.getItem(CUSTOM_PHRASES_KEY) || "{}"); }catch(e){}
+  try{ state.gachaWords = JSON.parse(localStorage.getItem(GACHA_WORDS_KEY) || "[]"); }catch(e){}
+  try{ state.savedSentences = JSON.parse(localStorage.getItem(SAVED_SENTENCES_KEY) || "[]"); }catch(e){}
+  try{ state.wrongWords = JSON.parse(localStorage.getItem(WRONG_WORDS_KEY) || "[]"); }catch(e){}
+  try{ state.marks = JSON.parse(localStorage.getItem(MARKS_KEY) || "{}"); }catch(e){}
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    currentTab:state.currentTab,
+    wordType:state.wordType,
+    nounSubType:state.nounSubType,
+    wordStatus:state.wordStatus,
+    currentPhraseCategory:state.currentPhraseCategory,
+    randomStyle:state.randomStyle,
+    coin:state.coin,
+    sentence:state.sentence,
+    sentenceJp:state.sentenceJp,
+    bestScore:state.bestScore,
+    bgMode:state.bgMode,
+    pronMode:state.pronMode
+  }));
+  localStorage.setItem(CUSTOM_WORDS_KEY, JSON.stringify(state.customWords));
+  localStorage.setItem(CUSTOM_PHRASES_KEY, JSON.stringify(state.customPhrases));
+  localStorage.setItem(GACHA_WORDS_KEY, JSON.stringify(state.gachaWords));
+  localStorage.setItem(SAVED_SENTENCES_KEY, JSON.stringify(state.savedSentences));
+  localStorage.setItem(WRONG_WORDS_KEY, JSON.stringify(state.wrongWords));
+  localStorage.setItem(MARKS_KEY, JSON.stringify(state.marks));
+}
+
+function setTheme(main,sub,sub2,on){
+  document.documentElement.style.setProperty("--main",main);
+  document.documentElement.style.setProperty("--sub",sub);
+  document.documentElement.style.setProperty("--sub2",sub2);
+  document.documentElement.style.setProperty("--on",on);
+  document.body.style.background = main;
+}
+
+function applyTheme(){
+  if(state.bgMode === "beige"){
+    setTheme("#E7D0A9","#d6b98e","#c6a477","#0d1b2a");
+  }else{
+    setTheme("#0d1b2a","#1b263b","#24364f","#ffffff");
+  }
+  renderSettingHighlights();
+}
+
+function enterEndlessTheme(){
+  setTheme("#740125","#8b1430","#9d1b39","#ffffff");
+}
+
+function exitEndlessTheme(){
+  applyTheme();
+}
+
+function getPron(item){
+  return state.pronMode === "kana" ? item.kana || "" : item.roman || "";
+}
+
+function getAllWords(){
+  return [
+    ...RAW_WORDS,
+    ...state.customWords,
+    ...state.gachaWords.map(w=>({...w,type:"gacha"}))
+  ];
+}
+
+function getVisibleWords(){
+  let words = getAllWords();
+
+  if(state.wordType !== "all"){
+    words = words.filter(w=>w.type === state.wordType);
+  }
+
+  if(state.wordType === "noun" && state.nounSubType !== "all"){
+    words = words.filter(w=>(w.subType || "thing") === state.nounSubType);
+  }
+
+  if(state.wordStatus !== "all"){
+    words = words.filter(w=>state.marks[w.kr] === state.wordStatus);
+  }
+
+  return words;
+}
+
+function typeLabel(type){
+  return {
+    noun:"名詞",
+    verb:"動詞",
+    adj:"形容詞",
+    adv:"副詞",
+    conj:"接続詞",
+    react:"リアクション",
+    time:"時間",
+    pronoun:"代名詞",
+    question:"疑問詞",
+    number:"数詞",
+    gacha:"ガチャ"
+  }[type] || type;
+}
+
+function subTypeLabel(sub){
+  return {
+    person:"人",
+    food:"食べ物",
+    place:"場所",
+    thing:"物"
+  }[sub] || sub;
+}
+
+function escapeHtml(str){
+  return String(str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function pickRandom(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function shuffle(arr){
+  return [...arr].sort(()=>Math.random()-.5);
+}
+
+/* ===== 上バー ===== */
+function renderTopBars(){
+  const left = document.getElementById("leftFilter");
+  const right = document.getElementById("rightFilter");
+  const nounBar = document.getElementById("nounSubbar");
+  const styleBar = document.getElementById("styleSubbar");
+
+  nounBar.classList.add("hidden");
+  styleBar.classList.add("hidden");
+
+  if(state.currentTab === "word"){
+    if(state.typeExpanded){
+      left.innerHTML = `
+        <button class="chip active pressable" data-collapse-type>品詞</button>
+        ${WORD_TYPES.map(([key,label])=>`
+          <button class="chip pressable ${state.wordType===key?"active":""}" data-word-type="${key}">
+            ${label}
+          </button>
+        `).join("")}
+      `;
+    }else{
+      const label = WORD_TYPES.find(x=>x[0]===state.wordType)?.[1] || "すべて";
+      left.innerHTML = `
+        <button class="chip active pressable" id="typeOpenBtn">品詞：${label}</button>
+      `;
+    }
+
+    right.innerHTML = `
+      <button class="status-chip pressable ${state.wordStatus==="good"?"active":""}" data-status="good">〇</button>
+      <button class="status-chip pressable ${state.wordStatus==="bad"?"active":""}" data-status="bad">×</button>
+    `;
+
+    if(state.wordType === "noun"){
+      nounBar.classList.remove("hidden");
+      document.getElementById("nounSubRow").innerHTML = NOUN_SUBTYPES.map(([key,label])=>`
+        <button class="chip pressable ${state.nounSubType===key?"active":""}" data-noun-sub="${key}">
+          ${label}
+        </button>
+      `).join("");
+    }
+  }
+
+  else if(state.currentTab === "phrase"){
+    left.innerHTML = Object.entries(PHRASE_TYPES).map(([key,label])=>`
+      <button class="chip pressable ${state.currentPhraseCategory===key?"active":""}" data-phrase-type="${key}">
+        ${label}
+      </button>
+    `).join("");
+    right.innerHTML = "";
+  }
+
+  else if(state.currentTab === "random"){
+    left.innerHTML = `<button class="chip active">ランダム文章</button>`;
+    right.innerHTML = "";
+    styleBar.classList.remove("hidden");
+    document.getElementById("styleRow").innerHTML = RANDOM_STYLES.map(([key,label])=>`
+      <button class="chip pressable ${state.randomStyle===key?"active":""}" data-style="${key}">
+        ${label}
+      </button>
+    `).join("");
+  }
+
+  else{
+    left.innerHTML = `<button class="chip active">${state.currentTab}</button>`;
+    right.innerHTML = "";
+  }
+}
+
+/* ===== 単語 ===== */
+function renderWords(){
+  const list = document.getElementById("wordList");
+  const words = getVisibleWords();
+
+  if(!words.length){
+    list.innerHTML = `<div class="empty">表示できる単語がありません。</div>`;
+    return;
+  }
+
+  list.innerHTML = words.map(item=>{
+    const mark = state.marks[item.kr] || "";
+    const sub = item.type === "noun"
+      ? `<span class="tag">${subTypeLabel(item.subType || "thing")}</span>`
+      : "";
+
+    return `
+      <div class="word-card">
+        <div class="top-row">
+          <div class="card-left">
+            <div class="kr">${escapeHtml(item.kr)}</div>
+            <div class="pron">${escapeHtml(getPron(item))}</div>
+            <div class="tag-row">
+              <span class="tag">${typeLabel(item.type)}</span>
+              ${sub}
+              ${mark === "good" ? `<span class="tag">得意</span>` : ""}
+              ${mark === "bad" ? `<span class="tag">苦手</span>` : ""}
+            </div>
+            <div class="jp">${escapeHtml(item.jp)}</div>
+          </div>
+
+          <div class="word-actions">
+            <button class="audio-btn pressable" data-audio="${escapeHtml(item.kr)}">🔊</button>
+            <div class="mark-row">
+              <button class="mark-btn good pressable ${mark==="good"?"active":""}" data-mark-good="${escapeHtml(item.kr)}">〇</button>
+              <button class="mark-btn bad pressable ${mark==="bad"?"active":""}" data-mark-bad="${escapeHtml(item.kr)}">×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ===== フレーズ ===== */
+function getPhrases(){
+  const merged = JSON.parse(JSON.stringify(BASE_PHRASES));
+  Object.keys(PHRASE_TYPES).forEach(k=>{
+    if(!merged[k]) merged[k]=[];
+    if(state.customPhrases[k]) merged[k].push(...state.customPhrases[k]);
+  });
+  return merged[state.currentPhraseCategory] || [];
+}
+
+function renderPhrase(){
+  const panel = document.getElementById("phrasePanel");
+  const items = getPhrases();
+
+  if(!items.length){
+    panel.innerHTML = `<div class="empty">フレーズがありません。</div>`;
+    return;
+  }
+
+  panel.innerHTML = items.map(item=>`
+    <div class="phrase-card">
+      <div class="top-row">
+        <div class="card-left">
+          <div class="kr">${escapeHtml(item.kr)}</div>
+          <div class="pron">${escapeHtml(getPron(item))}</div>
+          <div class="jp">${escapeHtml(item.jp)}</div>
+        </div>
+        <button class="audio-btn phrase-audio-btn pressable" data-audio="${escapeHtml(item.kr)}">🔊</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ===== ランダム ===== */
+function renderSentence(){
+  document.getElementById("sentenceText").textContent = state.sentence || "ボタンを押すとここに文章が出ます";
+  document.getElementById("sentenceJp").textContent = state.sentenceJp || "日本語訳";
+}
+
+function renderSavedSentences(){
+  const root = document.getElementById("savedSentenceList");
+
+  if(!state.savedSentences.length){
+    root.innerHTML = `<div class="empty">保存した文章はありません。</div>`;
+    return;
+  }
+
+  root.innerHTML = state.savedSentences.map(s=>`
+    <div class="sentence-card">
+      <div class="kr">${escapeHtml(s.kr)}</div>
+      <div class="jp" style="display:block;">${escapeHtml(s.jp)}</div>
+    </div>
+  `).join("");
+}
+
+/* ===== 間違い ===== */
+function renderWrongWords(){
+  const root = document.getElementById("wrongWordList");
+
+  if(!state.wrongWords.length){
+    root.innerHTML = `<div class="empty">まだ間違えた単語はありません。</div>`;
+    return;
+  }
+
+  root.innerHTML = state.wrongWords.map(w=>`
+    <div class="wrong-card">
+      <div class="kr">${escapeHtml(w.kr)}</div>
+      <div class="pron">${escapeHtml(getPron(w))}</div>
+      <div>${escapeHtml(w.jp)}</div>
+    </div>
+  `).join("");
+}
+
+function addWrongWord(item){
+  state.wrongWords = state.wrongWords.filter(w=>w.kr !== item.kr);
+  state.wrongWords.unshift({...item});
+  if(state.wrongWords.length > 50) state.wrongWords.pop();
+  saveState();
+  renderWrongWords();
+}
+
+/* ===== 統計 ===== */
+function renderStats(){
+  document.getElementById("coinDisplay").textContent = state.coin;
+  document.getElementById("statWordCount").textContent = getAllWords().length;
+  document.getElementById("statGachaCount").textContent = state.gachaWords.length;
+  document.getElementById("statBestScore").textContent = state.bestScore;
+  document.getElementById("statCurrentCategory").textContent = state.currentTab === "word" ? state.wordType : state.currentTab;
+}
+
+function renderFab(){
+  const fab = document.getElementById("fabBtn");
+  if(state.currentTab === "word" || state.currentTab === "phrase"){
+    fab.classList.remove("hidden");
+  }else{
+    fab.classList.add("hidden");
+  }
+}
+
+/* ===== 画面切替：幕なし ===== */
+function switchTab(tab){
+  if(tab === state.currentTab){
+    return;
+  }
+
+  state.currentTab = tab;
+
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.tab === tab);
+  });
+
+  document.querySelectorAll(".screen").forEach(screen=>{
+    screen.classList.remove("active");
+  });
+
+  document.getElementById(`screen-${tab}`).classList.add("active");
+
+  state.typeExpanded = false;
+
+  renderTopBars();
+  renderFab();
+
+  if(tab === "word") renderWords();
+  if(tab === "phrase") renderPhrase();
+
+  if(tab === "random"){
+    renderSentence();
+    renderSavedSentences();
+  }
+
+  if(tab === "quiz") renderWrongWords();
+
+  renderStats();
+  saveState();
+}
+
+function instantRender(){
+  renderTopBars();
+  renderFab();
+  renderWords();
+  renderPhrase();
+  renderSentence();
+  renderSavedSentences();
+  renderWrongWords();
+  renderStats();
+}
+
+/* ===== クイズ ===== */
+function showQuizStart(mode){
+  document.getElementById("endEndlessBtn").classList.add("hidden");
+
+  const box = document.getElementById("quizBox");
+
+  if(mode === "normal"){
+    box.innerHTML = `
+      <div class="quiz-progress">10問クイズ</div>
+      <div class="quiz-result">10問全問正解で100コイン獲得できます。</div>
+      <button class="action-btn pressable" id="startNormalConfirm">開始する</button>
+    `;
+    document.getElementById("startNormalConfirm").onclick = startNormalQuiz;
+  }
+
+  if(mode === "endless"){
+    box.innerHTML = `
+      <div class="quiz-progress">エンドレスモード</div>
+      <div class="quiz-result">間違えるまで続きます。10連続ごとにボーナス。</div>
+      <button class="action-btn pressable" id="startEndlessConfirm">開始する</button>
+    `;
+    document.getElementById("startEndlessConfirm").onclick = startEndlessQuiz;
+  }
+}
+
+function startNormalQuiz(){
+  exitEndlessTheme();
+  const pool = getAllWords();
+  if(pool.length < 4) return;
+
+  state.quiz.mode = "normal";
+  state.quiz.inProgress = true;
+  state.quiz.items = shuffle(pool).slice(0,10);
+  state.quiz.index = 0;
+  state.quiz.score = 0;
+
+  document.getElementById("endEndlessBtn").classList.add("hidden");
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const current = state.quiz.items[state.quiz.index];
+
+  if(!current){
+    finishNormalQuiz();
+    return;
+  }
+
+  const wrong = shuffle(getAllWords().filter(w=>w.jp !== current.jp)).slice(0,3);
+  const choices = shuffle([current, ...wrong]);
+
+  document.getElementById("quizBox").innerHTML = `
+    <div class="quiz-progress">問題 ${state.quiz.index + 1} / ${state.quiz.items.length} ・ ${state.quiz.score}点</div>
+    <div class="quiz-question">${escapeHtml(current.kr)} の意味は？</div>
+    <div class="answers">
+      ${choices.map(c=>`
+        <button class="answer-btn pressable" data-answer="${escapeHtml(c.jp)}">
+          ${escapeHtml(c.jp)}
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function finishNormalQuiz(){
+  let reward = 0;
+
+  if(state.quiz.score === 10){
+    reward = 100;
+    state.coin += reward;
+  }
+
+  if(state.quiz.score > state.bestScore){
+    state.bestScore = state.quiz.score;
+  }
+
+  state.quiz.inProgress = false;
+  state.quiz.mode = null;
+
+  document.getElementById("quizBox").innerHTML = `
+    <div class="quiz-progress">終了</div>
+    <div class="quiz-question">${state.quiz.score} / 10</div>
+    <div class="quiz-result">${reward ? "100コイン獲得！" : "報酬なし。"}</div>
+  `;
+
+  renderStats();
+  saveState();
+}
+
+function startEndlessQuiz(){
+  enterEndlessTheme();
+
+  state.quiz.mode = "endless";
+  state.quiz.inProgress = true;
+  state.quiz.streak = 0;
+  state.quiz.pendingCoins = 0;
+
+  document.getElementById("endEndlessBtn").classList.remove("hidden");
+  renderEndlessQuestion();
+}
+
+function renderEndlessQuestion(){
+  const pool = getAllWords();
+  const current = pickRandom(pool);
+  state.quiz.currentQuestion = current;
+
+  const wrong = shuffle(pool.filter(w=>w.jp !== current.jp)).slice(0,3);
+  const choices = shuffle([current, ...wrong]);
+
+  document.getElementById("quizBox").innerHTML = `
+    <div class="quiz-progress">エンドレス
+連続正解: ${state.quiz.streak}
+保留コイン: ${state.quiz.pendingCoins}</div>
+    <div class="quiz-question">${escapeHtml(current.kr)} の意味は？</div>
+    <div class="answers">
+      ${choices.map(c=>`
+        <button class="answer-btn pressable" data-answer="${escapeHtml(c.jp)}">
+          ${escapeHtml(c.jp)}
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function finishEndless(){
+  state.coin += state.quiz.pendingCoins;
+
+  const streak = state.quiz.streak;
+  const coins = state.quiz.pendingCoins;
+
+  state.quiz.inProgress = false;
+  state.quiz.mode = null;
+  state.quiz.pendingCoins = 0;
+
+  document.getElementById("endEndlessBtn").classList.add("hidden");
+  exitEndlessTheme();
+
+  document.getElementById("quizBox").innerHTML = `
+    <div class="quiz-progress">エンドレス終了</div>
+    <div class="quiz-question">${streak}連続正解</div>
+    <div class="quiz-result">${coins}コイン獲得。</div>
+  `;
+
+  renderStats();
+  saveState();
+}
+
+function handleQuizAnswer(answer){
+  if(!state.quiz.inProgress) return;
+
+  if(state.quiz.mode === "normal"){
+    const current = state.quiz.items[state.quiz.index];
+
+    if(answer === current.jp){
+      state.quiz.score++;
+    }else{
+      addWrongWord(current);
+    }
+
+    state.quiz.index++;
+
+    if(state.quiz.index >= state.quiz.items.length){
+      finishNormalQuiz();
+    }else{
+      renderQuizQuestion();
+    }
+  }
+
+  if(state.quiz.mode === "endless"){
+    const current = state.quiz.currentQuestion;
+
+    if(answer === current.jp){
+      state.quiz.streak++;
+      if(state.quiz.streak % 10 === 0){
+        state.quiz.pendingCoins += state.quiz.streak * 10;
+      }
+      renderEndlessQuestion();
+    }else{
+      addWrongWord(current);
+      finishEndless();
+    }
+  }
+}
+
+/* ===== ガチャ ===== */
+function gachaPull(times){
+  const cost = times === 10 ? 5000 : 500;
+
+  if(state.coin < cost){
+    document.getElementById("gachaStage").textContent = "コイン不足です。";
+    return;
+  }
+
+  state.coin -= cost;
+
+  const results = [];
+
+  for(let i=0;i<times;i++){
+    const item = pickRandom(GACHA_POOL);
+    results.push(item);
+
+    if(!state.gachaWords.some(w=>w.kr === item.kr)){
+      state.gachaWords.push({...item,type:"gacha"});
+    }
+  }
+
+  document.getElementById("gachaStage").textContent = `${times}回引きました。`;
+
+  document.getElementById("gachaLog").innerHTML = results.map(r=>`
+    <div class="gacha-item">${escapeHtml(r.kr)} - ${escapeHtml(r.jp)}</div>
+  `).join("");
+
+  renderStats();
+  saveState();
+}
+
+/* ===== 音声 ===== */
+function speakText(text){
+  if(!text) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ko-KR";
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+/* ===== 単語追加 ===== */
+function openWordModal(){
+  document.getElementById("addWordModal").classList.add("show");
+  syncNewWordSubtype();
+}
+
+function closeWordModal(){
+  document.getElementById("addWordModal").classList.remove("show");
+}
+
+function syncNewWordSubtype(){
+  const type = document.getElementById("newType").value;
+  document.getElementById("newNounSubTypeField").style.display = type === "noun" ? "block" : "none";
+}
+
+function addWord(){
+  const kr = document.getElementById("newKr").value.trim();
+  const jp = document.getElementById("newJp").value.trim();
+  const roman = document.getElementById("newRoman").value.trim();
+  const kana = document.getElementById("newKana").value.trim();
+  const type = document.getElementById("newType").value;
+  const subType = document.getElementById("newSubType").value;
+
+  if(!kr || !jp){
+    alert("韓国語と日本語は必須です。");
+    return;
+  }
+
+  const item = { kr,jp,roman,kana,type };
+  if(type === "noun") item.subType = subType;
+
+  state.customWords.push(item);
+
+  closeWordModal();
+  renderWords();
+  renderStats();
+  saveState();
+
+  document.getElementById("newKr").value = "";
+  document.getElementById("newJp").value = "";
+  document.getElementById("newRoman").value = "";
+  document.getElementById("newKana").value = "";
+}
+
+/* ===== フレーズ追加 ===== */
+function openPhraseModal(){
+  const select = document.getElementById("newPhraseCategory");
+  select.innerHTML = Object.entries(PHRASE_TYPES).map(([key,label])=>`
+    <option value="${key}">${label}</option>
+  `).join("");
+
+  select.value = state.currentPhraseCategory;
+  document.getElementById("addPhraseModal").classList.add("show");
+}
+
+function closePhraseModal(){
+  document.getElementById("addPhraseModal").classList.remove("show");
+}
+
+function addPhrase(){
+  const category = document.getElementById("newPhraseCategory").value;
+  const kr = document.getElementById("newPhraseKr").value.trim();
+  const jp = document.getElementById("newPhraseJp").value.trim();
+  const roman = document.getElementById("newPhraseRoman").value.trim();
+  const kana = document.getElementById("newPhraseKana").value.trim();
+
+  if(!kr || !jp){
+    alert("韓国語と日本語は必須です。");
+    return;
+  }
+
+  if(!state.customPhrases[category]) state.customPhrases[category] = [];
+  state.customPhrases[category].push({ kr,jp,roman,kana });
+
+  closePhraseModal();
+  renderPhrase();
+  saveState();
+}
+
+/* ===== 設定 ===== */
+function openSettings(){
+  document.getElementById("settingsBackdrop").classList.add("show");
+  document.getElementById("settingsPanel").classList.add("show");
+  renderSettingHighlights();
+}
+
+function closeSettings(){
+  document.getElementById("settingsBackdrop").classList.remove("show");
+  document.getElementById("settingsPanel").classList.remove("show");
+}
+
+function renderSettingHighlights(){
+  const bgNavy = document.getElementById("bgNavyBtn");
+  const bgBeige = document.getElementById("bgBeigeBtn");
+  const pronRoman = document.getElementById("pronRomanBtn");
+  const pronKana = document.getElementById("pronKanaBtn");
+
+  if(!bgNavy) return;
+
+  bgNavy.classList.toggle("selected", state.bgMode === "navy");
+  bgBeige.classList.toggle("selected", state.bgMode === "beige");
+  pronRoman.classList.toggle("selected", state.pronMode === "roman");
+  pronKana.classList.toggle("selected", state.pronMode === "kana");
+}
+
+function clearCache(){
+  if(!confirm("保存データを削除しますか？")) return;
+
+  [
+    STORAGE_KEY,
+    CUSTOM_WORDS_KEY,
+    CUSTOM_PHRASES_KEY,
+    GACHA_WORDS_KEY,
+    SAVED_SENTENCES_KEY,
+    WRONG_WORDS_KEY,
+    MARKS_KEY
+  ].forEach(k=>localStorage.removeItem(k));
+
+  location.reload();
+}
+
+/* ===== イベント ===== */
+function bindEvents(){
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>switchTab(btn.dataset.tab));
+  });
+
+  document.getElementById("leftFilter").addEventListener("click",e=>{
+    const open = e.target.closest("#typeOpenBtn");
+    const collapse = e.target.closest("[data-collapse-type]");
+    const type = e.target.closest("[data-word-type]");
+    const phrase = e.target.closest("[data-phrase-type]");
+
+    if(open){
+      state.typeExpanded = true;
+      renderTopBars();
+      return;
+    }
+
+    if(collapse){
+      state.typeExpanded = false;
+      renderTopBars();
+      return;
+    }
+
+    if(type){
+      state.wordType = type.dataset.wordType;
+      state.typeExpanded = false;
+
+      if(state.wordType !== "noun"){
+        state.nounSubType = "all";
+      }
+
+      renderTopBars();
+      renderWords();
+      renderStats();
+      saveState();
+      return;
+    }
+
+    if(phrase){
+      state.currentPhraseCategory = phrase.dataset.phraseType;
+      renderTopBars();
+      renderPhrase();
+      saveState();
+    }
+  });
+
+  document.getElementById("rightFilter").addEventListener("click",e=>{
+    const btn = e.target.closest("[data-status]");
+    if(!btn) return;
+
+    const status = btn.dataset.status;
+
+    if(state.wordStatus === status){
+      state.wordStatus = "all";
+    }else{
+      state.wordStatus = status;
+    }
+
+    renderTopBars();
+    renderWords();
+    saveState();
+  });
+
+  document.getElementById("nounSubRow").addEventListener("click",e=>{
+    const btn = e.target.closest("[data-noun-sub]");
+    if(!btn) return;
+
+    state.nounSubType = btn.dataset.nounSub;
+    renderTopBars();
+    renderWords();
+    saveState();
+  });
+
+  document.getElementById("styleRow").addEventListener("click",e=>{
+    const btn = e.target.closest("[data-style]");
+    if(!btn) return;
+
+    state.randomStyle = btn.dataset.style;
+    renderTopBars();
+    saveState();
+  });
+
+  document.getElementById("wordList").addEventListener("click",e=>{
+    const audio = e.target.closest(".audio-btn");
+    const good = e.target.closest("[data-mark-good]");
+    const bad = e.target.closest("[data-mark-bad]");
+    const card = e.target.closest(".word-card");
+
+    if(audio){
+      e.stopPropagation();
+      speakText(audio.dataset.audio);
+      return;
+    }
+
+    if(good){
+      e.stopPropagation();
+      const kr = good.dataset.markGood;
+      state.marks[kr] = state.marks[kr] === "good" ? "" : "good";
+      if(!state.marks[kr]) delete state.marks[kr];
+      renderWords();
+      saveState();
+      return;
+    }
+
+    if(bad){
+      e.stopPropagation();
+      const kr = bad.dataset.markBad;
+      state.marks[kr] = state.marks[kr] === "bad" ? "" : "bad";
+      if(!state.marks[kr]) delete state.marks[kr];
+      renderWords();
+      saveState();
+      return;
+    }
+
+    if(card){
+      card.classList.toggle("show");
+    }
+  });
+
+  document.getElementById("phrasePanel").addEventListener("click",e=>{
+    const audio = e.target.closest(".phrase-audio-btn");
+
+    if(audio){
+      e.stopPropagation();
+      speakText(audio.dataset.audio);
+      return;
+    }
+
+    const card = e.target.closest(".phrase-card");
+    if(card) card.classList.toggle("show");
+  });
+
+  document.getElementById("sentenceBoard").addEventListener("click",()=>{
+    document.getElementById("sentenceBoard").classList.toggle("show");
+  });
+
+  document.getElementById("randomSentenceBtn").addEventListener("click",()=>{
+    const pool = RANDOM_SENTENCES.filter(s=>s.style === state.randomStyle);
+    const item = pickRandom(pool.length ? pool : RANDOM_SENTENCES);
+    state.sentence = item.kr;
+    state.sentenceJp = item.jp;
+    document.getElementById("sentenceBoard").classList.remove("show");
+    renderSentence();
+    saveState();
+  });
+
+  document.getElementById("saveSentenceBtn").addEventListener("click",()=>{
+    if(!state.sentence) return;
+
+    if(!state.savedSentences.some(s=>s.kr === state.sentence)){
+      state.savedSentences.unshift({
+        kr:state.sentence,
+        jp:state.sentenceJp
+      });
+    }
+
+    renderSavedSentences();
+    saveState();
+  });
+
+  document.getElementById("speakSentenceBtn").addEventListener("click",()=>speakText(state.sentence));
+
+  document.getElementById("selectNormalQuizBtn").addEventListener("click",()=>showQuizStart("normal"));
+  document.getElementById("selectEndlessQuizBtn").addEventListener("click",()=>showQuizStart("endless"));
+  document.getElementById("endEndlessBtn").addEventListener("click",finishEndless);
+
+  document.getElementById("quizBox").addEventListener("click",e=>{
+    const btn = e.target.closest(".answer-btn");
+    if(btn) handleQuizAnswer(btn.dataset.answer);
+  });
+
+  document.getElementById("gachaOneBtn").addEventListener("click",()=>gachaPull(1));
+  document.getElementById("gachaTenBtn").addEventListener("click",()=>gachaPull(10));
+
+  document.getElementById("fabBtn").addEventListener("click",()=>{
+    if(state.currentTab === "word") openWordModal();
+    if(state.currentTab === "phrase") openPhraseModal();
+  });
+
+  document.getElementById("newType").addEventListener("change",syncNewWordSubtype);
+  document.getElementById("cancelAddWordBtn").addEventListener("click",closeWordModal);
+  document.getElementById("submitAddWordBtn").addEventListener("click",addWord);
+
+  document.getElementById("cancelAddPhraseBtn").addEventListener("click",closePhraseModal);
+  document.getElementById("submitAddPhraseBtn").addEventListener("click",addPhrase);
+
+  document.getElementById("settingsBtn").addEventListener("click",openSettings);
+  document.getElementById("settingsBackdrop").addEventListener("click",closeSettings);
+  document.getElementById("closeSettingsBtn").addEventListener("click",closeSettings);
+
+  document.getElementById("bgNavyBtn").addEventListener("click",()=>{
+    state.bgMode = "navy";
+    if(state.quiz.mode !== "endless") applyTheme();
+    renderSettingHighlights();
+    saveState();
+  });
+
+  document.getElementById("bgBeigeBtn").addEventListener("click",()=>{
+    state.bgMode = "beige";
+    if(state.quiz.mode !== "endless") applyTheme();
+    renderSettingHighlights();
+    saveState();
+  });
+
+  document.getElementById("pronRomanBtn").addEventListener("click",()=>{
+    state.pronMode = "roman";
+    renderWords();
+    renderPhrase();
+    renderWrongWords();
+    renderSettingHighlights();
+    saveState();
+  });
+
+  document.getElementById("pronKanaBtn").addEventListener("click",()=>{
+    state.pronMode = "kana";
+    renderWords();
+    renderPhrase();
+    renderWrongWords();
+    renderSettingHighlights();
+    saveState();
+  });
+
+  document.getElementById("clearCacheBtn").addEventListener("click",clearCache);
+}
+
+function init(){
+  loadState();
+  applyTheme();
+  bindEvents();
+  renderTopBars();
+  renderFab();
+  renderWords();
+  renderPhrase();
+  renderSentence();
+  renderSavedSentences();
+  renderWrongWords();
+  renderStats();
+  syncNewWordSubtype();
+}
+
+init();
+</script>
+
+</body>
+</html>
