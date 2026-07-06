@@ -2011,7 +2011,48 @@ const RAW_WORDS = [
 { kr:"번", jp:"回（固有数詞）", roman:"beon", kana:"ボン", type:"number" },
 { kr:"도", jp:"度（固有数詞）", roman:"do", kana:"ド", type:"number" },
 { kr:"번째", jp:"番目（固有数詞）", roman:"beonjjae", kana:"ボンチェ", type:"number" },
-{ kr:"개념", jp:"概念", roman:"gaenyeom", kana:"ケニョム", type:"gacha" },
+];
+const RANDOM_SENTENCES = [
+  { style:"casual", kr:"나 학교에 가.", jp:"私は学校に行く。" },
+  { style:"casual", kr:"너 밥 먹어?", jp:"君、ご飯食べる？" },
+  { style:"haeyo", kr:"저는 학교에 가요.", jp:"私は学校に行きます。" },
+  { style:"haeyo", kr:"친구는 밥을 먹어요.", jp:"友達はご飯を食べます。" },
+  { style:"hamnida", kr:"저는 학교에 갑니다.", jp:"私は学校に行きます。" },
+  { style:"hamnida", kr:"친구는 밥을 먹습니다.", jp:"友達はご飯を食べます。" }
+];
+
+const BASE_PHRASES = {
+  greeting:[
+    { kr:"안녕하세요", jp:"こんにちは", roman:"annyeonghaseyo", kana:"アンニョンハセヨ" }
+  ],
+  emotion:[
+    { kr:"기분이 좋아요", jp:"気分がいいです", roman:"gibuni joayo", kana:"キブニ チョアヨ" }
+  ],
+  instruction:[
+    { kr:"천천히 말해 주세요", jp:"ゆっくり話してください", roman:"cheoncheonhi malhae juseyo", kana:"チョンチョニ マレ ジュセヨ" }
+  ],
+  slang:[
+    { kr:"대박", jp:"やばい / すごい", roman:"daebak", kana:"テバク" }
+  ],
+  game:[
+    { kr:"같이 가자", jp:"一緒に行こう", roman:"gachi gaja", kana:"カチ カジャ" }
+  ],
+  affirm:[
+    { kr:"좋아요", jp:"いいです", roman:"joayo", kana:"チョアヨ" }
+  ],
+  negative:[
+    { kr:"아니요", jp:"いいえ", roman:"aniyo", kana:"アニヨ" }
+  ],
+  request:[
+    { kr:"주세요", jp:"ください", roman:"juseyo", kana:"ジュセヨ" }
+  ],
+  question:[
+    { kr:"어디예요?", jp:"どこですか？", roman:"eodiyeyo", kana:"オディエヨ" }
+  ]
+};
+
+const GACHA_POOL = [
+ { kr:"개념", jp:"概念", roman:"gaenyeom", kana:"ケニョム", type:"gacha" },
 { kr:"현상", jp:"現象", roman:"hyeonsang", kana:"ヒョンサン", type:"gacha" },
 { kr:"원리", jp:"原理", roman:"wolli", kana:"ウォルリ", type:"gacha" },
 { kr:"구조", jp:"構造", roman:"gujo", kana:"クジョ", type:"gacha" },
@@ -2513,49 +2554,6 @@ const RAW_WORDS = [
 { kr:"물류", jp:"物流", roman:"mullyu", kana:"ムルリュ", type:"gacha" },
 ];
 
-const RANDOM_SENTENCES = [
-  { style:"casual", kr:"나 학교에 가.", jp:"私は学校に行く。" },
-  { style:"casual", kr:"너 밥 먹어?", jp:"君、ご飯食べる？" },
-  { style:"haeyo", kr:"저는 학교에 가요.", jp:"私は学校に行きます。" },
-  { style:"haeyo", kr:"친구는 밥을 먹어요.", jp:"友達はご飯を食べます。" },
-  { style:"hamnida", kr:"저는 학교에 갑니다.", jp:"私は学校に行きます。" },
-  { style:"hamnida", kr:"친구는 밥을 먹습니다.", jp:"友達はご飯を食べます。" }
-];
-
-const BASE_PHRASES = {
-  greeting:[
-    { kr:"안녕하세요", jp:"こんにちは", roman:"annyeonghaseyo", kana:"アンニョンハセヨ" }
-  ],
-  emotion:[
-    { kr:"기분이 좋아요", jp:"気分がいいです", roman:"gibuni joayo", kana:"キブニ チョアヨ" }
-  ],
-  instruction:[
-    { kr:"천천히 말해 주세요", jp:"ゆっくり話してください", roman:"cheoncheonhi malhae juseyo", kana:"チョンチョニ マレ ジュセヨ" }
-  ],
-  slang:[
-    { kr:"대박", jp:"やばい / すごい", roman:"daebak", kana:"テバク" }
-  ],
-  game:[
-    { kr:"같이 가자", jp:"一緒に行こう", roman:"gachi gaja", kana:"カチ カジャ" }
-  ],
-  affirm:[
-    { kr:"좋아요", jp:"いいです", roman:"joayo", kana:"チョアヨ" }
-  ],
-  negative:[
-    { kr:"아니요", jp:"いいえ", roman:"aniyo", kana:"アニヨ" }
-  ],
-  request:[
-    { kr:"주세요", jp:"ください", roman:"juseyo", kana:"ジュセヨ" }
-  ],
-  question:[
-    { kr:"어디예요?", jp:"どこですか？", roman:"eodiyeyo", kana:"オディエヨ" }
-  ]
-};
-
-const GACHA_POOL = [
-  { kr:"대박", jp:"すごい / やばい", roman:"daebak", kana:"テバク" },
-  { kr:"진짜", jp:"マジで", roman:"jinjja", kana:"チンチャ" },
-  { kr:"최애", jp:"最推し", roman:"choeae", kana:"チェエ" }
 ];
 
 const state = {
