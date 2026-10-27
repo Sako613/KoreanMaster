@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>世界地図メモ</title>
+<style>
+:root{--paper:#f3eee3;--ink:#2e2923;--sub:#7a7266;--line:#cfc7b6;--sea:#dfe5e3;--red:#a8321f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#1c1b19;--ink:#e6e0d3;--sub:#9a9284;--line:#3b3832;--sea:#20262a;--red:#d9634d}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 16px 8px;border-bottom:1px solid var(--ink)}
+header b{font-size:17px;letter-spacing:.25em;font-weight:600}
+header span{color:var(--sub);font-size:12px}
+#map{flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none;background:var(--sea)}
+#map>div{width:100%}
+.datamaps-subunit{cursor:pointer;vector-effect:non-scaling-stroke;stroke:#3a342e!important;stroke-width:.7px!important}
+#panel{display:none;flex:1;min-height:0;flex-direction:column}
+#panel.open{display:flex}
+.bar{display:flex;align-items:baseline;gap:12px;padding:8px 16px;border-bottom:1px solid var(--line)}
+.bar h2{margin:0;font-size:18px;font-weight:600;flex:1}
+.bar small{color:var(--sub);font-size:12px}
+.bar button{border:0;background:none;color:var(--sub);font:inherit;font-size:13px;padding:0}
+#shape{height:34%;min-height:120px;background:var(--sea);border-bottom:1px solid var(--ink)}
+#shape svg{width:100%;height:100%;display:block}
+.zones{flex:1;min-height:0;display:flex}
+.zone{flex:1;min-width:0;display:flex;flex-direction:column;padding:10px 12px}
+.zone+.zone{border-left:1px solid var(--line)}
+.zone label{font-size:12px;color:var(--sub);letter-spacing:.15em;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+textarea{flex:1;width:100%;resize:none;border:0;padding:0;font:inherit;font-size:15px;line-height:26px;color:var(--ink);background:repeating-linear-gradient(transparent,transparent 25px,var(--line) 25px,var(--line) 26px) local;outline:none}
+.add{position:relative;overflow:hidden;color:var(--red);font-size:12px;letter-spacing:0;border-bottom:1px solid var(--red)}
+.add input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+#imgs{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;align-content:start}
+.th{position:relative;aspect-ratio:1;background:#fff;padding:3px;box-shadow:0 1px 2px rgba(0,0,0,.35)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th button{position:absolute;top:0;right:0;width:20px;height:20px;border:0;background:rgba(30,25,20,.7);color:#fff;font-size:13px;line-height:1;padding:0}
+.empty{color:var(--sub);font-size:12px;grid-column:1/-1}
+#toast{position:fixed;left:50%;top:60px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:6px 12px;font-size:12px;display:none}
+</style>
+</head>
+<body>
+<header><b>世界地図メモ</b><span id="stat">未記録</span></header>
+<div id="map"></div>
+<section id="panel">
+  <div class="bar"><button id="close">‹ 地図に戻る</button><h2 id="cname"></h2><small id="cscore"></small></div>
+  <div id="shape"></div>
+  <div class="zones">
+    <div class="zone"><label>メモ <span id="cnt"></span></label><textarea id="memo" placeholder="この国のメモを書く"></textarea></div>
+    <div class="zone"><label>画像 <span class="add">追加<input type="file" id="file" accept="image/*" multiple></span></label><div id="imgs"></div></div>
+  </div>
+</section>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson@1.6.27/build/topojson.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.world.min.js"></script>
+<script>
+var KEY='worldMemo.v1', GRAY='#b9b4a9', store={}, cur=null, map, saveT;
+try{store=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){store={}}
+var $=function(id){return document.getElementById(id)};
+
+function toast(t){var e=$('toast');e.textContent=t;e.style.display='block';setTimeout(function(){e.style.display='none'},2500)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){toast('保存容量がいっぱいです。画像を減らしてください')}}
+function score(id){var d=store[id];if(!d)return 0;return Math.min(1,((d.memo||'').length+(d.imgs||[]).length*80)/400)}
+function color(s){return s<=0?GRAY:d3.interpolateRgb(GRAY,'#a8321f')(s)}
+function paint(id){var o={};o[id]=color(score(id));map.updateChoropleth(o);stat()}
+function stat(){var n=Object.keys(store).filter(function(k){return score(k)>0}).length;$('stat').textContent=n?n+'か国':'未記録'}
+
+function build(){
+  $('map').innerHTML='';
+  map=new Datamap({
+    element:$('map'),projection:'mercator',responsive:true,
+    fills:{defaultFill:GRAY},
+    geographyConfig:{borderColor:'#3a342e',borderWidth:.7,highlightOnHover:false,popupOnHover:false},
+    done:function(m){
+      m.svg.selectAll('.datamaps-subunit').on('click',function(g){openC(g.id,g.properties.name,g)});
+      var z=d3.behavior.zoom().scaleExtent([1,14]).on('zoom',function(){
+        m.svg.select('.datamaps-subunits').attr('transform','translate('+d3.event.translate+')scale('+d3.event.scale+')');
+      });
+      m.svg.call(z);
+      var all={};Object.keys(store).forEach(function(k){all[k]=color(score(k))});
+      m.updateChoropleth(all);stat();
+    }
+  });
+}
+
+function drawShape(g){
+  var box=$('shape');box.innerHTML='';
+  var w=box.clientWidth||360,h=box.clientHeight||200,pr,pa,b,s;
+  function fit(p){
+    pr=p.scale(1).translate([0,0]);pa=d3.geo.path().projection(pr);b=pa.bounds(g);
+    s=.86/Math.max((b[1][0]-b[0][0])/w,(b[1][1]-b[0][1])/h);
+  }
+  fit(d3.geo.mercator());
+  if(!isFinite(s))fit(d3.geo.equirectangular());
+  pr.scale(s).translate([(w-s*(b[1][0]+b[0][0]))/2,(h-s*(b[1][1]+b[0][1]))/2]);
+  d3.select(box).append('svg').attr('viewBox','0 0 '+w+' '+h).attr('preserveAspectRatio','xMidYMid meet')
+    .append('path').attr('id','shapePath').attr('d',pa(g))
+    .style({fill:color(score(g.id)),stroke:'#3a342e','stroke-width':'1px','stroke-linejoin':'round'});
+}
+function openC(id,name,g){
+  cur=id;$('map').style.display='none';$('panel').classList.add('open');
+  $('cname').textContent=name;
+  $('memo').value=(store[id]&&store[id].memo)||'';
+  render();drawShape(g);
+}
+function closeC(){cur=null;$('panel').classList.remove('open');$('map').style.display='';setTimeout(function(){map.resize()},0)}
+function render(){
+  var d=store[cur]||{memo:'',imgs:[]},box=$('imgs');
+  box.innerHTML='';
+  if(!d.imgs.length){box.innerHTML='<div class="empty">画像はまだありません</div>'}
+  d.imgs.forEach(function(src,i){
+    var w=document.createElement('div');w.className='th';
+    var im=document.createElement('img');im.src=src;
+    var b=document.createElement('button');b.textContent='×';
+    b.onclick=function(){store[cur].imgs.splice(i,1);commit()};
+    w.appendChild(im);w.appendChild(b);box.appendChild(w);
+  });
+  $('cnt').textContent=(d.memo||'').length+'字';
+  $('cscore').textContent='記録度 '+Math.round(score(cur)*100)+'%';
+  var sp=$('shapePath');if(sp)sp.style.fill=color(score(cur));
+}
+function commit(){
+  var d=store[cur];
+  if(d&&!d.memo&&!d.imgs.length)delete store[cur];
+  clearTimeout(saveT);save();paint(cur);render();
+}
+function ensure(){if(!store[cur])store[cur]={memo:'',imgs:[]};return store[cur]}
+
+$('memo').addEventListener('input',function(){
+  if(!cur)return;ensure().memo=this.value;
+  clearTimeout(saveT);saveT=setTimeout(commit,400);
+  $('cnt').textContent=this.value.length+'字';
+});
+$('close').onclick=closeC;
+$('file').addEventListener('change',function(){
+  var files=Array.prototype.slice.call(this.files);this.value='';
+  var target=cur;
+  files.forEach(function(f){
+    var r=new FileReader();
+    r.onload=function(){
+      var im=new Image();
+      im.onload=function(){
+        var s=Math.min(1,700/Math.max(im.width,im.height)),c=document.createElement('canvas');
+        c.width=im.width*s;c.height=im.height*s;
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+        if(!store[target])store[target]={memo:'',imgs:[]};
+        store[target].imgs.push(c.toDataURL('image/jpeg',.7));
+        if(cur===target)commit();else{save();paint(target)}
+      };
+      im.onerror=function(){toast('この画像形式は読み込めません')};
+      im.src=r.result;
+    };
+    r.readAsDataURL(f);
+  });
+});
+window.addEventListener('resize',function(){if(map)map.resize()});
+build();
+</script>
+</body>
+</html>
